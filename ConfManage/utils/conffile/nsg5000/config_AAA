@@ -1,0 +1,13 @@
+# Module config_AAA
+
+#local groups information
+
+#local role information
+
+#authsrv information
+authsrv local "local"
+exit
+authsrv remote add
+
+#user bind information
+
