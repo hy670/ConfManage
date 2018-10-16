@@ -1,0 +1,129 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+<style type="text/css"> 
+	td.details-control {
+	    background: url("/static/img/details_open.png") no-repeat center center;
+	    cursor: pointer;
+	}
+	tr.shown td.details-control {
+	    background: url('/static/img/details_close.png') no-repeat center center;
+	}
+</style>	
+{% endblock %}
+{% block page-content %}
+<div id="page-wrapper">
+    <div class="row">
+         <div class="col-lg-12">
+              <h1 class="page-header"><i class="fa  fa-align-justify "></i> 防火墙本机策略冗余检查</h1>
+         </div>
+                <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+         <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            	<i class="fa fa-database"></i>请选择检查设备
+                           <div class="row" >
+                            <div class="form-group">
+								<div class="col-sm-2">
+									 <select class="form-control center" id="selAssetsType" >
+									 		<option selected="selected" value="">请选择设备</option>
+											<option value="usg" name="assets_type">USG</option>
+											<option value="f1030" name="assets_type">F1030</option>
+											<option value="nsg" name="assets_type">NSG</option>
+									</select>
+								</div>
+                                <div class="col-sm-1">
+                                    <button type="submit" class="btn btn-default" onClick="policy_redundancy_check()">查询</button>
+                                </div>
+
+                            </div>
+				      </div>
+                        </div>
+                        <!-- /.panel-heading -->
+
+                        <div class="panel-body">
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="deployTableList">
+                                <thead>
+                                    <tr>
+                                        <th>设备名称</th>
+                                    	<th>序号</th>
+                                    	<th>策略ID</th>
+                                    	<th>源域</th>
+                                    	<th>目的域</th>
+                                    	<th>源地址</th>
+                                        <th>目的地址</th>
+                                        <th>协议</th>
+                                        <th>目的端口</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deployTablebody">
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+         </div>
+    </div>
+<script type="text/javascript">
+
+    function _w_table_rowspan(_w_table_id,_w_table_colnum){
+          _w_table_firsttd = "";
+          _w_table_currenttd = "";
+          _w_table_SpanNum = 0;
+          _w_table_Obj = $(_w_table_id + " tr td:nth-child(" + _w_table_colnum + ")");
+          _w_table_Obj.each(function(i){
+                if(i==0){
+                      _w_table_firsttd = $(this);
+                      _w_table_SpanNum = 1;
+                }else{
+                      _w_table_currenttd = $(this);
+                      if(_w_table_firsttd.text()==_w_table_currenttd.text()){
+                            _w_table_SpanNum++;
+                            _w_table_currenttd.hide(); //remove();
+                            _w_table_firsttd.attr("rowSpan",_w_table_SpanNum);
+                      }else{
+                            _w_table_firsttd = $(this);
+                            _w_table_SpanNum = 1;
+                  }
+                }
+          });
+    }
+    function policy_redundancy_check()
+    {
+          dev = document.getElementById("selAssetsType").value
+
+			$.ajax({
+				  type: 'POST',
+				  url: '/policy_redundancy_check/',
+				  data: {
+					  "dev":dev,
+				  },
+                  dataType : "json",
+			      success:function(response){
+
+                      var tbody = "";
+                      $.each((response.policy),function(n,item) {
+                          var trs = "";
+                          trs = "<tr> <td>" +item.dev+"</td> <td>"  +item.number+"</td> <td>" +item.id+"</td> <td>" + item.srceth +"</td > <td>"
+                              + item.dsteth +"</td > <td>" + item.srcaddr +"</td > <td>" + item.dstaddr +"</td > <td>"
+                              + item.protocol +"</td ><td>" +item.port +"</td ></tr>";
+                          tbody += trs;
+                      });
+                      $("#deployTablebody").html(" ")
+                      $("#deployTablebody").append(tbody);
+                      _w_table_rowspan("#deployTableList",1);
+                      _w_table_rowspan("#deployTableList",2);
+
+				    },
+                  error:function(response){
+	            	window.wxc.xcConfirm("查询操作失败", window.wxc.xcConfirm.typeEnum.error);
+	            },
+				})
+
+    }
+
+</script>
+{% endblock %}
