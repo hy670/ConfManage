@@ -1,4 +1,5 @@
 # -*- coding:utf8 -*-
+import os
 import IPy
 import networkx
 from ConfManage.utils import usg,f1030,nsg5000,devicebase
@@ -91,7 +92,7 @@ def iszmbiepolicy(topology,checkfirewall,netaddrlist):
     return zmbiepolicylist
 
 
-def searchpolicy(srcaddr, dstaddr, service):
+def searchpolicy(srcaddr, dstaddr, protocol,service):
     searchpolicydic= {}
     dstnet = ""
     srcnet = ""
@@ -127,14 +128,11 @@ def searchpolicy(srcaddr, dstaddr, service):
                             srcaddr) == 1:
                         if IPy.IP(dstaddr).overlaps(j.dstaddr) == 1 or IPy.IP(j.dstaddr).overlaps(
                                 dstaddr) == 1:
-                            if service == 'any' or j.service == 'any':
+                            if protocol == '0' or j.service['protocol'] == '0':
                                 # print("--------------------------------------------------------------")
                                 # checkpoliy.printpolicymic()
-                                print(srcaddr)
-                                print(j.srcaddr)
-                                print()
                                 searchpolicylist.append(j)
-                            elif service == j.service:
+                            elif protocol == j.service['protocol'] and service == j.service['port']:
                                 # print("--------------------------------------------------------------")
                                 # checkpoliy.printpolicymic()
                                 searchpolicylist.append(j)
@@ -144,7 +142,6 @@ def searchpolicy(srcaddr, dstaddr, service):
 usg100 = usg.USG('usg100')
 f1030 = f1030.F1030('f1030')
 nsg5000 = nsg5000.NSG5000('nsg5000')
-
 
 # 创建防火墙列表
 firewalllist = []
@@ -191,9 +188,9 @@ topology.add_edge(hxsw, testaddr)
 topology.add_edge(hxsw, webaddr)
 topology.add_edge(hxsw, f1030)
 topology.add_edge(f1030, appaddr)
+topology.add_edge(f1030, dbaddr)
 topology.add_edge(f1030, jtaddr)
 topology.add_edge(f1030, wzaddr)
 
-tempdic = searchpolicy('10.16.18.98','10.16.25.100','any')
-for key in tempdic:
-   print(key)
+
+

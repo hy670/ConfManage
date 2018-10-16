@@ -35,8 +35,8 @@
                                 <div class="col-sm-2">
 									 <select class="form-control" id="protocol" >
 									 		<option selected="selected" value="">请选择协议</option>
-											<option value="tcp" name="assets_type">TCP</option>
-											<option value="udp" name="assets_type">UDP</option>
+											<option value="6" name="assets_type">TCP</option>
+											<option value="17" name="assets_type">UDP</option>
 
 									</select>
 								</div>
@@ -106,7 +106,6 @@
          dstaddr = document.getElementById("dstaddr").value
          protocol = document.getElementById("protocol").value
          port = document.getElementById("port").value
-         alert(srcaddr+dstaddr+protocol+port)
 			$.ajax({
 				  type: 'POST',
 				  url: '/policy_search/',
@@ -122,8 +121,7 @@
 				          window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
                       else
                       {
-
-                          var tbody = "";
+                         var tbody = "";
                           $.each((response.policy),function(n,item) {
                               var trs = "";
                               trs = "<tr> <td>" +item.dev+"</td> <td>" +item.id+"</td> <td>" + item.srceth +"</td > <td>"
@@ -134,7 +132,7 @@
                           $("#deployTablebody").html(" ")
                           $("#deployTablebody").append(tbody);
                           _w_table_rowspan("#deployTableList",1);
-                          _w_table_rowspan("#deployTableList",2);
+                          _w_table_rowspan("#deployTableList",2);;
                       }
 
 				    },

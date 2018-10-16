@@ -4,19 +4,8 @@ import pymysql
 
 class DefaultSerDicList:
 	defaultserdiclist =[]
-	db = pymysql.connect(
-		host='127.0.0.1',
-		port=12345,
-		user='root',
-		passwd='12345',
-		db='confmgr',
-		charset='utf8'
-	)
-	cur = db.cursor()
-	cur.execute("select * from defaultservice")
-	results = cur.fetchall()
-	for i in results:
-		sername = i[0]
-		protocol = i[1]
-		dstport = i[2]
-		defaultserdiclist.append({'servicename':sername,'protocol':protocol,'port':dstport})
+	f = open('./ConfManage/utils/resource/well-known-port', 'r', encoding="UTF-8")
+	for line in f:
+		key = line.strip().split(' ')
+		if len(key)==3:
+			defaultserdiclist.append({'servicename':key[0],'protocol':key[1],'port':key[2]})

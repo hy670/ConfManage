@@ -61,7 +61,8 @@ class Policy:
 
 
 class PolicyMic:
-	def __init__(self, name=""):
+	def __init__(self,id='',name=""):
+		self.policyid = id
 		self.name = name
 		self.srceth = ''
 		self.dsteth = ''
@@ -70,12 +71,13 @@ class PolicyMic:
 		self.service = {}
 
 	def printpolicymic(self) -> object:
-		print('policydetail id :' + self.name, end=" ")
-		print(' policydetail srceth :' + self.srceth, end=" ")
-		print(' policydetail dsteth :' + self.dsteth, end=" ")
-		print(' policydetail srcaddr :', end=" ")
+		print('policydetail id :' + self.policyid, end=" ")
+		print('name :' + self.name, end=" ")
+		print('  srceth :' + self.srceth, end=" ")
+		print('  dsteth :' + self.dsteth, end=" ")
+		print('  srcaddr :', end=" ")
 		print('  ' + self.srcaddr, end=" ")
-		print(' policydetail dstaddr :', end=" ")
+		print(' dstaddr :', end=" ")
 		print('  ' + self.dstaddr, end=" ")
 		print(' policydetail service :', end=" ")
 		print('  ' + str(self.service))
@@ -102,14 +104,11 @@ class F1030:
 		self.creatpolicymic()
 
 
-
-
 	def locataddrbyname(self, addrname):
 		for i in self.addrlist:
 			if addrname == i.name:
 				return i
 		return 0
-
 
 
 	def locataddrgrpbyname(self, name):
@@ -119,13 +118,11 @@ class F1030:
 		return 0
 
 
-
 	def locatruleaddrgrpbyname(self, name):
 		for i in self.ruleaddrgrplist:
 			if name == i.name:
 				return i
 		return 0
-
 
 
 	def locatserbyname(self, name):
@@ -135,13 +132,11 @@ class F1030:
 		return 0
 
 
-
 	def locatdefaultserbyname(self, name):
 		for i in self.defaultserlist:
 			if name == i.name:
 				return i
 		return 0
-
 
 
 	def locatsergrpbyname(self, name):
@@ -178,7 +173,7 @@ class F1030:
 					for addrcontent in tempdstaddr.addrcontent:
 						tempdstaddrcontent.append(addrcontent)
 			if i.service[0] == 'any':
-				tempsercontent.append({'protocol': '-1', 'port': '-1'})
+				tempsercontent.append({'protocol': '0', 'port': '-1'})
 			else:
 				for j in i.service:
 					tempservice = self.locatserbyname(j)
@@ -277,23 +272,52 @@ class F1030:
 
 
 	def redundantcheck(self):
+		number = 1
+		policydiclist = []
 		for i in range(len(self.policymiclist)):
 			for j in range(i + 1, len(self.policymiclist)):
-				if self.policymiclist[i].name != self.policymiclist[j].name:
+				if self.policymiclist[i].policyid != self.policymiclist[j].policyid:
 					if self.policymiclist[i].srceth == self.policymiclist[j].srceth and \
 							self.policymiclist[i].dsteth == self.policymiclist[j].dsteth:
 						if IPy.IP(self.policymiclist[i].srcaddr).overlaps(self.policymiclist[j].srcaddr) == 1 or \
 								IPy.IP(self.policymiclist[j].srcaddr).overlaps(self.policymiclist[i].srcaddr) == 1:
 							if IPy.IP(self.policymiclist[i].dstaddr).overlaps(self.policymiclist[j].dstaddr) == 1 or \
 									IPy.IP(self.policymiclist[j].dstaddr).overlaps(self.policymiclist[i].dstaddr) == 1:
-								if self.policymiclist[i].service['protocol'] == '-1' or self.policymiclist[j].service['protocol'] == '-1':
-									print(str(i) + " " + str(j))
-									print("--------------------------------------------------------------")
-									self.policymiclist[i].printpolicydetail()
-									self.policymiclist[j].printpolicydetail()
+								if self.policymiclist[i].service['protocol'] == '0' or self.policymiclist[j].service['protocol'] == '0':
+									temppolicydic1 = {'number':number,'dev': self.name, 'id': self.policymiclist[i].policyid,
+									                  'srceth': self.policymiclist[i].srceth,
+									                 'dsteth': self.policymiclist[i].dsteth,
+									                 'srcaddr': self.policymiclist[i].srcaddr,
+									                  'dstaddr':self.policymiclist[i].dstaddr,
+									                 'protocol': self.policymiclist[i].service['protocol'],
+									                 'port':self.policymiclist[i].service['port']}
+									temppolicydic2 = {'number': number, 'dev': self.name, 'id': self.policymiclist[j].policyid,
+									                  'srceth': self.policymiclist[j].srceth,
+									                  'dsteth': self.policymiclist[j].dsteth,
+									                  'srcaddr': self.policymiclist[j].srcaddr, 'dstaddr': self.policymiclist[j].dstaddr,
+									                  'protocol': self.policymiclist[j].service['protocol'],
+									                  'port': self.policymiclist[j].service['port']}
+									policydiclist.append(temppolicydic1)
+									policydiclist.append(temppolicydic2)
+									number = number + 1
 								elif self.policymiclist[i].service['protocol'] == self.policymiclist[j].service['protocol']:
 									if self.policymiclist[i].service['port'] == self.policymiclist[j].service['port']:
-										print(str(i) +" "+str(j))
-										print("--------------------------------------------------------------")
-										self.policymiclist[i].printpolicydetail()
-										self.policymiclist[j].printpolicydetail()
+										temppolicydic1 = {'number': number, 'dev': self.name, 'id': self.policymiclist[i].policyid,
+										                  'srceth': self.policymiclist[i].srceth,
+										                  'dsteth': self.policymiclist[i].dsteth,
+										                  'srcaddr': self.policymiclist[i].srcaddr, 'dstaddr': self.policymiclist[i].dstaddr,
+										                  'protocol': self.policymiclist[i].service['protocol'],
+										                  'port': self.policymiclist[i].service['port']}
+										temppolicydic2 = {'number': number, 'dev': self.name, 'id': self.policymiclist[j].policyid,
+										                  'srceth': self.policymiclist[j].srceth,
+										                  'dsteth': self.policymiclist[j].dsteth,
+										                  'srcaddr': self.policymiclist[j].srcaddr, 'dstaddr': self.policymiclist[j].dstaddr,
+										                  'protocol': self.policymiclist[j].service['protocol'],
+										                  'port': self.policymiclist[j].service['port']}
+										policydiclist.append(temppolicydic1)
+										policydiclist.append(temppolicydic2)
+										number = number + 1
+		return policydiclist
+
+
+
