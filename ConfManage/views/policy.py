@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from ConfManage.utils.graph import usg100, f1030, nsg5000, searchpolicy
+from ConfManage.utils.graph import usg100, f1030, nsg5000, searchpolicy,iszmbiepolicy
 from ConfManage.utils.is_ip import is_ip
 
 
@@ -18,22 +18,22 @@ def policy_list(request):
 		if dev == 'usg':
 			for i in usg100.policymiclist:
 				temppolicydic = {'dev': usg100.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 		elif dev == 'f1030':
 			for i in f1030.policymiclist:
 				temppolicydic = {'dev': f1030.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 		elif dev == 'nsg':
 			for i in nsg5000.policymiclist:
 				temppolicydic = {'dev': nsg5000.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 
@@ -63,8 +63,8 @@ def policy_search(request):
 				if len(tempdic[key]) > 0:
 					for i in tempdic[key]:
 						temppolicydic = {'dev': key, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-										 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-										 'port': i.service['port']}
+						                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+						                 'port': i.service['port']}
 						policydiclist.append(temppolicydic)
 			return JsonResponse({'policy': policydiclist, "code": '400'})
 
@@ -83,4 +83,38 @@ def policy_redundancy_check(request):
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 		elif dev == 'nsg':
 			policydiclist = nsg5000.redundantcheck()
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+
+
+def policy_iszmbie_check(request):
+	if request.method == "GET":
+		return render(request, 'policy/policy_iszmbie_check.html')
+	elif request.method == "POST":
+		policydiclist = []
+		dev = request.POST.get('dev')
+		if dev == 'usg':
+			policydiclist = iszmbiepolicy(usg100)
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+		elif dev == 'f1030':
+			policydiclist = iszmbiepolicy(f1030)
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+		elif dev == 'nsg':
+			policydiclist = iszmbiepolicy(nsg5000)
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+
+
+def policy_regular_list(request):
+	if request.method == "GET":
+		return render(request, 'policy/policy_regular_list.html')
+	elif request.method == "POST":
+		policydiclist = []
+		dev = request.POST.get('dev')
+		if dev == 'usg':
+			policydiclist = iszmbiepolicy(usg100)
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+		elif dev == 'f1030':
+			policydiclist = iszmbiepolicy(f1030)
+			return JsonResponse({'msg': '200', 'policy': policydiclist})
+		elif dev == 'nsg':
+			policydiclist = iszmbiepolicy(nsg5000)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})

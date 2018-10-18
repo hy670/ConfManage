@@ -1,0 +1,2 @@
+db-internet 10.16.26.0/24 0.0.0.0/0 any
+app-internet 10.16.25.0/24 0.0.0.0/0 any

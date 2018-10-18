@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from ConfManage.views import (index,policy)
+from ConfManage.views import (index, policy)
 
 urlpatterns = [
 	url(r'^$', index.index),
@@ -28,6 +28,8 @@ urlpatterns = [
 	url(r'^noperm', index.noperm),
 	url(r'^policy_list/', policy.policy_list),
 	url(r'^policy_search/', policy.policy_search),
-	url(r'^policy_redundancy_check/', policy.policy_redundancy_check),
+	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
+	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
+	url(r'^policy_regular_list/', policy.policy_regular_list),
 
 ]
