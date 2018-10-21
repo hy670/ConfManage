@@ -3,6 +3,7 @@ import IPy
 import networkx
 from ConfManage.utils import usg, f1030, nsg5000, devicebase
 import matplotlib.pyplot as plt
+from ConfManage.utils.regularlist import RegularList
 
 
 def isnetaddr(addr):
@@ -25,93 +26,6 @@ def iplocate(addr):
 		return internet
 	else:
 		return False
-
-
-def iszmbiepolicy1(checkfirewall):
-	zmbiepolicylist = []
-	print('begin' + checkfirewall.name + 'policycheck')
-	print(checkfirewall.name + '######---独立存在的策略---######')
-	# 遍历需要检测防火墙的原子策略表
-	for checkpoliy in checkfirewall.policymiclist:
-		issrcport = 0
-		isdstport = 0
-		srcaddr = ""
-		dstaddr = ""
-		# 不对未初始化的安全域策略检查
-		for port in checkfirewall.portlink:
-			if checkpoliy.srceth in port:
-				for route in netaddrlist:
-					if route.name == port.split('-')[1] and route.type == "netaddr":
-						srcaddr = route.netaddr
-						break
-					else:
-						srcaddr = checkpoliy.srcaddr
-				issrcport = 1
-			if checkpoliy.dsteth in port:
-				for route in netaddrlist:
-					if route.name == port.split('-')[1] and route.type == "netaddr":
-						dstaddr = route.netaddr
-						break
-					else:
-						dstaddr = checkpoliy.dstaddr
-				isdstport = 1
-		if issrcport == 0 or isdstport == 0:
-			continue
-		# 根据策略的源地址和目的地址 匹配拓扑网络区域地址
-		for i in netaddrlist:
-			if 1 == IPy.IP(i.netaddr).overlaps(dstaddr):
-				dstnet = i
-				break
-		for i in netaddrlist:
-			if 1 == IPy.IP(i.netaddr).overlaps(srcaddr):
-				srcnet = i
-				break
-		# 根据策略的源区域和目的区域 确认策略路径 生成路径设备列表
-		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
-		iscontent = 0
-		# 遍历路径设备列表
-		for i in range(len(routelist)):
-			# 设备与策略主机一致跳过
-			if routelist[i] == checkfirewall:
-				continue
-			# 如设备类型为防火墙
-			elif routelist[i].type == 'firewall':
-				# 根据上下游设备 确定检测策略经过本机的安全域或端口
-				srceth = ''
-				dsteth = ''
-				for port in routelist[i].portlink:
-					if routelist[i - 1].name in port:
-						srceth = port.split('-')[0]
-					if routelist[i + 1].name in port:
-						dsteth = port.split('-')[0]
-				print(srceth)
-				print(dsteth)
-				# 遍历主机原子策略表，与经过的安全域策略比较是否有相应的策略
-				for j in routelist[i].policymiclist:
-					if j.srceth == srceth and j.dsteth == dsteth:
-						iscontent = 1
-						if IPy.IP(checkpoliy.srcaddr).overlaps(j.srcaddr) == 1 or IPy.IP(j.srcaddr).overlaps(
-								checkpoliy.srcaddr) == 1:
-							if IPy.IP(checkpoliy.dstaddr).overlaps(j.dstaddr) == 1 or IPy.IP(j.dstaddr).overlaps(
-									checkpoliy.dstaddr) == 1:
-								if checkpoliy.service['protocol'] == '0' or j.service['protocol'] == '0':
-									iscontent = 2
-									break
-								elif checkpoliy == j.service['protocol'] and checkpoliy == j.service['port']:
-
-									iscontent = 2
-									break
-				# 标识  表示 1= 相关安全域策略未匹配 2= 匹配（存在相对应的策略）
-				if iscontent == 1:
-					temppolicydic = {'dev': routelist[i].name, 'id': checkpoliy.policyid,
-									 'srceth': checkpoliy.srceth,
-									 'dsteth': checkpoliy.dsteth,
-									 'srcaddr': checkpoliy.srcaddr,
-									 'dstaddr': checkpoliy.dstaddr,
-									 'protocol': checkpoliy.service['protocol'],
-									 'port': checkpoliy.service['port']}
-					zmbiepolicylist.append(temppolicydic)
-	return zmbiepolicylist
 
 
 def iszmbiepolicy(checkfirewall):
@@ -211,17 +125,26 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	searchpolicydic = {}
 	dstnet = ""
 	srcnet = ""
+	if 	dstaddr == "0.0.0.0" or dstaddr == "0.0.0.0/0":
+		dstnet = internet
+	else:
+		for i in netaddrlist:
+			if 1 == IPy.IP(i.netaddr).overlaps(dstaddr):
+				dstnet = i
+				break
 
-	for i in netaddrlist:
-		if 1 == IPy.IP(i.netaddr).overlaps(dstaddr):
-			dstnet = i
-			break
-	for i in netaddrlist:
-		if 1 == IPy.IP(i.netaddr).overlaps(srcaddr):
-			srcnet = i
-			break
+	if srcaddr == "0.0.0.0" or srcaddr == "0.0.0.0/0":
+		srcnet = internet
+	else:
+		for i in netaddrlist:
+			if 1 == IPy.IP(i.netaddr).overlaps(srcaddr):
+				srcnet = i
+				break
 	# 根据策略的源区域和目的区域 确认策略路径 生成路径设备列表
-	routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
+	if not srcnet or not dstnet:
+		return False
+	else:
+		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
 	# 遍历路径设备列表
 	for i in range(len(routelist)):
 		searchpolicylist = []
@@ -252,6 +175,45 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 								searchpolicylist.append(j)
 		searchpolicydic.update({routelist[i].name: searchpolicylist})
 	return searchpolicydic
+
+
+def regularcheck(checkfirewall):
+
+	print('##########beging regularchecke########')
+	policymiclist =checkfirewall.policymiclist.copy()
+	regularpolicylist =[]
+
+	for i in RegularList.regularlist:
+		srcnet = iplocate(i['srcaddr'])
+		dstnet = iplocate(i['dstaddr'])
+		print(i['srcaddr'])
+		print(i['dstaddr'])
+		print(srcnet.name)
+		print(dstnet.name)
+		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
+		srceth = ''
+		dsteth = ''
+		for k in range(len(routelist)):
+			if routelist[k] == checkfirewall:
+				for port in checkfirewall.portlink:
+					if routelist[k - 1].name in port:
+						srceth = port.split('-')[0]
+					if routelist[k + 1].name in port:
+						dsteth = port.split('-')[0]
+		print(srceth)
+		print(dsteth)
+		if not srceth or not dsteth:
+			continue
+		else:
+			for j in policymiclist:
+
+				if j.srceth==srceth and j.dsteth==dsteth:
+					if IPy.IP(i['srcaddr'])==IPy.IP(j.srcaddr) and IPy.IP(i['dstaddr']).overlaps(j.dstaddr) == 1:
+							if i['protocol'] == j.service['protocol'] and i['port'] == j.service['port']:
+								policymiclist.remove(j)
+
+	return policymiclist
+
 
 
 def showgraph():
@@ -315,10 +277,7 @@ f1030 = f1030.F1030('f1030')
 nsg5000 = nsg5000.NSG5000('nsg5000')
 
 # 创建防火墙列表
-firewalllist = []
-firewalllist.append(usg100)
-firewalllist.append(f1030)
-firewalllist.append(nsg5000)
+firewalllist = [usg100, f1030, nsg5000]
 hxsw = devicebase.EthSW('hxsw')
 
 # 创建网络节点并添加至网络节点列表

@@ -28,8 +28,9 @@ urlpatterns = [
 	url(r'^noperm', index.noperm),
 	url(r'^policy_list/', policy.policy_list),
 	url(r'^policy_search/', policy.policy_search),
-	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
+	url(r'^policy_redundancy_check/', policy.policy_redundancy_check),
 	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
 	url(r'^policy_regular_list/', policy.policy_regular_list),
+	url(r'^policy_regular_check/', policy.policy_regular_check),
 
 ]

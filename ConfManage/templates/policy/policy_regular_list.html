@@ -22,19 +22,39 @@
          <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            	<i class="fa fa-database"></i>请选择检查设备
+                            	<i class="fa fa-database"></i>添加规则
                            <div class="row" >
                             <div class="form-group">
-								<div class="col-sm-2">
-									 <select class="form-control center" id="selAssetsType" >
-									 		<option selected="selected" value="">请选择设备</option>
-											<option value="usg" name="assets_type">USG</option>
-											<option value="f1030" name="assets_type">F1030</option>
-											<option value="nsg" name="assets_type">NSG</option>
+                                <div class="col-sm-2">
+									 <input class="form-control" type="text"  placeholder="名称" id="id" />
+								</div>
+								 <div class="col-sm-2">
+									 <input class="form-control" type="text"  placeholder="源地址" id="srcaddr" />
+								</div>
+                                <div class="col-sm-2">
+									 <input class="form-control" type="text"  placeholder="目的地址" id="dstaddr" />
+								</div>
+                                <div class="col-sm-2">
+									 <select class="form-control" id="protocol" >
+									 		<option selected="selected" value="">协议</option>
+											<option value="6" name="assets_type">TCP</option>
+											<option value="17" name="assets_type">UDP</option>
+
 									</select>
 								</div>
                                 <div class="col-sm-1">
-                                    <button type="submit" class="btn btn-default" onClick="policy_iszmbie_check()">查询</button>
+									 <input class="form-control" type="text"  placeholder="端口" id="port" />
+								</div>
+                                <div class="col-sm-1">
+                                    <select class="form-control" id="action" >
+									 		<option selected="selected" value="">动作</option>
+											<option value="permit" name="assets_type">permit</option>
+											<option value="deny" name="assets_type">deny</option>
+
+									</select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="submit" class="btn btn-default" onClick="addregular()">新增</button>
                                 </div>
 
                             </div>
@@ -52,20 +72,23 @@
                                         <th>协议</th>
                                         <th>目的端口</th>
                                         <th>动作</th>
-                                        <th>描述</th>
                                         <th>操作</th>
                                     </tr>
-                                    </tr>
-                                        <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td>test</td>
-                                    <td class="text-center">
-									         	<button  type="button" class="btn btn-default" onclick="deleteAssets(this,{{a.id}})"><i class="glyphicon glyphicon-trash"></i></button>
-									         </td>
+
+                                    {% for regular in regularlist %}
+                                        <tr>
+                                        <td>{{ regular.name }}</td>
+                                        <td>{{ regular.srcaddr }}</td>
+                                        <td>{{ regular.dstaddr }}</td>
+                                        <td>{{ regular.protocol }}</td>
+                                        <td>{{ regular.port }}</td>
+                                        <td>{{ regular.action }}</td>
+                                        <td class="text-center">
+                                            <button  type="button" class="btn btn-default" onclick="deleteregular({{regular.id}})"><i class="glyphicon glyphicon-trash"></i></button>
+                                        </td>
+                                        <tr>
+                                    {% endfor %}
+
                                 </thead>
                                 <tbody id="deployTablebody">
                                 </tbody>
@@ -79,58 +102,67 @@
     </div>
 <script type="text/javascript">
 
-    function _w_table_rowspan(_w_table_id,_w_table_colnum){
-          _w_table_firsttd = "";
-          _w_table_currenttd = "";
-          _w_table_SpanNum = 0;
-          _w_table_Obj = $(_w_table_id + " tr td:nth-child(" + _w_table_colnum + ")");
-          _w_table_Obj.each(function(i){
-                if(i==0){
-                      _w_table_firsttd = $(this);
-                      _w_table_SpanNum = 1;
-                }else{
-                      _w_table_currenttd = $(this);
-                      if(_w_table_firsttd.text()==_w_table_currenttd.text()){
-                            _w_table_SpanNum++;
-                            _w_table_currenttd.hide(); //remove();
-                            _w_table_firsttd.attr("rowSpan",_w_table_SpanNum);
-                      }else{
-                            _w_table_firsttd = $(this);
-                            _w_table_SpanNum = 1;
-                  }
-                }
-          });
-    }
-    function policy_iszmbie_check()
+
+    function deleteregular(number)
     {
-          dev = document.getElementById("selAssetsType").value
+
 
 			$.ajax({
 				  type: 'POST',
-				  url: '/policy_iszmbie_check/',
+				  url: '/policy_regular_list/',
 				  data: {
-					  "dev":dev,
+				      "option": 0,
+					  "number":number
+
 				  },
                   dataType : "json",
 			      success:function(response){
 
-                      var tbody = "";
-                      $.each((response.policy),function(n,item) {
-                          var trs = "";
-                          trs = "<tr> <td>" +item.dev+"</td> <td>"  +item.id+"</td> <td>" + item.srceth +"</td > <td>"
-                              + item.dsteth +"</td > <td>" + item.srcaddr +"</td > <td>" + item.dstaddr +"</td > <td>"
-                              + item.protocol +"</td ><td>" +item.port +"</td ></tr>";
-                          tbody += trs;
-                      });
-                      $("#deployTablebody").html(" ")
-                      $("#deployTablebody").append(tbody);
-                      _w_table_rowspan("#deployTableList",1);
-                      _w_table_rowspan("#deployTableList",2);
-
+                      location.reload();
 				    },
                   error:function(response){
 	            	window.wxc.xcConfirm("查询操作失败", window.wxc.xcConfirm.typeEnum.error);
 	            },
+				})
+
+    }
+     function addregular(number)
+    {
+            id = document.getElementById("id").value
+            srcaddr = document.getElementById("srcaddr").value
+            dstaddr = document.getElementById("dstaddr").value
+            protocol = document.getElementById("protocol").value
+            port = document.getElementById("port").value
+            action = document.getElementById("action").value
+
+			$.ajax({
+				  type: 'POST',
+				  url: '/policy_regular_list/',
+				  data: {
+				      "option": 1,
+					  "id":id,
+                      "srcaddr":srcaddr,
+                      "dstaddr":dstaddr,
+                      "protocol":protocol,
+                      "port":port,
+                      "action":action
+
+				  },
+                  dataType : "json",
+			      success:function(response){
+                      if (response.code == '502')
+                      {
+                          window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                      }
+                      else
+                      {
+                          location.reload();
+                      }
+
+				    },
+                  error:function(response){
+	            	window.wxc.xcConfirm("查询操作失败", window.wxc.xcConfirm.typeEnum.error);
+	                },
 				})
 
     }
