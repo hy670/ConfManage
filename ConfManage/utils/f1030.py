@@ -164,8 +164,9 @@ class F1030:
 			else:
 				for j in i.service:
 					tempservice = self.locatserbyname(j)
-					for sercontent in tempservice.sercontent:
-						tempsercontent.append(sercontent)
+					if tempservice != 0:
+						for sercontent in tempservice.sercontent:
+							tempsercontent.append(sercontent)
 			if not tempdstaddrcontent:
 				pass
 			if not tempsrcaddrcontent:
@@ -188,7 +189,7 @@ class F1030:
 		key = ''
 		for line in f:
 			if not line[0].isspace():
-				tokks = line.strip().split(' ')
+				tokks = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())
 				if 'object' in line:
 					if tokks[0] == 'object-group':
 						key = tokks[1]
@@ -213,7 +214,7 @@ class F1030:
 							ipaddr = tokks[3] + '/' + tokks[4]
 							self.addrlist[len(self.addrlist) - 1].addrcontent.append(str(IPy.IP(ipaddr, make_net=True)))
 				elif key == 'service':
-					tokks = line.strip().split(' ')
+					tokks = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())
 					if tokks[0].isdigit():
 						servicedic = {}
 						if tokks[2] == 'tcp':
@@ -230,14 +231,15 @@ class F1030:
 							servicedic = {'protocol': '1', 'port': '-1'}
 						self.serlist[len(self.serlist) - 1].sercontent.append(servicedic)
 				elif 'policy' in key:
-					tokks = line.strip().split(' ')
+					tokks = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())
 					policydic = {}
 					if tokks[2] == 'pass':
 						self.policylist.append(Policy(key.split(':')[1] + tokks[1]))
 						self.policylist[len(self.policylist) - 1].srceth = key.split(':')[1].split('-')[0]
 						self.policylist[len(self.policylist) - 1].dsteth = key.split(':')[1].split('-')[1]
 						for i in range(3, len(tokks), 2):
-							if tokks[i] == 'counting':
+
+							if tokks[i] == 'counting' or tokks[i] == 'logging':
 								continue
 							policydic[tokks[i]] = tokks[i + 1]
 						if 'source-ip' in policydic.keys():

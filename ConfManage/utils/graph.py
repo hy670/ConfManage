@@ -179,20 +179,16 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 
 def regularcheck(checkfirewall):
 
-	print('##########beging regularchecke########')
-	policymiclist =checkfirewall.policymiclist.copy()
+	policymiclist = checkfirewall.policymiclist.copy()
 	regularpolicylist =[]
 
 	for i in RegularList.regularlist:
 		srcnet = iplocate(i['srcaddr'])
 		dstnet = iplocate(i['dstaddr'])
-		print(i['srcaddr'])
-		print(i['dstaddr'])
-		print(srcnet.name)
-		print(dstnet.name)
 		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
 		srceth = ''
 		dsteth = ''
+
 		for k in range(len(routelist)):
 			if routelist[k] == checkfirewall:
 				for port in checkfirewall.portlink:
@@ -200,8 +196,7 @@ def regularcheck(checkfirewall):
 						srceth = port.split('-')[0]
 					if routelist[k + 1].name in port:
 						dsteth = port.split('-')[0]
-		print(srceth)
-		print(dsteth)
+
 		if not srceth or not dsteth:
 			continue
 		else:
@@ -273,11 +268,12 @@ def anychangenet(srcdev, passdev):
 
 
 usg100 = usg.USG('usg100')
+
 f1030 = f1030.F1030('f1030')
 nsg5000 = nsg5000.NSG5000('nsg5000')
 
 # 创建防火墙列表
-firewalllist = [usg100, f1030, nsg5000]
+firewalllist = [usg, f1030, nsg5000]
 hxsw = devicebase.EthSW('hxsw')
 
 # 创建网络节点并添加至网络节点列表

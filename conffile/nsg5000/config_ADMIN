@@ -1,0 +1,51 @@
+# Module config_ADMIN
+
+# admin role
+
+# admin user
+admin user "admin"
+password "BF0400257F5BBBEC5F71F02C0CECAB38"
+password-encrypt "BF0400257F5BBBEC5F71F02C0CECAB38"
+role "Administrator"
+auth LOCAL
+login "CONSOLE"
+login "TELNET"
+login "SSH"
+login "HTTP"
+login "HTTPS"
+vsys "root-vsys"
+create "2017-06-12"
+exit
+admin user "cqby"
+password "B76567E21D33AA49BE3AEF2C67286758"
+password-encrypt "B76567E21D33AA49BE3AEF2C67286758"
+role "Administrator"
+desc "网管"
+auth LOCAL
+login "CONSOLE"
+login "SSH"
+login "HTTPS"
+vsys "root-vsys"
+create "2018-08-23"
+exit
+admin user "jiankong"
+password "5D1265789BC2786BCB5A7E511B6888DA"
+password-encrypt "5D1265789BC2786BCB5A7E511B6888DA"
+role "AuditAdmin"
+desc "监控"
+auth LOCAL
+login "HTTPS"
+vsys "root-vsys"
+create "2016-09-08"
+exit
+
+# admin policy
+admin password policy minlen 10
+admin password policy complexity "CHAR"
+admin password policy complexity "NUMBER"
+admin password policy complexity "SPECIAL"
+admin session policy timeout 300
+admin login policy failed 5 deny 300 interval 10 lockmode ip failedmax 10
+no admin login policy https-verify-admincert
+admin password policy validity 90
+
