@@ -102,6 +102,69 @@
 		overflow-x: hidden;
 	} 
 </style>
+<!-- Jtopo JavaScript -->
+<script src="/static/js/jtopo-0.4.8-min.js"></script>
+
+<script type="text/javascript">
+		$(document).ready(function(){
+            var canvas = document.getElementById('canvas');
+            var stage = new JTopo.Stage(canvas);
+            var scene = new JTopo.Scene(stage);
+            scene.background = '/static/img/bg.jpg'
+            var node = new JTopo.Node("Hello");
+            node.setLocation(200, 200);
+            node.setImage('/static/123.gif', true);
+            node.text="hello";
+            node.font = 'bold 16px 微软雅黑'; // 字体
+
+            node.textPosition = 'Top_Left'; // 文字位置，对齐方式可选择：（'Top_Left', 'Top_Center', 'Top_Right', 'Middle_Left', 'Middle_Center', 'Middle_Right', 'Bottom_Left', 'Bottom_Center', 'Bottom_Right'）
+             node.textOffsetX = -30; // 文字向左偏移 30像素
+            node.textOffsetX = 30; // 文字向右偏移 30像素
+              node.textOffsetY = -8; // 文字向上偏移8像素
+            node.textOffsetY = 8; // 文字向下偏移8像素
+
+            scene.add(node);
+            node.mousedown(function(event){
+                if(event.button == 2){
+                    node.text = '按下右键';
+                }else if(event.button == 1){
+                    node.text = '按下中键';
+                }else if(event.button == 0){
+                    node.text = '按下左键';
+                }
+            });
+
+            node.mouseup(function(event){
+                if(event.button == 2){
+                    node.text = '松开右键';
+                }else if(event.button == 1){
+                    node.text = '松开中键';
+                }else if(event.button == 0){
+                    node.text = '松开左键';
+                }
+            });
+            node.click(function(event){
+                console.log("单击");
+            });
+            node.dbclick(function(event){
+                console.log("双击");
+            });
+            node.mousedrag(function(event){
+                console.log("拖拽");
+            });
+            node.mouseover(function(event){
+                console.log("mouseover");
+            });
+            node.mousemove(function(event){
+                console.log("mousemove");
+            });
+            node.mouseout(function(event){
+                console.log("mouseout");
+            });
+        });
+
+
+</script>
 
 </head>
 
@@ -169,21 +232,26 @@
 						<li><a href="#"><i class="fa  fa-bank fa-fw"></i> 防火墙策略管理<span
 								class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">
-                                <li><a href="/policy_list">策略列表</a></li>
-                                <li><a href="/policy_search">策略查询</a></li>
-                                <li><a href="/policy_redundancy_check">本机冗余策略</a></li>
-								<li><a href="/assets_add">全网僵尸策略</a></li>
-								<li><a href="/assets_search/">策略合规性检查</a></li>
+                                <li><a href="/policy_list/">策略列表</a></li>
+                                <li><a href="/policy_search/">策略查询</a></li>
+                                <li><a href="/policy_redundancy_check/">本机冗余策略</a></li>
+								<li><a href="/policy_iszmbie_check/">全网僵尸策略</a></li>
+								<li><a href="#">策略合规性检查<span class="fa arrow"></span></a>
+									<ul class="nav nav-third-level">
+										<li><a href="/policy_regular_list/">规则管理</a></li>
+                                        <li><a href="/policy_regular_check/">合规性检查</a></li>
+
+									</ul></li>
 							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="glyphicon glyphicon-hdd"></i> 代码发布<span
+						<li><a href="#"><i class="glyphicon glyphicon-hdd"></i> 安全基线<span
 								class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">
-								<li><a href="/deploy_add">项目配置</a></li>
-								<li><a href="/deploy_list">项目列表</a></li>
+								<li><a href="/deploy_add">基线配置</a></li>
+								<li><a href="/deploy_list">基线检查</a></li>
 <!-- 								<li><a href="/deploy_order/1/">部署工单</a></li> -->
 								<li><a href="/deploy_log/1/">操作日志</a></li>
 							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="fa fa-table fa-fw"></i> 任务管理<span
+						<li><a href="#"><i class="fa fa-table fa-fw"></i> 自动备份任务管理<span
 								class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">
 								<li><a href="/cron_add">添加任务</a></li>
@@ -367,245 +435,20 @@
 			</div>
 			<!-- /.row -->
 			<div class="row">
-				<div class="col-lg-8">
+				<div class="col-lg-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<i class="fa fa-bar-chart-o fa-fw"></i> 用户代码部署统计
-							<div class="pull-right">
-								<div class="btn-group">
-									<!--                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"> -->
-									<!--                                         Actions -->
-									<!--                                         <span class="caret"></span> -->
-									<!--                                     </button> -->
-									<!--                                     <ul class="dropdown-menu pull-right" role="menu"> -->
-									<!--                                         <li><a href="#">Action</a> -->
-									<!--                                         </li> -->
-									<!--                                         <li><a href="#">Another action</a> -->
-									<!--                                         </li> -->
-									<!--                                         <li><a href="#">Something else here</a> -->
-									<!--                                         </li> -->
-									<!--                                         <li class="divider"></li> -->
-									<!--                                         <li><a href="#">Separated link</a> -->
-									<!--                                         </li> -->
-									<!--                                     </ul> -->
-								</div>
-							</div>
+							<i class="fa fa-bar-chart-o fa-fw"></i> 网络拓扑图
 						</div>
 						<!-- /.panel-heading -->
 						<div class="panel-body">
-							<div id="morris-area-chart" style="width: 100%; height: 400px"></div>
+                            <canvas id="canvas" width="1100" height="500"></canvas>
 						</div>
 						<!-- /.panel-body -->
 					</div>
-					<!-- /.panel -->
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-bar-chart-o fa-fw"></i> 月度代码更新统计
-							<!--                             <div class="pull-right"> -->
-							<!--                                 <div class="btn-group"> -->
-							<!--                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"> -->
-							<!--                                         Actions -->
-							<!--                                         <span class="caret"></span> -->
-							<!--                                     </button> -->
-							<!--                                     <ul class="dropdown-menu pull-right" role="menu"> -->
-							<!--                                         <li><a href="#">Action</a> -->
-							<!--                                         </li> -->
-							<!--                                         <li><a href="#">Another action</a> -->
-							<!--                                         </li> -->
-							<!--                                         <li><a href="#">Something else here</a> -->
-							<!--                                         </li> -->
-							<!--                                         <li class="divider"></li> -->
-							<!--                                         <li><a href="#">Separated link</a> -->
-							<!--                                         </li> -->
-							<!--                                     </ul> -->
-							<!--                                 </div> -->
-							<!--                             </div> -->
-						</div>
-						<!-- /.panel-heading -->
-						<div class="panel-body">
-							<div class="row">
-								<div class="col-lg-4">
-									<div class="table-responsive">
-										<table class="table table-bordered table-hover table-striped">
-											<thead>
-												<tr>
-													<th>#</th>
-													<th class="text-center">用户</th>
-													<th class="text-center">总次数</th>
-												</tr>
-											</thead>
-											<tbody>
-												{% for ds in allDeployList %}
-												<tr>
-													<td>{{ forloop.counter }}</td>
-													<td class="text-center">{{ ds.user }}</td>
-													<td class="text-center">{{ ds.count }}</td>
-												</tr>
-												{% endfor %}
-											</tbody>
-										</table>
-									</div>
-									<!-- /.table-responsive -->
-								</div>
-								<!-- /.col-lg-4 (nested) -->
-								<div class="col-lg-8">
-									<div id="morris-bar-chart"></div>
-								</div>
-								<!-- /.col-lg-8 (nested) -->
-							</div>
-							<!-- /.row -->
-						</div>
-						<!-- /.panel-body -->
-					</div>
-					<!-- /.panel -->
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-clock-o fa-fw"></i> 更新时间轴
-						</div>
-						<!-- /.panel-heading -->
-						<div class="panel-body">
-							<ul class="timeline">
-								{% for ds in orderNotice %}
-								 {% if ds.order_status == 8 %}
-								<li>
-									<div class="timeline-badge success">
-										<i class="fa fa-check "></i>
-									</div>
-									<div class="timeline-panel">
-										<div class="timeline-heading">
-											<h4 class="timeline-title"><a href="{{ds.order_url}}">{{ ds.order_subject }}</a></h4>
-											<p>
-												<small class="text-muted"><i class="fa fa-clock-o"></i>
-													{{ ds.modify_time }}</small>
-											</p>
-										</div>
-										<div class="timeline-body">
-											<p><strong>申请人：</strong>{{ ds.order_user }}</p>
-											<p><strong>执行人：</strong>{{ ds.order_executor }}</p>
-												{% if ds.order_type == 1 %}
-													<p><strong>工单类型：</strong><code>代码更新</code></p>
-												{% elif ds.order_type == 2 %}
-													<p><strong>工单类型：</strong><code>文件分发</code></p>
-												{% elif ds.order_type == 0 %}
-													<p><strong>工单类型：</strong><code>SQL更新</code></p>
-												{% elif ds.order_type == 3 %}
-													<p><strong>工单类型：</strong><code>文件下载</code></p>											
-												{% endif %}	
-											<p><strong>工单内容：</strong>{{ ds.order_content }}</p>											
-										</div>
-									</div>
-								</li> {% elif ds.order_status == 7 or ds.order_status == 9 %}
-								<li class="timeline-inverted">
-									<div class="timeline-badge danger">
-										<i class="fa fa-bomb"></i>
-									</div>
-									<div class="timeline-panel">
-										<div class="timeline-heading">
-											<h4 class="timeline-title"><a href="{{ds.order_url}}">{{ ds.order_subject }}</a></h4>
-											<p>
-												<small class="text-muted"><i class="fa fa-clock-o"></i>
-													{{ ds.modify_time }}</small>
-										</div>
-										<div class="timeline-body">
-											<p><strong>申请人：</strong>{{ ds.order_user }}</p>
-											<p><strong>执行人：</strong>{{ ds.order_executor }}</p>
-												{% if ds.order_type == 1 %}
-													<p><strong>工单类型：</strong><code>代码更新</code></p>
-												{% elif ds.order_type == 2 %}
-													<p><strong>工单类型：</strong><code>文件分发</code></p>
-												{% elif ds.order_type == 0 %}
-													<p><strong>工单类型：</strong><code>SQL更新</code></p>
-												{% elif ds.order_type == 3 %}
-													<p><strong>工单类型：</strong><code>文件下载</code></p>											
-												{% endif %}	
-											<p><strong>工单内容：</strong>{{ ds.order_content }}</p>
-										</div>
-									</div>
-								</li> 
-								{% else %}
-									<li class="timeline-inverted">
-										<div class="timeline-badge warning">
-											<i class="fa fa-credit-card"></i>
-										</div>
-										<div class="timeline-panel">
-											<div class="timeline-heading">
-												<h4 class="timeline-title"><a href="{{ds.order_url}}">{{ ds.order_subject }}</a></h4>
-												<p>
-													<small class="text-muted"><i class="fa fa-clock-o"></i>
-														{{ ds.modify_time }}</small>
-											</div>
-											<div class="timeline-body">
-												<p><strong>申请人：</strong>{{ ds.order_user }}</p>												
-												<p><strong>执行人：</strong>{{ ds.order_executor }}</p>
-												{% if ds.order_type == 1 %}
-													<p><strong>工单类型：</strong><code>代码更新</code></p>
-												{% elif ds.order_type == 2 %}
-													<p><strong>工单类型：</strong><code>文件分发</code></p>
-												{% elif ds.order_type == 0 %}
-													<p><strong>工单类型：</strong><code>SQL更新</code></p>
-												{% elif ds.order_type == 3 %}
-													<p><strong>工单类型：</strong><code>文件下载</code></p>											
-												{% endif %}	
-												<p><strong>工单内容：</strong>{{ ds.order_content }}</p>
-											</div>
-										</div>
-									</li> 									
-								{% endif %} 
-								{% endfor %}
-							</ul>
-						</div>
-						<!-- /.panel-body -->
-					</div>				
-					<!-- /.panel -->
+
 				</div>
 				<!-- /.col-lg-8 -->
-				<div class="col-lg-4">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-bar-chart-o fa-fw"></i> 数据统计
-						</div>
-						<div class="panel-body">
-							<div id="morris-donut-chart"></div>
-							<!--                             <a href="#" class="btn btn-default btn-block">View Details</a> -->
-						</div>
-						<!-- /.panel-body -->
-					</div>
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-bell fa-fw"></i> 设备资产更新通知
-						</div>
-						<!-- /.panel-heading -->
-						<div class="panel-body">
-							<div class="list-group">
-
-								{% for ds in assetsLog %} {% if ds.assets_type == 'server' %} <a
-									href="/assets_view/{{ds.assets_id}}" class="list-group-item">
-									<i class="fa  fa-windows fa-fw"></i>{{ds.assets_user}}
-									{{ds.assets_content}} <span class="pull-right text-muted small"><em>{{ds.create_time}}</em>
-								</span>
-								</a> {% elif ds.assets_type == 'net' %} <a
-									href="/assets_view/{{ds.assets_id}}" class="list-group-item">
-									<i class="fa   fa-paper-plane-o  fa-fw"></i>{{ds.assets_user}}
-									{{ds.assets_content}} <span class="pull-right text-muted small"><em>{{ds.create_time}}</em>
-								</span>
-								</a> {% else %} <a href="#" class="list-group-item"> <i
-									class="fa fa-comments-o fa-fw"></i>{{ds.assets_user}}
-									{{ds.assets_content}} <span class="pull-right text-muted small"><em>{{ds.create_time}}</em>
-								</span>
-								</a> {% endif %} {% endfor %}
-
-							</div>
-							<!-- /.list-group -->
-							<a href="/assets_log/1/" class="btn btn-default btn-block">查看操作记录</a>
-						</div>
-						<!-- /.panel-body -->
-					</div>
-					<!-- /.panel -->
-
-					<!-- /.panel -->
-
-					<!-- /.panel .chat-panel -->
-				</div>
 <!-- 				<div class="col-lg-4">
                     <div class="chat-panel panel panel-default">
                         <div class="panel-heading">
@@ -639,7 +482,8 @@
 	</div>
 	<!-- /#wrapper -->
 	
-	<script type="text/javascript"> 
+	<script type="text/javascript">
+
 	var myChart = echarts.init(document.getElementById('morris-area-chart'));
 	option = {
 		    title : {
@@ -712,14 +556,14 @@
 	myChart.setOption(option);
 	
 	$(function() {
-	
-	
+
+
 	    Morris.Donut({
 	        element: 'morris-donut-chart',
 	        data: [{
 	            label: "项目",
 	            value: {{projectTotal.project}}
-	        }, {
+	        },{
 	            label: "任务",
 	            value: {{projectTotal.cron}}
 	        },{
@@ -731,7 +575,7 @@
 	        }],
 	        resize: true
 	    });
-	
+
 	    Morris.Bar({
 	        element: 'morris-bar-chart',
 	        data: [
@@ -761,7 +605,7 @@
 	        hideHover: 'auto',
 	        resize: true
 	    });
-	    
+
 	});
 
 

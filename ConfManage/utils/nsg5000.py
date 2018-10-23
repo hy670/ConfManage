@@ -5,8 +5,6 @@ from ConfManage.utils.defaultserdiclist import DefaultSerDicList
 from ConfManage.utils.ipprotocol import IpProtocol
 
 
-
-
 class Addr:
 	def __init__(self, name=""):
 
@@ -95,9 +93,6 @@ class PolicyMic:
 		print('  ' + self.dstaddr, end=" ")
 		print(' policydetail service :', end=" ")
 		print('  ' + str(self.service))
-
-
-
 
 
 class NSG5000:

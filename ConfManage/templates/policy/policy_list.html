@@ -23,7 +23,9 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             	<i class="fa fa-database"></i>策略列表明细
-                            <div class="row" >
+
+                        </div>
+                        <div class="panel-body" >
                             <div class="form-group">
 								<div class="col-sm-2">
 									 <select class="form-control center" id="selAssetsType" >
@@ -39,9 +41,13 @@
 
                             </div>
 				      </div>
-                        </div>
+                    </div>
                         <!-- /.panel-heading -->
+                    <div class="panel panel-default">
+                          <div class="panel-heading">
+                            	<i class="fa fa-database"></i>设备策略列表
 
+                        </div>
                         <div class="panel-body">
                             <table width="100%" class="table table-striped table-bordered table-hover" id="deployTableList">
                                 <thead>
@@ -67,6 +73,11 @@
          </div>
     </div>  
 <script type="text/javascript">
+    $(document).ready(function() {
+		    $('#deployTableList').DataTable({
+		        responsive: true
+		    });
+		});
 
     function _w_table_rowspan(_w_table_id,_w_table_colnum){
           _w_table_firsttd = "";

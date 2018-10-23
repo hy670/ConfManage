@@ -1,8 +1,7 @@
 # -*- coding:utf8 -*-
 import IPy
 import re
-
-
+from ConfManage.utils.logger import logger
 
 
 class Addr:
@@ -160,7 +159,7 @@ class PolicyMic:
 
 class USG:
 	def __init__(self, name=""):
-		self.name = name
+		self.name = "usg100"
 		self.type = 'firewall'
 		self.portlink = ['internet-internetaddr', 'intranet-nsg5000']
 		self.addrlist = []
@@ -301,8 +300,8 @@ class USG:
 						if tempruleaddrgrp.oid:
 							for i in tempruleaddrgrp.oid:
 								tempaddr = self.locataddrbyid(i)
-								for i in tempaddr.addrcontent:
-									temppolicydetail.dstaddr.append(i)
+								for j in tempaddr.addrcontent:
+									temppolicydetail.dstaddr.append(j)
 						if tempruleaddrgrp.gid:
 							for i in tempruleaddrgrp.gid:
 								tempaddrgrp = self.locataddrgrpbyid(i)
@@ -348,6 +347,9 @@ class USG:
 				else:
 					pass
 				self.policydetaillist.append(temppolicydetail)
+			else:
+				msg = "USG策略类型："+policydic['type']+"未解析"
+				logger.debug(msg=msg)
 
 	def creatpolicymic(self):
 		for i in self.policydetaillist:
@@ -361,11 +363,6 @@ class USG:
 						tempmetapolicy.dstaddr = k
 						tempmetapolicy.service = l
 						self.policymiclist.append(tempmetapolicy)
-
-	def printmetapolicylist(self):
-		for i in self.metapolicylist:
-			print("policy id:" + i.name + " srceth:" + i.srceth +
-			      " dsteth:" + i.dsteth + " srcaddr:" + i.srcaddr + " dstaddr:" + i.dstaddr + " service:" + i.service)
 
 	def parseconffile(self):
 		f = open('./conffile/usg.conf', 'r', encoding="UTF-8")
@@ -402,7 +399,6 @@ class USG:
 					tempdefaultser.defaultsercontent.append({'port':defaultserdic['port'],'protocol':defaultserdic['protocol']})
 					self.defaultserlist.append(tempdefaultser)
 				elif key[1] == 'service' and key[2] == "servicegrp":
-					print(line.strip())
 					tokss = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())
 					tempsergrp = ServGrp(tokss[4].split('"')[1], tokss[8].split('"')[1])
 					sergrpdic = {}
@@ -462,7 +458,8 @@ class USG:
 					for i in range(11, len(tokss), 2):
 						ruleaddrgrpdic[tokss[i]] = tokss[i + 1].split('"')[1]
 					if ruleaddrgrpdic['o_id']:
-						tempruleaddrgrp.oid.append(ruleaddrgrpdic['o_id'])
+						for itemruleaddrgrp in ruleaddrgrpdic['o_id'].split(';'):
+							tempruleaddrgrp.oid.append(itemruleaddrgrp)
 					if ruleaddrgrpdic['g_id']:
 						tempruleaddrgrp.gid.append(ruleaddrgrpdic['g_id'])
 					self.ruleaddrgrplist.append(tempruleaddrgrp)
