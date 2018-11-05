@@ -10,7 +10,7 @@ from ConfManage.utils.is_ip import is_ip
 import ConfManage.utils.regularlist
 
 
-
+@login_required(login_url='/login')
 def policy_list(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_list.html')
@@ -40,6 +40,7 @@ def policy_list(request):
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 
 
+@login_required(login_url='/login')
 def policy_search(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_search.html')
@@ -73,6 +74,7 @@ def policy_search(request):
 			return JsonResponse({'policy': policydiclist, "code": '400'})
 
 
+@login_required(login_url='/login')
 def policy_redundancy_check(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_redundancy_check.html')
@@ -90,6 +92,7 @@ def policy_redundancy_check(request):
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 
 
+@login_required(login_url='/login')
 def policy_iszmbie_check(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_iszmbie_check.html')
@@ -106,7 +109,7 @@ def policy_iszmbie_check(request):
 			policydiclist = iszmbiepolicy(nsg5000)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 
-
+@login_required(login_url='/login')
 def policy_regular_list(request):
 	if request.method == "GET":
 
@@ -139,6 +142,7 @@ def policy_regular_list(request):
 				return JsonResponse({'msg': '200', "code": "200"})
 
 
+@login_required(login_url='/login')
 def policy_regular_check(request):
 	if request.method == "GET":
 

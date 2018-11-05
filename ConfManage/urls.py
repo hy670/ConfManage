@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from ConfManage.views import (index, policy)
+from ConfManage.views import (index, policy, users, assets)
 
 urlpatterns = [
 	url(r'^$', index.index),
@@ -26,11 +26,28 @@ urlpatterns = [
 	url(r'^logout', index.logout),
 	url(r'^config', index.config),
 	url(r'^noperm', index.noperm),
+	url(r'^assets_config', assets.assets_config),
+	url(r'^assets_add', assets.assets_add),
+	url(r'^assets_list', assets.assets_list),
+	url(r'^assets_mod/(?P<aid>[0-9]+)/$', assets.assets_modf),
+	url(r'^assets_view/(?P<aid>[0-9]+)/$', assets.assets_view),
+	url(r'^assets_facts', assets.assets_facts),
+	url(r'^assets_log/(?P<page>[0-9]+)/$', assets.assets_log),
+	url(r'^assets_import/', assets.assets_import),
+	url(r'^assets_search/', assets.assets_search),
+	url(r'^assets_server/', assets.assets_server),
+	url(r'^assets/batch/update/', assets.assets_update),
+	url(r'^assets/batch/delete/', assets.assets_delete),
+	url(r'^assets/batch/dumps/', assets.assets_dumps),
+	url(r'^assets/groups/(?P<id>[0-9]+)/$', assets.assets_groups),
 	url(r'^policy_list/', policy.policy_list),
 	url(r'^policy_search/', policy.policy_search),
 	url(r'^policy_redundancy_check/', policy.policy_redundancy_check),
 	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
 	url(r'^policy_regular_list/', policy.policy_regular_list),
 	url(r'^policy_regular_check/', policy.policy_regular_check),
+	url(r'^user/center/$', users.user_center),
+	url(r'^user/server/(?P<uid>[0-9]+)/$', users.user_server),
+	url(r'^users/manage$', users.user_manage),
 
 ]
