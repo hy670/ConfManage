@@ -7,12 +7,14 @@ from django.contrib.auth.decorators import login_required
 from ConfManage.models import *
 from django.db.models import Count
 import json
+import IPy
 from django.contrib.auth.models import Group, User
-
+from ConfManage.utils import base
 from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.logger import logger
 from ConfManage.utils.execl import CellWriter
+from ConfManage.utils.is_ip import is_ip
 
 
 def getBaseAssets():
@@ -30,10 +32,35 @@ def getBaseAssets():
 
 @login_required(login_url='/login')
 def assets_config(request):
-	return render(request, 'assets/assets_config.html', {"user": request.user, "baseAssets": getBaseAssets()},
-				  )
-
-
+	if request.method == "GET":
+		return render(request, 'assets/assets_config.html', {"user": request.user, "baseAssets": getBaseAssets()},)
+	elif request.method == "POST":
+		if request.POST.get('op') == 'add':
+			line_name = request.POST.get('line_name')
+			line_ip = request.POST.get('line_ip')
+			line_is_master = request.POST.get('line_is_master')
+			if not line_ip or not line_is_master or not line_name:
+				return JsonResponse({'msg': "必选项不许为空~", "code": '502'})
+			elif not is_ip(line_ip):
+				logger.debug(msg="ip地址不合法")
+				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
+			else:
+				try:
+					Line_Assets.objects.create(line_name=line_name,line_ip=line_ip,line_is_master=line_is_master)
+				except Exception as ex:
+					logger.debug(msg=ex)
+					return JsonResponse({'msg': "添加失败~", "code": '502'})
+				return JsonResponse({'msg': "添加成功~", "code": '400'})
+		elif request.POST.get('op') == 'mod':
+			pass
+		elif request.POST.get('op') == 'del':
+			line_id = request.POST.get('id')
+			try:
+				Line_Assets.objects.get(id=line_id).delete()
+			except Exception as ex:
+				logger.debug(msg=ex)
+				return JsonResponse({'msg': "删除失败~", "code": '502'})
+			return JsonResponse({'msg': "删除成功~", "code": '400'})
 @login_required(login_url='/login')
 def assets_add(request, format=None):
 	if request.method == "GET":
@@ -56,15 +83,10 @@ def assets_add(request, format=None):
 def assets_list(request):
 	userList = User.objects.all()
 	assetsList = Assets.objects.all().order_by("-id")
-	for ds in assetsList:
-		ds.nks = ds.networkcard_assets_set.all()
-	assetOnline = Assets.objects.filter(status=0).count()
-	assetOffline = Assets.objects.filter(status=1).count()
-	assetMaintain = Assets.objects.filter(status=2).count()
+
 	assetsNumber = Assets.objects.values('assets_type').annotate(dcount=Count('assets_type'))
 	return render(request, 'assets/assets_list.html', {"user": request.user, "totalAssets": assetsList.count(),
-													   "assetOnline": assetOnline, "assetOffline": assetOffline,
-													   "assetMaintain": assetMaintain, "baseAssets": getBaseAssets(),
+													   "baseAssets": getBaseAssets(),
 													   "assetsList": assetsList, "assetsNumber": assetsNumber,
 													   'userList': userList},
 				  )
@@ -546,16 +568,10 @@ def assets_search(request):
 				assets_type = '''交换机'''
 			elif a.assets_type == "route":
 				assets_type = '''路由器'''
-			elif a.assets_type == "printer":
-				assets_type = '''打印机'''
-			elif a.assets_type == "scanner":
-				assets_type = '''扫描仪'''
 			elif a.assets_type == "firewall":
 				assets_type = '''防火墙'''
 			elif a.assets_type == "storage":
 				assets_type = '''存储设备'''
-			elif a.assets_type == "wifi":
-				assets_type = '''无线设备'''
 			nks = ''
 			if a.management_ip:
 				liTags = ''
@@ -787,7 +803,6 @@ def assets_delete(request):
 
 
 @login_required(login_url='/login')
-@permission_required('OpsManage.can_dumps_assets', login_url='/noperm/')
 def assets_dumps(request):
 	if request.method == "POST":
 		dRbt = CellWriter('assets_dumps.xls')
@@ -817,8 +832,7 @@ def assets_dumps(request):
 				sheet.write(count, 18, assets.server_assets.hostname, dRbt.bodySttle())
 				sheet.write(count, 19, assets.server_assets.port, dRbt.bodySttle())
 				sheet.write(count, 20, assets.server_assets.cpu, dRbt.bodySttle())
-				sheet.write(count, 21, Raid_Assets.objects.get(id=assets.server_assets.raid).raid_name,
-							dRbt.bodySttle())
+
 				sheet.write(count, 22, assets.server_assets.cpu_number, dRbt.bodySttle())
 				sheet.write(count, 23, assets.server_assets.vcpu_number, dRbt.bodySttle())
 				sheet.write(count, 24, assets.server_assets.cpu_core, dRbt.bodySttle())
@@ -828,8 +842,7 @@ def assets_dumps(request):
 				sheet.write(count, 28, assets.server_assets.swap, dRbt.bodySttle())
 				sheet.write(count, 29, assets.server_assets.disk_total, dRbt.bodySttle())
 				sheet.write(count, 30, assets.server_assets.system, dRbt.bodySttle())
-				sheet.write(count, 31, Line_Assets.objects.get(id=assets.server_assets.line).line_name,
-							dRbt.bodySttle())
+
 			else:
 				sheet = netSheet
 				sheet.write(count, 15, assets.network_assets.ip, dRbt.bodySttle())
@@ -871,20 +884,6 @@ def assets_dumps(request):
 			sheet.write(count, 7, assets.manufacturer, dRbt.bodySttle())
 			sheet.write(count, 8, assets.model, dRbt.bodySttle())
 			sheet.write(count, 9, assets.provider, dRbt.bodySttle())
-			if assets.status == 0:
-				sheet.write(count, 10, '已上线', dRbt.bodySttle())
-			elif assets.status == 1:
-				sheet.write(count, 10, '已下线', dRbt.bodySttle())
-			elif assets.status == 2:
-				sheet.write(count, 10, '维修中', dRbt.bodySttle())
-			elif assets.status == 3:
-				sheet.write(count, 10, '已入库', dRbt.bodySttle())
-			elif assets.status == 4:
-				sheet.write(count, 10, '未使用', dRbt.bodySttle())
-			sheet.write(count, 11, Zone_Assets.objects.get(id=assets.put_zone).zone_name, dRbt.bodySttle())
-			sheet.write(count, 12, Project_Assets.objects.get(id=assets.project).project_name, dRbt.bodySttle())
-			sheet.write(count, 13, Group.objects.get(id=assets.group).name, dRbt.bodySttle())
-			sheet.write(count, 14, Service_Assets.objects.get(id=assets.business).service_name, dRbt.bodySttle())
 			count = count + 1
 		dRbt.save()
 		response = StreamingHttpResponse(base.file_iterator('assets_dumps.xls'))

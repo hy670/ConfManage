@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.graph import usg100, f1030, nsg5000, searchpolicy, iszmbiepolicy,regularcheck
 from ConfManage.utils.is_ip import is_ip
-import ConfManage.utils.regularlist
+from ConfManage.models import Applied_policy
 
 
 @login_required(login_url='/login')
@@ -38,7 +38,6 @@ def policy_list(request):
 								 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
-
 
 @login_required(login_url='/login')
 def policy_search(request):
@@ -73,7 +72,6 @@ def policy_search(request):
 						policydiclist.append(temppolicydic)
 			return JsonResponse({'policy': policydiclist, "code": '400'})
 
-
 @login_required(login_url='/login')
 def policy_redundancy_check(request):
 	if request.method == "GET":
@@ -90,7 +88,6 @@ def policy_redundancy_check(request):
 		elif dev == 'nsg':
 			policydiclist = nsg5000.redundantcheck()
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
-
 
 @login_required(login_url='/login')
 def policy_iszmbie_check(request):
@@ -112,15 +109,14 @@ def policy_iszmbie_check(request):
 @login_required(login_url='/login')
 def policy_regular_list(request):
 	if request.method == "GET":
-
+		regularlist=Applied_policy.objects.all()
 		return render(request, 'policy/policy_regular_list.html',
-					  {'regularlist': ConfManage.utils.regularlist.RegularList.regularlist})
+		              {'regularlist':regularlist})
 	elif request.method == "POST":
 		option = request.POST.get('option')
 		if option == '0':
 			number = request.POST.get('number')
-			ConfManage.utils.regularlist.RegularList.regulardelete(number)
-			reload(ConfManage.utils.regularlist)
+			Applied_policy.objects.get(id=number).delete()
 			return JsonResponse({'msg': '200'})
 		elif option == '1':
 			name = request.POST.get('id')
@@ -128,7 +124,7 @@ def policy_regular_list(request):
 			dstaddr = request.POST.get('dstaddr')
 			protocol = request.POST.get('protocol')
 			port = request.POST.get('port')
-			action = request.POST.get('action')
+			proposer = request.POST.get('proposer')
 			if not is_ip(srcaddr) and not is_ip(dstaddr):
 				return JsonResponse({'msg': "请输入合法IP地址~", "code": '502'})
 			elif int(port) not in range(0, 65535):
@@ -136,11 +132,11 @@ def policy_regular_list(request):
 			elif " " in name:
 				return JsonResponse({'msg': "名称中不能包含空格!!!", "code": '502'})
 			else:
-				linestr = (name + " " + srcaddr + " " + dstaddr + " " + protocol + " " + port + " " + action)
-				ConfManage.utils.regularlist.RegularList.regularadd(linestr)
-				reload(ConfManage.utils.regularlist)
+				try:
+					Applied_policy.objects.create(name=name,srcaddr=srcaddr,dstaddr=dstaddr,protocol=protocol,port=port,proposer=proposer)
+				except Exception as ex:
+					print(ex)
 				return JsonResponse({'msg': '200', "code": "200"})
-
 
 @login_required(login_url='/login')
 def policy_regular_check(request):
