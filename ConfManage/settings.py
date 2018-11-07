@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ConfManage'
 ]
 
 MIDDLEWARE = [
@@ -76,8 +77,12 @@ WSGI_APPLICATION = 'ConfManage.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'confmanage',
+        'USER':'root',
+        'PASSWORD':'!QAZ2wsx',
+        'HOST':'127.0.0.1',
+        'PORT':'3306',
     }
 }
 
@@ -122,3 +127,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
      'E:\\project\\ConfManage\\ConfManage\\static',
     )
+SESSION_SAVE_EVERY_REQUEST = False
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

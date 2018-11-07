@@ -31,8 +31,6 @@ def iplocate(addr):
 def iszmbiepolicy(checkfirewall):
 	zmbiepolicylist = []
 
-	print('begin' + checkfirewall.name + 'policycheck')
-	print(checkfirewall.name + '######---独立存在的策略---######')
 	# 遍历需要检测防火墙的原子策略表
 	for checkpoliy in checkfirewall.policymiclist:
 		srcdev = ''

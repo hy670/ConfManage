@@ -10,11 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from ConfManage.utils.graph import topology
 
+@login_required(login_url='/login')
 def index(request):
     nodelist =topology.node()
     edges = topology.edges()
-    for i in edges:
-        print(i[0].name + " "+i[1].name)
     return render(request,'index.html', {'nodelist': nodelist,'edges':edges})
 
 def login(request):

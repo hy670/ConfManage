@@ -34,12 +34,9 @@
 														<option value="server" name="asset_assets_type">服务器</option>
 														<option value="vmser" name="asset_assets_type">虚拟机</option>
 														<option value="switch" name="asset_assets_type">交换机</option>	
-														<option value="route" name="asset_assets_type">路由器</option>	
-														<option value="printer" name="asset_assets_type">打印机</option>	
-														<option value="scanner" name="asset_assets_type">扫描仪</option>		
+														<option value="route" name="asset_assets_type">路由器</option>
 														<option value="firewall" name="asset_assets_type">防火墙</option>	
-														<option value="storage" name="asset_assets_type">存储设备</option>	
-														<option value="wifi" name="asset_assets_type">无线设备</option>					
+														<option value="storage" name="asset_assets_type">存储设备</option>
 													</select>	
 												</div>						
 											</div>					
@@ -71,24 +68,25 @@
 												 <div class="col-sm-6">
 												 	<input  type="text"  name="asset_expire_date"  class="form-control form_datetime" data-date-format="yyyy-mm-dd" title="例如2016-01-01" required>
 												 </div>
-											</div>															
+											</div>
+                                            <div class="form-group">
+												 <label class="col-sm-2 control-label">购买人</label>
+												 <div class="col-sm-6">
+												   <select class="form-control" name="asset_buy_user"  required>
+												   		<option selected="selected" value="">请选择一个用户</option>
+														{% for user in userList %}
+															<option value="{{user.id}}" name="asset_buy_user">{{user.username}}</option>
+														{% endfor %}
+													</select>
+												 </div>
+											</div>
 											<div class="form-group">
 												 <label class="col-sm-2 control-label">管理IP</label>
 												 <div class="col-sm-6">
 												 	<input type="text" class="form-control" name="asset_management_ip" placeholder="管理/预设IP" value="" pattern="^(\d+\.\d+\.\d+\.\d+|[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?))$"  class="input-xlarge" />
 												 </div>
 											</div>															
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">购买人</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_buy_user"  required>
-												   		<option selected="selected" value="">请选择一个用户</option>
-														{% for user in userList %}
-															<option value="{{user.id}}" name="asset_buy_user">{{user.username}}</option>	
-														{% endfor %}			   		
-													</select>												 	
-												 </div>
-											</div>	
+
 																									
 												
 											<div class="form-group">
@@ -97,7 +95,12 @@
 												 	<input type="text" class="form-control" name="asset_manufacturer" placeholder="制造商" value=""  class="input-xlarge"  required/>
 												 </div>
 											</div>
-											
+											<div class="form-group">
+												 <label class="col-sm-2 control-label">供货商</label>
+												 <div class="col-sm-6">
+												 	<input type="text" class="form-control" name="asset_provider" placeholder="供货商" value="" class="input-xlarge"  required/>
+												 </div>
+											</div>
 											<div class="form-group">
 												 <label class="col-sm-2 control-label">设备型号</label>
 												 <div class="col-sm-6">
@@ -105,71 +108,22 @@
 												 </div>
 											</div>						
 											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">供货商</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_provider" placeholder="供货商" value="" class="input-xlarge"  required/>
-												 </div>
-											</div>													
-											</div>
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">设备状态</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_status" id="asset_status_select"  >
-												   			<option selected="selected" value="">请选择一个类型</option>
-															<option value="0" name="asset_status">已上线</option>	
-															<option value="1" name="asset_status">已下线</option>	
-															<option value="2" name="asset_status">维修中</option>	
-															<option value="3" name="asset_status">已入库</option>	
-															<option value="4" name="asset_status">未使用</option>				   		
-													</select>	
-												 </div>
-											</div>			
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">放置区域</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_put_zone"  >
-												   		<option selected="selected" value="">请选择一个类型</option>
-															{% for z in baseAssets.zone %}
-																<option value="{{z.id}}" name="asset_put_zone">{{z.zone_name}}</option>
-															{% endfor %}							   		
-													</select>							 	
-												 </div>
-											</div>		
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">使用组</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_group"  >
-												   		<option selected="selected" value="">请选择一个类型</option>
-															{% for g in baseAssets.group %}
-																<option value="{{g.id}}" name="asset_group">{{g.name}}</option>
-															{% endfor %}							   		
-													</select>
-												 </div>
-											</div>																	
 
+											</div>
 											<div class="form-group">
-												 <label class="col-sm-2 control-label">所属产品线</label>
+												 <label class="col-sm-2 control-label">备注</label>
 												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_project"  id="asset_project" onchange="javascript:oBtProjectSelect();">
-												   		<option selected="selected" value="">请选择一个类型</option>
-															{% for p in baseAssets.project %}
-																<option value="{{p.id}}" name="asset_project">{{p.project_name}}</option>
-															{% endfor %}								   							
-													</select>
+												 	<textarea type="text" class="form-control" id="asset_mark" name="asset_mark" placeholder="备注" value="" class="input-xlarge"></textarea>
 												 </div>
 											</div>
+											
+
+											
+
+
+
 														
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">业务类型</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_business" id="asset_business" >
-												   		<option selected="selected" value="">请选择一个类型</option>								   							
-													</select>
-												 </div>
-											</div>		
+
 											
 											</fieldset>
 											<fieldset>		
@@ -287,19 +241,7 @@
 												 <div class="col-sm-6">
 												 <input type="text" class="form-control" name="server_disk_total" placeholder="Disk"  class="input-xlarge" value=""/>
 												 </div>
-											</div>	
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label"> Raid类型</label>	 
-												 <div class="col-sm-6"> 
-												    	<select class="form-control" name="server_raid"  >
-														<option selected="selected" value="">请选择一个类型</option>
-															{% for r in baseAssets.raid %}
-																<option value="{{r.id}}" name="server_raid">{{r.raid_name}}</option>
-															{% endfor %}										
-														</select>	
-												 </div>
-											</div>																		
+											</div>
 														
 													
 											<div class="form-group">
@@ -576,7 +518,8 @@
 			}
 			
 		};
-		var asset_data = getFormData(document.getElementById('addAssets'),''); 
+		var asset_data = getFormData(document.getElementById('addAssets'),'');
+		alert(asset_data)
 		var btnObj = $(obj);
 		if (asset_data.assets.assets_type=="server" || asset_data.assets.assets_type=="vmser"){
 			var putUrl = '/api/server/';
@@ -584,9 +527,11 @@
 		else {
 			var putUrl = '/api/net/';
 		}
+        var test = JSON.stringify({'data':asset_data});
+		alert(test)
 		$.ajax({
 			dataType: "JSON",
-			url:putUrl, //请求地址
+			url:'/assets_add/', //请求地址
 			type:"POST",  //提交类似
 			contentType: "application/json",
 			data: JSON.stringify({
