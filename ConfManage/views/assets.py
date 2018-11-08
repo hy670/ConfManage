@@ -52,7 +52,23 @@ def assets_config(request):
 					return JsonResponse({'msg': "添加失败~", "code": '502'})
 				return JsonResponse({'msg': "添加成功~", "code": '400'})
 		elif request.POST.get('op') == 'mod':
-			pass
+			line_id = request.POST.get('line_id')
+			line_name = request.POST.get('line_name')
+			line_ip = request.POST.get('line_ip')
+			line_is_master = request.POST.get('line_is_master')
+			if not line_ip or not line_is_master or not line_name:
+				return JsonResponse({'msg': "必选项不许为空~", "code": '502'})
+			elif not is_ip(line_ip):
+				logger.debug(msg="ip地址不合法")
+				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
+			else:
+				try:
+					Line_Assets.objects.filter(id=line_id).update( line_ip=line_ip, line_is_master=line_is_master)
+				except Exception as ex:
+					logger.debug(msg='cuowu')
+					logger.debug(msg=ex)
+					return JsonResponse({'msg': "添加失败~", "code": '502'})
+				return JsonResponse({'msg': "添加成功~", "code": '400'})
 		elif request.POST.get('op') == 'del':
 			line_id = request.POST.get('id')
 			try:
@@ -61,6 +77,8 @@ def assets_config(request):
 				logger.debug(msg=ex)
 				return JsonResponse({'msg': "删除失败~", "code": '502'})
 			return JsonResponse({'msg': "删除成功~", "code": '400'})
+
+
 @login_required(login_url='/login')
 def assets_add(request, format=None):
 	if request.method == "GET":
@@ -68,14 +86,27 @@ def assets_add(request, format=None):
 		return render(request, 'assets/assets_add.html', {"user": request.user, "baseAssets": getBaseAssets(),
 														  'userList': userList})
 	elif request.method == "POST":
+		assets_type = json.loads(request.body)['assets_type']
 		dic = json.loads(request.body)['data']
 		try:
 			assets = Assets.objects.create(**json.loads(request.body)['data']['assets'])
 		except Exception as ex:
 			print(ex)
+			return JsonResponse({'msg': "添加失败~", "code": '502'})
 		dic['assets'] = assets
-		print(dic)
-		Server_Assets.objects.create(**dic)
+		if assets_type == 'server':
+			try:
+				Server_Assets.objects.create(**dic)
+			except Exception as ex:
+				print(ex)
+				return JsonResponse({'msg': "添加失败~", "code": '502'})
+		else:
+			try:
+				Network_Assets.objects.create(**dic)
+			except Exception as ex:
+				print(ex)
+				return JsonResponse({'msg': "添加失败~", "code": '502'})
+		return JsonResponse({'msg': "添加成功~", "code": '502'})
 
 
 @login_required(login_url='/login')

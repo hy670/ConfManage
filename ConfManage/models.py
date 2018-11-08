@@ -103,7 +103,7 @@ class Network_Assets(models.Model):
 
 class Line_Assets(models.Model):
     line_name = models.CharField(max_length=100, unique=True)
-    line_ip = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name='IP地址')
+    line_ip = models.CharField( max_length=100, blank=True, null=True, verbose_name='IP地址')
     line_is_master = models.BooleanField(default=True,verbose_name="是否主设备")
     '''自定义权限'''
 

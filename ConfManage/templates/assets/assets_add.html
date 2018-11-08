@@ -39,314 +39,135 @@
 														<option value="storage" name="asset_assets_type">存储设备</option>
 													</select>	
 												</div>						
-											</div>					
-											
+											</div>
 											<div class="form-group">
 												 <label class="col-sm-2 control-label">资产编号</label>
 												 <div class="col-sm-6">
 												 	<input type="text" class="form-control" id="asset_name" name="asset_name" placeholder="编号" value="" class="input-xlarge"  required/>
 												 </div>
 											</div>
-																						
-											<div id="asset_vmserver_chioce" >	
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">设备序列号</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_sn" placeholder="序列号" value="" class="input-xlarge"  required/>
-												 </div>
-											</div>	
-					
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">购买时间</label>
-												 <div class="col-sm-6">
-														<input  type="text"  name="asset_buy_time"  class="form-control form_datetime" data-date-format="yyyy-mm-dd" title="例如2016-01-01" required>
-												 </div>
-											</div>		
-					
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">过保时间</label>
-												 <div class="col-sm-6">
-												 	<input  type="text"  name="asset_expire_date"  class="form-control form_datetime" data-date-format="yyyy-mm-dd" title="例如2016-01-01" required>
-												 </div>
-											</div>
                                             <div class="form-group">
-												 <label class="col-sm-2 control-label">购买人</label>
-												 <div class="col-sm-6">
-												   <select class="form-control" name="asset_buy_user"  required>
-												   		<option selected="selected" value="">请选择一个用户</option>
-														{% for user in userList %}
-															<option value="{{user.id}}" name="asset_buy_user">{{user.username}}</option>
-														{% endfor %}
-													</select>
-												 </div>
-											</div>
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">管理IP</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_management_ip" placeholder="管理/预设IP" value="" pattern="^(\d+\.\d+\.\d+\.\d+|[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?))$"  class="input-xlarge" />
-												 </div>
-											</div>															
-
-																									
-												
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">生产制造商</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_manufacturer" placeholder="制造商" value=""  class="input-xlarge"  required/>
-												 </div>
-											</div>
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">供货商</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_provider" placeholder="供货商" value="" class="input-xlarge"  required/>
-												 </div>
-											</div>
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">设备型号</label>
-												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="asset_model" placeholder="设备型号" value="" class="input-xlarge"  required/>
-												 </div>
-											</div>						
-											
-
-											</div>
+                                                     <label class="col-sm-2 control-label">设备序列号</label>
+                                                     <div class="col-sm-6">
+                                                        <input type="text" class="form-control" name="asset_sn" placeholder="序列号" value="" class="input-xlarge"  required/>
+                                                     </div>
+                                                </div>
+                                            <div class="form-group">
+                                                     <label class="col-sm-2 control-label">购买人</label>
+                                                     <div class="col-sm-6">
+                                                       <select class="form-control" name="asset_buy_user"  required>
+                                                            <option selected="selected" value="">请选择一个用户</option>
+                                                            {% for user in userList %}
+                                                                <option value="{{user.id}}" name="asset_buy_user">{{user.username}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                     </div>
+                                                </div>
+                                            <div class="form-group">
+                                                     <label class="col-sm-2 control-label">管理IP</label>
+                                                     <div class="col-sm-6">
+                                                        <input type="text" class="form-control" name="asset_management_ip" placeholder="管理/预设IP" value="" pattern="^(\d+\.\d+\.\d+\.\d+|[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?))$"  class="input-xlarge" />
+                                                     </div>
+                                                </div>
+                                            <div class="form-group">
+                                                     <label class="col-sm-2 control-label">生产制造商</label>
+                                                     <div class="col-sm-6">
+                                                        <input type="text" class="form-control" name="asset_manufacturer" placeholder="制造商" value=""  class="input-xlarge"  required/>
+                                                     </div>
+                                                </div>
+                                            <div class="form-group">
+                                                     <label class="col-sm-2 control-label">设备型号</label>
+                                                     <div class="col-sm-6">
+                                                        <input type="text" class="form-control" name="asset_model" placeholder="设备型号" value="" class="input-xlarge"  required/>
+                                                     </div>
+                                                </div>
 											<div class="form-group">
 												 <label class="col-sm-2 control-label">备注</label>
 												 <div class="col-sm-6">
 												 	<textarea type="text" class="form-control" id="asset_mark" name="asset_mark" placeholder="备注" value="" class="input-xlarge"></textarea>
 												 </div>
 											</div>
-											
 
-											
-
-
-
-														
-
-											
-											</fieldset>
-											<fieldset>		
-					
+										</fieldset>
+										<fieldset>
 											<div id="asset_server_chioce">					
 											<legend>服务器设备资产信息录入 - 可选信息</legend>
 					
-											<div class="form-group" >
+											    <div class="form-group" >
 												 <label class="col-sm-2 control-label"><font color='red'>* </font>主机地址<i class="fa fa-info-circle" data-toggle="tooltip"  title="必填项"></i></label>
 												 <div class="col-sm-6">
 												 	<input type="text" class="form-control" name="server_ip" placeholder="Ip Address" value="" pattern="^(\d+\.\d+\.\d+\.\d+|[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?))$" title="请输入IP地址或者域名"  class="input-xlarge"/>
 												 </div>
 											</div>
-											<div class="form-group">
-													<label class="col-sm-2 control-label"><font color='red'>* </font>账户</label>
-													 <div class="col-sm-6">
-													 <input type="text" class="form-control" name="server_username" placeholder="Username"  class="input-xlarge" value="" />
-													</div>
-											</div>	
-											<div class="form-group">
-												 <label class="col-sm-2 control-label"><font color='red'>* </font>认证方式<i class="fa fa-info-circle" data-toggle="tooltip"  title="如果选择密钥方式认证，请先在部署服务器到节点服务器做好证书认证"></i></label>
+                                                <div class="form-group" >
+												 <label class="col-sm-2 control-label"><font color='red'>* </font>主机名称<i class="fa fa-info-circle" data-toggle="tooltip"  title="必填项"></i></label>
 												 <div class="col-sm-6">
-												 	<select class="form-control" id='auth_type_select' onchange="javascript:oBtAuthType();" name="server_keyfile">
-												 		<option value="1" name="server_keyfile">密钥认证</option>
-												 		<option value="0" name="server_keyfile">账户密码</option>
-												 	</select>
+												 	<input type="text" class="form-control" name="server_hostname" placeholder="hostname" value=""  title="请输入主机名称"  class="input-xlarge"/>
 												 </div>
 											</div>
-											
-											<div id="auth_accout_select" style="display:none;">
-												<div class="form-group">
-													 <label class="col-sm-2 control-label"><font color='red'>* </font>密码</label>
-													 <div class="col-sm-6">
-													 <input type="password" class="form-control" name="server_passwd" placeholder="Password"  class="input-xlarge" value="" />
-													 </div>
-												</div>	
-												<div class="form-group">
-													 <label class="col-sm-2 control-label">sudo密码</label>
-													 <div class="col-sm-6">
-													 <input type="password" class="form-control" name="server_sudo_passwd" placeholder="Password"  class="input-xlarge" value="" />
-													 </div>
-												</div>																							
-												<div class="form-group">
-													 <label class="col-sm-2 control-label">主机名字</label>
-													 <div class="col-sm-6">
-													 	<input type="text" class="form-control" name="server_hostname" placeholder="Hostname"  class="input-xlarge" value="" />
-													 </div>
-												</div>																						
 											</div>
-											
-											<div class="form-group">
-												<label class="col-sm-2 control-label"><font color='red'>* </font>端口</label>
-												<div class="col-sm-6">
-												<input type="text" class="form-control" name="server_port" placeholder="Port"  class="input-xlarge" pattern="^(\d+)" value="" />
-												</div>
-											</div>												
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">CPU型号</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_cpu" placeholder="Cpu"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">物理CPU</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_cpu_number" placeholder="物理CPU个数"  class="input-xlarge" value="" />
-												 </div>
-											</div>		
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">逻辑CPU</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_vcpu_number" placeholder="逻辑CPU个数"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">CPU核心数</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_cpu_core" placeholder="单个CPU核心数"  class="input-xlarge" value="" />
-												 </div>
-											</div>															
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">内存容量</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_ram_total" placeholder="单位(GB)"  class="input-xlarge" value="" />									 				 
-												 </div>
-											</div>	
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">内核版本</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_kernel" placeholder="内核版本"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">Selinux状态</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_selinux" placeholder="selinux状态"  class="input-xlarge" value="" />
-												 </div>
-											</div>															
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">Swap分区</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_swap" placeholder="swap分区容量"  class="input-xlarge" value="" />
-												 </div>
-											</div>						
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">磁盘空间</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_disk_total" placeholder="Disk"  class="input-xlarge" value=""/>
-												 </div>
-											</div>
-														
-													
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">系统版本号</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="server_system" placeholder="System"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-																												
-											<div class="form-group">
-												 <label class="col-sm-2 control-label"> 机房线路</label>
-												 <div class="col-sm-6">							 	  
-												    	<select class="form-control" name="server_line"  >
-														<option selected="selected" value="">请选择一个类型</option>
-														{% for l in baseAssets.line %}
-															<option value="{{l.id}}" name="server_line">{{l.line_name}}</option>
-														{% endfor %}									
-														</select>	
-												</div>
-											</div>	 					 											
-											</div>
-											</fieldset>
-											
-											<fieldset>
-					
+										</fieldset>
+										<fieldset>
 											<div id="asset_net_chioce" style="display:none;">					
 											<legend>网络设备资产信息录入 - 可选信息</legend>
-					
-											<div class="form-group" >
-												 <label class="col-sm-2 control-label">背板带宽</label>
+                                                <div class="form-group" >
+												 <label class="col-sm-2 control-label"><font color='red'>* </font>设备名称<i class="fa fa-info-circle" data-toggle="tooltip"  title="必填项"></i></label>
 												 <div class="col-sm-6">
-												 	<input type="text" class="form-control" name="net_bandwidth" placeholder="xGbps"  title="请输入IP地址或者域名"  class="input-xlarge" value="" />
+												 	<input type="text" class="form-control" name="net_hostname" placeholder="hostname" value=""  title="请输入主机名称"  class="input-xlarge"/>
 												 </div>
 											</div>
-											
-											<div class="form-group" >
+											    <div class="form-group" >
 												 <label class="col-sm-2 control-label"><font color='red'>* </font>主机地址</label>
 												 <div class="col-sm-6">
 												 	<input type="text" class="form-control" name="net_ip" placeholder="Ip Address" value="" pattern="^(\d+\.\d+\.\d+\.\d+|[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?))$" title="请输入IP地址或者域名"  class="input-xlarge"/>
 												 </div>
-											</div>				
-											
-											<div class="form-group">
+											</div>
+											    <div class="form-group">
 													<label class="col-sm-2 control-label">SSH账户</label>
 													 <div class="col-sm-6">
 													 <input type="text" class="form-control" name="net_username" placeholder="Username"  class="input-xlarge" value="" />
 													</div>
 											</div>											
-											
-											<div class="form-group">
+											    <div class="form-group">
+												 <label class="col-sm-2 control-label">SSH密码</label>
+												 <div class="col-sm-6">
+												 <input type="password" class="form-control" name="net_passwd" placeholder="Password"  class="input-xlarge" value="" />
+												 </div>
+											</div>
+                                                <div class="form-group">
+												 <label class="col-sm-2 control-label">EN密码</label>
+												 <div class="col-sm-6">
+												 <input type="password" class="form-control" name="net_sudo_passwd" placeholder="Password"  class="input-xlarge" value="" />
+												 </div>
+											</div>
+											    <div class="form-group">
 												 <label class="col-sm-2 control-label">SSH端口</label>
 												 <div class="col-sm-6">
 												 <input type="text" class="form-control" name="net_port" placeholder="ssh port" pattern="^(\d+)" class="input-xlarge" value="" />
 												 </div>
 											</div>											
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">SSH密码</label>
-												 <div class="col-sm-6">
-												 <input type="password" class="form-control" name="net_passwd" placeholder="Password"  class="input-xlarge" value="" />
-												 </div>
-											</div>		
-
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">EN密码</label>
-												 <div class="col-sm-6">
-												 <input type="password" class="form-control" name="net_sudo_passwd" placeholder="Password"  class="input-xlarge" value="" />
-												 </div>
-											</div>																						
-											
-											<div class="form-group">
+                                                <div class="form-group">
 												 <label class="col-sm-2 control-label">端口数</label>
 												 <div class="col-sm-6">
 												 <input type="text" class="form-control" name="net_port_number" placeholder="port number" pattern="^(\d+)" class="input-xlarge" value="" />
 												 </div>
 											</div>							
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">固件版本</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="net_firmware" placeholder="firmware"  class="input-xlarge" value="" />
-												 </div>
-											</div>							
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">CPU型号</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="net_cpu" placeholder="cpu"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-											
-											
-											<div class="form-group">
-												 <label class="col-sm-2 control-label">内存容量</label>
-												 <div class="col-sm-6">
-												 <input type="text" class="form-control" name="net_stone" placeholder="Mem"  class="input-xlarge" value="" />
-												 </div>
-											</div>	
-											
-											<div class="form-group">
+                                                <div class="form-group">
 												 <label class="col-sm-2 control-label">配置说明</label>
 												 <div class="col-sm-6">						
 												 	<textarea  class="form-control" rows="5" name="net_configure_detail" placeholder="配置说明" value=""></textarea>
 												 </div>
-											</div>	
+											</div>
+                                                <div class="form-group">
+												 <label class="col-sm-2 control-label">主备状态</label>
+												 <div class="col-sm-6">
+												 	<select class="form-control center" id="net_is_master" >
+                                                        <option selected="selected" value="">请选择</option>
+                                                        <option value="True" name="assets_type">主</option>
+                                                        <option value="False" name="assets_type">备</option>
+                                                    </select>
+												 </div>
+											</div>
 											</div>
 											<div class="form-group">
 												 <label class="col-sm-2 control-label">备注</label>
@@ -354,15 +175,15 @@
 												 	<textarea type="text" class="form-control" id="asset_mark" name="asset_mark" placeholder="备注" value="" class="input-xlarge"></textarea>
 												 </div>
 											</div>										
-											</fieldset>
-											<div class="form-group">
+										</fieldset>
+                                        <div class="form-group">
 											<label class="col-sm-3 control-label"></label>
 											<button type="reset"  class="btn btn-default" >撤销操作</button>
 									 		<button type="button" class="btn btn-default" onclick="addAssetsData(this)" >确认提交</button>
 									 		</div>
 									 		
 										</form>	
-										 </fieldset>                              
+                                    </fieldset>
                                 </div>
 
                                 <!-- /.col-lg-6 (nested) -->
@@ -382,29 +203,7 @@
 
 <script type="text/javascript"> 
 	$(function () { $("[data-toggle='tooltip']").tooltip(); });
-	
-	function oBtProjectSelect(){
-		   $('#asset_business option:selected').empty();
-		   var dbId = $('#asset_project option:selected').val();
-		   if ( dbId.length > 0){	 
-				$.ajax({
-					dataType: "JSON",
-					url:'/api/project/'+ dbId + '/', //请求地址
-					type:"GET",  //提交类似
-					success:function(response){
-						var binlogHtml = '<select class="form-control" name="asset_business" id="asset_business" >'
-						var selectHtml = '';
-						for (var i=0; i <response["service_assets"].length; i++){
-							 selectHtml += '<option name="asset_business" value="'+ response["service_assets"][i]["id"] +'">' + response["service_assets"][i]["service_name"] + '</option>' 
-						};                        
-						binlogHtml =  binlogHtml + selectHtml + '</select>';
-						document.getElementById("asset_business").innerHTML= binlogHtml;	
-							
-					},
-				});	
-		   };
-	
-	}	
+
 	
 	function getFormData (form, filler) {
 		var assets = {};
@@ -480,27 +279,16 @@
 			   document.getElementById("asset_server_chioce").style.display = "";  
 			   document.getElementById("asset_net_chioce").style.display = "none";		
 			   document.getElementById("asset_vmserver_chioce").style.display = "none";	
-			   assets = ['asset_assets_type','asset_name','asset_status','asset_put_zone','asset_group','asset_business'];
+			   assets = ['asset_assets_type','asset_name'];
 		   }		   
  		   else {
 			   document.getElementById("asset_net_chioce").style.display = "";
 			   document.getElementById("asset_server_chioce").style.display = "none";	
 			   document.getElementById("asset_vmserver_chioce").style.display = "";	
-			   assets = ['asset_assets_type','asset_name','asset_sn','asset_expire_date','asset_buy_time','asset_buy_user','asset_management_ip','asset_manufacturer','asset_provider','asset_model','asset_status','asset_put_zone','asset_group','asset_business','asset_project'];
+			   assets = ['asset_assets_type','asset_name','asset_sn','asset_buy_user','asset_management_ip','asset_manufacturer','asset_model'];
 		   }
 	}
 
-	function oBtAuthType() {
-		   var obj = document.getElementById("auth_type_select"); 
-		   var index = obj.selectedIndex;
-		   var value = obj.options[index].value; 
-		   if (value=="0"){
-			   document.getElementById("auth_accout_select").style.display = "";  	   
-		   }
-		   else {
-			   document.getElementById("auth_accout_select").style.display = "none";	
-		   }
-	}	
 	
 	function addAssetsData(obj) {
 		var form = document.getElementById('addAssets');
@@ -522,12 +310,12 @@
 		alert(asset_data)
 		var btnObj = $(obj);
 		if (asset_data.assets.assets_type=="server" || asset_data.assets.assets_type=="vmser"){
-			var putUrl = '/api/server/';
+			var assets_type = 'server';
 		}
 		else {
-			var putUrl = '/api/net/';
+			var assets_type = 'net';
 		}
-        var test = JSON.stringify({'data':asset_data});
+        var test = JSON.stringify({'assets_type':assets_type,'data':asset_data});
 		alert(test)
 		$.ajax({
 			dataType: "JSON",
@@ -535,10 +323,10 @@
 			type:"POST",  //提交类似
 			contentType: "application/json",
 			data: JSON.stringify({
-				'data':asset_data
+				'assets_type':assets_type,'data':asset_data
 			}),  //提交参数
 			success:function(response){
-				window.wxc.xcConfirm("资产添加成功", window.wxc.xcConfirm.typeEnum.success);
+				window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
 			},
 	    	error:function(response){
 				$.notify({

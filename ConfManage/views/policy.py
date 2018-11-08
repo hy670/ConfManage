@@ -117,7 +117,7 @@ def policy_regular_list(request):
 		if option == '0':
 			number = request.POST.get('number')
 			Applied_policy.objects.get(id=number).delete()
-			return JsonResponse({'msg': '200'})
+			return JsonResponse({'msg': '删除成功'})
 		elif option == '1':
 			name = request.POST.get('id')
 			srcaddr = request.POST.get('srcaddr')

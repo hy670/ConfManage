@@ -231,10 +231,6 @@
 									       <th class="text-center">管理IP</th>
 									       <th class="text-center">资产编号</th>
 									       <th class="text-center">设备型号</th>
-									       <th class="text-center">放置区域</th>
-									       <th class="text-center">产品线</th>
-									       <th class="text-center">业务类型</th>
-									       <th class="text-center">使用组</th>								       
 									       <th class="text-center">设备状态</th>
 									       <th class="text-center">操作</th>
 									    </tr>
@@ -247,10 +243,6 @@
 										       <th class="text-center">管理IP</th>
 										       <th class="text-center">资产编号</th>
 										       <th class="text-center">设备型号</th>
-										       <th class="text-center">放置区域</th>
-										       <th class="text-center">产品线</th>
-										       <th class="text-center">业务类型</th>
-										       <th class="text-center">使用组</th>
 										       <th class="text-center">设备状态</th>
 										       <th class="text-center">操作</th>
 								            </tr>
@@ -271,16 +263,10 @@
 									         			交换机	
 									         		{% elif a.assets_type == "route" %}
 									         			路由器
-									         		{% elif a.assets_type == "printer" %}
-									         			打印机	
-									         		{% elif a.assets_type == "scanner" %}
-									         			扫描仪
 									         		{% elif a.assets_type == "firewall" %}
 									         			防火墙	
 									         		{% elif a.assets_type == "storage" %}
 									         			存储设备
-									         		{% elif a.assets_type == "wifi" %}
-									         			无线设备									         													         												         												         											         												         			
 									         		{% endif %}
 									         </td>
 									         <td>
@@ -307,47 +293,6 @@
 									         </td>
 									         <td class="text-center">{{ a.name }}</td>
 									         <td class="text-center">{{ a.model|default:"无" }}</td>
-									         <td class="text-center">
-									         	{% for z in baseAssets.zone %}
-									         		{% if z.id == a.put_zone %}
-									         			{{ z.zone_name }}
-									         		{% endif %}
-									         	{% endfor %}
-									         </td>
-									         <td class="text-center">
-									         	{% for s in baseAssets.project %}
-									         		{% if s.id == a.project %}
-									         			{{ s.project_name }}	
-									         		{% endif %}
-									         	{% endfor %}								         		
-									         </td>									         
-									         <td class="text-center">
-									         	{% for s in baseAssets.service %}
-									         		{% if s.id == a.business %}
-									         			{{ s.service_name }}	
-									         		{% endif %}
-									         	{% endfor %}								         		
-									         </td>									         
-									         <td class="text-center">
-									         	{% for g in baseAssets.group %}
-									         		{% if g.id == a.group %}
-									         			{{ g.name }}
-									         		{% endif %}
-									         	{% endfor %}
-									         </td>
-									         <td class="text-center">
-									         		{% if a.status == 0 %}
-									         			<button  type="button" class="btn btn-outline btn-success">已上线</button>
-									         		{% elif a.status == 1 %}
-									         			<button  type="button" class="btn btn-outline btn-primary">已下线</button>
-									         		{% elif a.status == 2 %}
-									         			<button  type="button" class="btn btn-outline btn-warning">维修中</button>
-									         		{% elif a.status == 3 %}
-									         			<button  type="button" class="btn btn-outline btn-info">已入库</button>
-									         		{% elif a.status == 4 %}
-									         			<button  type="button" class="btn btn-outline btn-default">未使用</button>
-									         		{% endif %}
-									         </td>	
 									         <td class="text-center">
 									         	<a href="/assets_view/{{a.id}}" style="text-decoration:none;"><button  type="button" class="btn btn-default"><abbr title="查看详细信息"><i class="glyphicon glyphicon-info-sign"></i></abbr></button></a>
 									         	{% if a.assets_type == "server" or a.assets_type == "vmser" %}
