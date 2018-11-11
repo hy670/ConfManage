@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from ConfManage.views import (index, policy, users, assets)
+from ConfManage.views import (index, policy, users, assets,wssh)
 
 urlpatterns = [
 	url(r'^$', index.index),
@@ -49,5 +49,6 @@ urlpatterns = [
 	url(r'^user/center/$', users.user_center),
 	url(r'^user/server/(?P<uid>[0-9]+)/$', users.user_server),
 	url(r'^users/manage$', users.user_manage),
+	url(r'^webssh/(?P<sid>[0-9]+)/$', wssh.wssh),
 
 ]

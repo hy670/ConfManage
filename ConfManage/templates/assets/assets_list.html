@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge">{{assetOnline}}</div>
-                                    <div>上线</div>
+                                    <div>防火墙</div>
                                 </div>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge">{{assetMaintain}}</div>
-                                    <div>维修</div>
+                                    <div>路由器</div>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge">{{assetOffline}}</div>
-                                    <div>下线</div>
+                                    <div>交换机</div>
                                 </div>
                             </div>
                         </div>
@@ -231,7 +231,6 @@
 									       <th class="text-center">管理IP</th>
 									       <th class="text-center">资产编号</th>
 									       <th class="text-center">设备型号</th>
-									       <th class="text-center">设备状态</th>
 									       <th class="text-center">操作</th>
 									    </tr>
 								        <tfoot>
@@ -243,7 +242,6 @@
 										       <th class="text-center">管理IP</th>
 										       <th class="text-center">资产编号</th>
 										       <th class="text-center">设备型号</th>
-										       <th class="text-center">设备状态</th>
 										       <th class="text-center">操作</th>
 								            </tr>
 								        </tfoot>									    
@@ -788,8 +786,10 @@
 			btn: parseInt("0011",2),
 			onOk: function(){
 				$.ajax({
-					  type: 'DELETE',
-					  url: '/api/assets/'+id+'/',
+					  dataType: "JSON",
+			          type:"POST",  //提交类似
+					  url: '/assets_list/',
+                      data:{'op':'del','assets_id':id},
 				      success:function(response){	
 				    	btnObj.removeAttr('disabled');
 			            window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
