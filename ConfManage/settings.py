@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ConfManage'
+    'ConfManage',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ConfManage.wsgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("192.168.216.137", 6379)],
+        },
+    },
+}
 
+ASGI_APPLICATION = "ConfManage.routing.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 

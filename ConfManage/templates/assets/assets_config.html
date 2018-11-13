@@ -4,7 +4,7 @@
 <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><i class="fa  fa-cogs "></i> 基础资产配置</h1>
+                    <h1 class="page-header"><i class="fa  fa-cogs "></i> 线路资产配置</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -154,7 +154,7 @@
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
 				</button>
 				<button type="button" class="btn btn-primary" onclick="modfAssetsData(this)">
-					添加
+					修改
 				</button>
 			</div>
 		</div><!-- /.modal-content -->
@@ -181,8 +181,11 @@
 			data:{'op':'add','line_name':line_name,'line_ip':line_ip,'line_is_master':line_is_master}, //提交参数
 			success:function(response){
 				btnObj.removeAttr('disabled');
-				window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
- 				location.reload();			
+				window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success, {
+                    onOk: function () {
+                        location.reload();
+                    }
+                });
 			},
 	    	error:function(response){
 	    		btnObj.removeAttr('disabled');
@@ -220,7 +223,12 @@
 			data:{'op':'mod','line_id':line_id,'line_name':line_name,'line_ip':line_ip,'line_is_master':line_is_master}, //提交参数
 			success:function(response){
 				btnObj.removeAttr('disabled');
-				window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.confirm);
+				window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success, {
+                    onOk: function () {
+                        location.reload();
+                    }
+
+                });
 
 			},
 	    	error:function(response){
@@ -235,7 +243,6 @@
 		var btnObj = $(obj);
 		btnObj.attr('disabled',true);
 		var txt=  "是否确认删除？";
-		var post_data = {};
         var putUrl = '/assets_config/';
 		var option = {				
 				title: "id-"+id,

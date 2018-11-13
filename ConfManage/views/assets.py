@@ -84,14 +84,29 @@ def assets_add(request, format=None):
 		return render(request, 'assets/assets_add.html', {"user": request.user, "baseAssets": getBaseAssets(),
 														  'userList': userList})
 	elif request.method == "POST":
+		assets_type = json.loads(request.body)['assets_type']
 		dic = json.loads(request.body)['data']
 		try:
 			assets = Assets.objects.create(**json.loads(request.body)['data']['assets'])
 		except Exception as ex:
 			print(ex)
+			return JsonResponse({'msg': "添加失败~", "code": '502'})
 		dic['assets'] = assets
-		print(dic)
-		Server_Assets.objects.create(**dic)
+		if assets_type == 'server':
+			try:
+				Server_Assets.objects.create(**dic)
+			except Exception as ex:
+				print(ex)
+				assets.delete()
+				return JsonResponse({'msg': "添加失败~", "code": '502'})
+		else:
+			try:
+				Network_Assets.objects.create(**dic)
+			except Exception as ex:
+				print(ex)
+				assets.delete()
+				return JsonResponse({'msg': "添加失败~", "code": '502'})
+		return JsonResponse({'msg': "添加成功~", "code": '502'})
 
 
 @login_required(login_url='/login')

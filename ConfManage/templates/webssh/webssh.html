@@ -68,32 +68,32 @@
             ws.onopen = function (event) {
                 term.resize(term.cols, term.rows);
 /*                 ws.send(JSON.stringify(["id", id,term.cols, term.rows]));  */
-                term.on('data', function (data) {
-                    <!--console.log(data);-->
-                     ws.send(JSON.stringify(['stdin', data])); 
-                });
+                 term.on('data', function (data) {
+            console.log(data);
+            ws.send(data);
+        });
 
-                term.on('title', function (title) {
-                    document.title = title;
-                });
-                ws.onmessage = function (event) {
-                    json_msg = JSON.parse(event.data);
-                    switch (json_msg[0]) {
-                        case "stdout":
-                            term.write(json_msg[1]);
-                            break;
-                        case "disconnect":
-                            term.write("\r\n\r\n[Finished...]\r\n");
-                            break;
-                    }
-                };
+        ws.onmessage = function (msg) {
+            console.log(msg);
+            console.log(msg.data);
+            term.write(msg.data);
+        };
+        ws.onerror = function (e) {
+            console.log(e);
+        };
+
+        ws.onclose = function (e) {
+            console.log(e);
+            term.destroy();
+        };
             };
             return {socket: ws, term: term};
         }
 
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + window.location.host + '/ws/webssh/{{server.id}}/';
-        make_terminal(document.getElementById('webssh_tt'), {rows: 30, cols: 140}, ws_path, '{{server.id}}');
+        var ws_path = ws_scheme + '://' + window.location.host + '/ws/webssh/';
+        alert(ws_path);
+        make_terminal(document.getElementById('webssh_tt'), {rows: 30, cols: 140}, ws_path);
     }); // end of document ready  
 </script>  
 
