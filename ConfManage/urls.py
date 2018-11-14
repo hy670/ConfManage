@@ -49,6 +49,7 @@ urlpatterns = [
 	url(r'^user/center/$', users.user_center),
 	url(r'^user/server/(?P<uid>[0-9]+)/$', users.user_server),
 	url(r'^users/manage$', users.user_manage),
+	url(r'^webssh/list/$', wssh.wssh_list),
 	url(r'^webssh/(?P<sid>[0-9]+)/$', wssh.wssh),
 
 ]

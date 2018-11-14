@@ -19,17 +19,21 @@ from ConfManage.utils.is_ip import is_ip
 
 def getBaseAssets():
 	try:
+		groupList = Group.objects.all()
+	except:
+		groupList = []
+	try:
 		lineList = Line_Assets.objects.all()
 	except:
 		lineList = []
 
-	return { "line": lineList}
+	return {"group": groupList, "line": lineList}
 
 
 @login_required(login_url='/login')
 def assets_config(request):
 	if request.method == "GET":
-		return render(request, 'assets/assets_config.html', {"user": request.user, "baseAssets": getBaseAssets()},)
+		return render(request, 'assets/assets_config.html', {"user": request.user, "baseAssets": getBaseAssets()}, )
 	elif request.method == "POST":
 		if request.POST.get('op') == 'add':
 			line_name = request.POST.get('line_name')
@@ -42,7 +46,7 @@ def assets_config(request):
 				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
 			else:
 				try:
-					Line_Assets.objects.create(line_name=line_name,line_ip=line_ip,line_is_master=line_is_master)
+					Line_Assets.objects.create(line_name=line_name, line_ip=line_ip, line_is_master=line_is_master)
 				except Exception as ex:
 					logger.debug(msg=ex)
 					return JsonResponse({'msg': "添加失败~", "code": '502'})
@@ -59,7 +63,7 @@ def assets_config(request):
 				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
 			else:
 				try:
-					Line_Assets.objects.filter(id=line_id).update( line_ip=line_ip, line_is_master=line_is_master)
+					Line_Assets.objects.filter(id=line_id).update(line_ip=line_ip, line_is_master=line_is_master)
 				except Exception as ex:
 					logger.debug(msg='cuowu')
 					logger.debug(msg=ex)
@@ -73,6 +77,8 @@ def assets_config(request):
 				logger.debug(msg=ex)
 				return JsonResponse({'msg': "删除失败~", "code": '502'})
 			return JsonResponse({'msg': "删除成功~", "code": '400'})
+
+
 @login_required(login_url='/login')
 def assets_add(request, format=None):
 	if request.method == "GET":
@@ -93,14 +99,12 @@ def assets_add(request, format=None):
 				Server_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
-				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		else:
 			try:
 				Network_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
-				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		return JsonResponse({'msg': "添加成功~", "code": '502'})
 
@@ -108,19 +112,40 @@ def assets_add(request, format=None):
 @login_required(login_url='/login')
 @permission_required('OpsManage.can_read_assets', login_url='/noperm/')
 def assets_list(request):
-	userList = User.objects.all()
-	assetsList = Assets.objects.all().order_by("-id")
-
-	assetsNumber = Assets.objects.values('assets_type').annotate(dcount=Count('assets_type'))
-	return render(request, 'assets/assets_list.html', {"user": request.user, "totalAssets": assetsList.count(),
-													   "baseAssets": getBaseAssets(),
-													   "assetsList": assetsList, "assetsNumber": assetsNumber,
-													   'userList': userList},
-				  )
+	if request.method == 'GET':
+		userList = User.objects.all()
+		assetsList = Assets.objects.all().order_by("-id")
+		assetsNumber = Assets.objects.values('assets_type').annotate(dcount=Count('assets_type'))
+		return render(request, 'assets/assets_list.html', dict(user=request.user, totalAssets=assetsList.count(),
+								baseAssets=getBaseAssets(), assetsList=assetsList,
+								assetsNumber=assetsNumber, userList=userList),
+					  )
+	elif request.method == 'POST':
+		assets_id = request.POST.get('assets_id')
+		if request.POST.get('op') == 'del':
+			try:
+				assets_type = Assets.objects.get(id=assets_id).assets_type
+			except Exception as ex:
+				logger.debug(msg=ex)
+			if assets_type in ['switch','route','firewall']:
+				try:
+					Network_Assets.objects.get(assets_id= assets_id).delete()
+					Assets.objects.get(id=assets_id).delete()
+				except Exception as ex:
+					logger.debug(msg=ex)
+					return JsonResponse({'msg': "删除失败~", "code": '502'})
+				return JsonResponse({'msg': "删除成功~", "code": '400'})
+			elif assets_type in ['server', 'vmser','storage']:
+				try:
+					Server_Assets.objects.get(assets_id= assets_id).delete()
+					Assets.objects.get(id=assets_id).delete()
+				except Exception as ex:
+					logger.debug(msg=ex)
+					return JsonResponse({'msg': "删除失败~", "code": '502'})
+				return JsonResponse({'msg': "删除成功~", "code": '502'})
 
 
 @login_required(login_url='/login')
-@permission_required('OpsManage.can_read_assets', login_url='/noperm/')
 def assets_view(request, aid):
 	try:
 		assets = Assets.objects.get(id=aid)
@@ -130,80 +155,83 @@ def assets_view(request, aid):
 					  )
 	if assets.assets_type in ['server', 'vmser']:
 		try:
-			asset_ram = assets.ram_assets_set.all()
-		except:
-			asset_ram = []
-		try:
-			asset_disk = assets.disk_assets_set.all()
-		except:
-			asset_disk = []
-		try:
-			asset_nks = assets.networkcard_assets_set.all()
-		except Exception as ex:
-			asset_nks = []
-			logger.warn(msg="获取网卡设备资产失败: {ex}".format(ex=str(ex)))
-		try:
 			asset_body = assets.server_assets
 		except:
 			return render(request, 'assets/assets_view.html', {"user": request.user},
 						  )
 		return render(request, 'assets/assets_view.html', {"user": request.user, "asset_type": assets.assets_type,
 														   "asset_main": assets, "asset_body": asset_body,
-														   "asset_ram": asset_ram, "asset_disk": asset_disk,
-														   "baseAssets": getBaseAssets(), 'userList': userList,
-														   "asset_nks": asset_nks},
-					  )
+														   "baseAssets": getBaseAssets(), 'userList': userList,})
 	else:
 		try:
 			asset_body = assets.network_assets
-		except:
-			return render(request, 'assets/assets_view.html', {"user": request.user},
-						  )
+		except Exception as ex:
+			logger.debug(msg=ex)
+			return render(request, 'assets/assets_view.html', {"user": request.user})
 		return render(request, 'assets/assets_view.html', {"user": request.user, "asset_type": assets.assets_type,
 														   "asset_main": assets, "asset_body": asset_body,
-														   "baseAssets": getBaseAssets(), 'userList': userList},
-					  )
+														   "baseAssets": getBaseAssets(), 'userList': userList})
 
 
 @login_required(login_url='/login')
-@permission_required('OpsManage.can_change_assets', login_url='/noperm/')
 def assets_modf(request, aid):
-	try:
-		assets = Assets.objects.get(id=aid)
-		userList = User.objects.all()
-	except:
-		return render(request, 'assets/assets_modf.html', {"user": request.user},
-					  )
-	if assets.assets_type in ['server', 'vmser']:
+	if request.method == 'GET':
 		try:
-			asset_ram = assets.ram_assets_set.all()
-		except:
-			asset_ram = []
-		try:
-			asset_disk = assets.disk_assets_set.all()
-		except:
-			asset_disk = []
-		try:
-			asset_body = assets.server_assets
-		except Exception as ex:
-			logger.error(msg="修改资产失败: {ex}".format(ex=str(ex)))
-			return render(request, '404.html', {"user": request.user},
-						  )
-		return render(request, 'assets/assets_modf.html', {"user": request.user, "asset_type": assets.assets_type,
-														   "asset_main": assets, "asset_body": asset_body,
-														   "asset_ram": asset_ram, "asset_disk": asset_disk,
-														   "assets_data": getBaseAssets(), 'userList': userList},
-					  )
-	else:
-		try:
-			asset_body = assets.network_assets
+			assets = Assets.objects.get(id=aid)
+			userList = User.objects.all()
 		except:
 			return render(request, 'assets/assets_modf.html', {"user": request.user},
 						  )
-		return render(request, 'assets/assets_modf.html', {"user": request.user, "asset_type": assets.assets_type,
-														   "asset_main": assets, "asset_body": asset_body,
-														   "assets_data": getBaseAssets(), 'userList': userList},
-					  )
+		if assets.assets_type in ['server', 'vmser']:
+			try:
+				asset_body = assets.server_assets
+			except Exception as ex:
+				logger.error(msg="修改资产失败: {ex}".format(ex=str(ex)))
+				return render(request, '404.html', {"user": request.user},
+							  )
+			return render(request, 'assets/assets_modf.html', {"user": request.user, "asset_type": assets.assets_type,
+															   "asset_main": assets, "asset_body": asset_body,
+															   "assets_data": getBaseAssets(), 'userList': userList},
+						  )
+		else:
+			try:
+				asset_body = assets.network_assets
+			except:
+				return render(request, 'assets/assets_modf.html', {"user": request.user},
+							  )
+			return render(request, 'assets/assets_modf.html', {"user": request.user, "asset_type": assets.assets_type,
+															   "asset_main": assets, "asset_body": asset_body,
+															   "assets_data": getBaseAssets(), 'userList': userList},
+						  )
+	elif request.method == 'POST':
+		assets_type = json.loads(request.body)['assets_type']
+		asset = json.loads(request.body)['data']['assets']
+		dic = json.loads(request.body)['data']
+		del dic['assets']
+		del asset['name']
+		del asset['id']
+		del asset['assets_type']
+		del asset['sn']
+		try:
+			Assets.objects.filter(id=aid).update(**asset)
+		except Exception as ex:
+			logger.debug(msg=ex)
+			return JsonResponse({'msg': "修改失败~", "code": '502'})
+		if assets_type == 'server':
+			try:
+				Server_Assets.objects.filter(assets_id=aid).update(**dic)
+			except Exception as ex:
+				logger.debug(msg=ex)
+				return JsonResponse({'msg': "修改失败~", "code": '502'})
+			return JsonResponse({'msg': "修改成功~", "code": '502'})
+		elif assets_type == 'net':
+			try:
+				Network_Assets.objects.filter(assets_id=aid).update(**dic)
+			except Exception as ex:
+				logger.debug(msg=ex)
+				return JsonResponse({'msg': "修改失败~", "code": '502'})
+			return JsonResponse({'msg': "修改成功~", "code": '502'})
+
 
 
 @login_required(login_url='/login')
@@ -470,26 +498,14 @@ def assets_search(request):
 	ServerAssetFieldsList = [n.name for n in Server_Assets._meta.fields]
 	if request.method == "GET":
 		manufacturerList = [m.manufacturer for m in Assets.objects.raw(
-			'SELECT id,manufacturer from opsmanage_assets WHERE  manufacturer is not null GROUP BY manufacturer')]
+			'SELECT id,manufacturer from confmanage_assets WHERE  manufacturer is not null  ')]
 		modelList = [m.model for m in Assets.objects.raw(
-			'SELECT id,model from opsmanage_assets WHERE model is not null  GROUP BY model')]
-		providerList = [m.provider for m in Assets.objects.raw(
-			'SELECT id,provider from opsmanage_assets WHERE provider is not null GROUP BY provider')]
-		cpuList = [a.cpu for a in
-				   Assets.objects.raw('SELECT id,cpu from opsmanage_server_assets WHERE cpu is not null GROUP BY cpu')]
+			'SELECT id,model from confmanage_assets WHERE model is not null ')]
 		buyUserList = User.objects.all()
-		selinuxList = [m.selinux for m in Assets.objects.raw(
-			'SELECT id,selinux from opsmanage_server_assets WHERE selinux is not null GROUP BY selinux')]
-		systemList = [m.system for m in Assets.objects.raw(
-			'SELECT id,system from opsmanage_server_assets WHERE system is not null GROUP BY system')]
-		kernelList = [m.kernel for m in Assets.objects.raw(
-			'SELECT id,kernel from opsmanage_server_assets WHERE kernel is not null GROUP BY kernel')]
 		return render(request, 'assets/assets_search.html', {"user": request.user, "baseAssets": getBaseAssets(),
 															 "manufacturerList": manufacturerList,
 															 "modelList": modelList,
-															 "providerList": providerList, "cpuList": cpuList,
-															 "buyUserList": buyUserList, "selinuxList": selinuxList,
-															 "systemList": systemList, 'kernelList': kernelList,
+															 "buyUserList": buyUserList
 															 },
 					  )
 	elif request.method == "POST":
@@ -835,13 +851,11 @@ def assets_dumps(request):
 		dRbt = CellWriter('assets_dumps.xls')
 		serSheet = dRbt.workbook.add_sheet('服务器资产', cell_overwrite_ok=True)
 		netSheet = dRbt.workbook.add_sheet('网络设备资产', cell_overwrite_ok=True)
-		bList = ['设备类型', '资产编号', '设备序列号', '购买时间', '过保时间', '购买人', '管理IP', '生产制造商', '设备型号', '供货商',
-				 '设备状态', '放置区域', '产品线', '使用组', '业务类型', '主机地址', '认证方式', '账户', '主机名字', '端口', 'CPU型号',
-				 'Raid类型', '物理CPU', '逻辑CPU', 'CPU核心数', '内存容量', '内核版本', 'Selinux状态', 'Swap分区', '磁盘空间',
-				 '系统版本号', '机房线路']
-		nList = ['设备类型', '资产编号', '设备序列号', '购买时间', '过保时间', '购买人', '管理IP', '生产制造商', '设备型号', '供货商',
-				 '设备状态', '放置区域', '产品线', '使用组', '业务类型', '主机地址', '背板带宽', '端口数', '固件版本', 'CPU型号',
-				 '内存容量', '配置说明', '管理用户', '端口']
+		bList = ['设备类型', '资产编号', '设备序列号', '生产制造商', '设备型号',
+				 '主机地址', '主机名字']
+		nList = ['设备类型', '资产编号', '设备序列号', '购买人', '管理IP', '生产制造商', '设备型号',
+				 '设备状态', '主机地址', '设备名称', '端口数',
+				 '配置说明', '管理用户', '端口']
 		dRbt.writeBanner(sheetName=serSheet, bList=bList)
 		dRbt.writeBanner(sheetName=netSheet, bList=nList)
 		count = 1
@@ -854,33 +868,18 @@ def assets_dumps(request):
 			if assets.assets_type in ['vmser', 'server']:
 				sheet = serSheet
 				sheet.write(count, 15, assets.server_assets.ip, dRbt.bodySttle())
-				sheet.write(count, 16, assets.server_assets.keyfile, dRbt.bodySttle())
-				sheet.write(count, 17, assets.server_assets.username, dRbt.bodySttle())
 				sheet.write(count, 18, assets.server_assets.hostname, dRbt.bodySttle())
-				sheet.write(count, 19, assets.server_assets.port, dRbt.bodySttle())
-				sheet.write(count, 20, assets.server_assets.cpu, dRbt.bodySttle())
-
-				sheet.write(count, 22, assets.server_assets.cpu_number, dRbt.bodySttle())
-				sheet.write(count, 23, assets.server_assets.vcpu_number, dRbt.bodySttle())
-				sheet.write(count, 24, assets.server_assets.cpu_core, dRbt.bodySttle())
-				sheet.write(count, 25, assets.server_assets.ram_total, dRbt.bodySttle())
-				sheet.write(count, 26, assets.server_assets.kernel, dRbt.bodySttle())
-				sheet.write(count, 27, assets.server_assets.selinux, dRbt.bodySttle())
-				sheet.write(count, 28, assets.server_assets.swap, dRbt.bodySttle())
-				sheet.write(count, 29, assets.server_assets.disk_total, dRbt.bodySttle())
-				sheet.write(count, 30, assets.server_assets.system, dRbt.bodySttle())
-
 			else:
 				sheet = netSheet
-				sheet.write(count, 15, assets.network_assets.ip, dRbt.bodySttle())
-				sheet.write(count, 16, assets.network_assets.bandwidth, dRbt.bodySttle())
-				sheet.write(count, 17, assets.network_assets.port_number, dRbt.bodySttle())
-				sheet.write(count, 18, assets.network_assets.firmware, dRbt.bodySttle())
-				sheet.write(count, 19, assets.network_assets.cpu, dRbt.bodySttle())
-				sheet.write(count, 20, assets.network_assets.stone, dRbt.bodySttle())
-				sheet.write(count, 21, assets.network_assets.configure_detail, dRbt.bodySttle())
-				sheet.write(count, 22, assets.network_assets.username, dRbt.bodySttle())
-				sheet.write(count, 23, assets.network_assets.port, dRbt.bodySttle())
+				sheet.write(count, 7, assets.network_assets.ip, dRbt.bodySttle())
+				sheet.write(count, 8, assets.network_assets.hostname, dRbt.bodySttle())
+				sheet.write(count, 9, assets.network_assets.port_number, dRbt.bodySttle())
+				sheet.write(count, 10, assets.network_assets.username, dRbt.bodySttle())
+				sheet.write(count, 11, assets.network_assets.port, dRbt.bodySttle())
+				sheet.write(count, 12, assets.network_assets.passwd, dRbt.bodySttle())
+				sheet.write(count, 13, assets.network_assets.configure_detail, dRbt.bodySttle())
+				sheet.write(count, 14, assets.network_assets.port_number, dRbt.bodySttle())
+				sheet.write(count, 15, assets.network_assets.is_master, dRbt.bodySttle())
 			if assets.assets_type == 'vmser':
 				sheet.write(count, 0, '虚拟机', dRbt.bodySttle())
 			elif assets.assets_type == 'server':
@@ -889,28 +888,19 @@ def assets_dumps(request):
 				sheet.write(count, 0, '交换机', dRbt.bodySttle())
 			elif assets.assets_type == 'route':
 				sheet.write(count, 0, '路由器', dRbt.bodySttle())
-			elif assets.assets_type == 'printer':
-				sheet.write(count, 0, '打印机', dRbt.bodySttle())
-			elif assets.assets_type == 'scanner':
-				sheet.write(count, 0, '扫描仪', dRbt.bodySttle())
 			elif assets.assets_type == 'firewall':
 				sheet.write(count, 0, '防火墙', dRbt.bodySttle())
 			elif assets.assets_type == 'storage':
 				sheet.write(count, 0, '存储设备', dRbt.bodySttle())
-			elif assets.assets_type == 'wifi':
-				sheet.write(count, 0, '无线设备', dRbt.bodySttle())
 			sheet.write(count, 1, assets.name, dRbt.bodySttle())
 			sheet.write(count, 2, assets.sn, dRbt.bodySttle())
-			sheet.write(count, 3, str(assets.buy_time), dRbt.bodySttle())
-			sheet.write(count, 4, str(assets.expire_date), dRbt.bodySttle())
 			try:
-				sheet.write(count, 5, User.objects.get(id=assets.buy_user).username, dRbt.bodySttle())
+				sheet.write(count, 3, User.objects.get(id=assets.buy_user).username, dRbt.bodySttle())
 			except:
-				sheet.write(count, 5, assets.buy_user, dRbt.bodySttle())
-			sheet.write(count, 6, assets.management_ip, dRbt.bodySttle())
-			sheet.write(count, 7, assets.manufacturer, dRbt.bodySttle())
-			sheet.write(count, 8, assets.model, dRbt.bodySttle())
-			sheet.write(count, 9, assets.provider, dRbt.bodySttle())
+				sheet.write(count, 3, assets.buy_user, dRbt.bodySttle())
+			sheet.write(count, 4, assets.management_ip, dRbt.bodySttle())
+			sheet.write(count, 5, assets.manufacturer, dRbt.bodySttle())
+			sheet.write(count, 6, assets.model, dRbt.bodySttle())
 			count = count + 1
 		dRbt.save()
 		response = StreamingHttpResponse(base.file_iterator('assets_dumps.xls'))
