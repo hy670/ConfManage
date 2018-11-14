@@ -61,7 +61,7 @@ class Webterminal(WebsocketConsumer):
 			self.sshclient.load_system_host_keys()
 			self.sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 			try:
-				self.send("连接中--------\n")
+				self.send("连接中--------\r\n")
 				self.sshclient.connect(netasset.ip, ssh_port, netasset.username, netasset.passwd,timeout=10)
 			except:
 				self.send("连接失败")

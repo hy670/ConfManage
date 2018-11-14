@@ -15,25 +15,39 @@ def conffile_list(request):
 	if request.method == 'GET':
 		assets = Network_Assets.objects.filter(is_master=True)
 		conffiledic = []
-		for conffile in Conffile.objects.all():
+		for conffile in Conffile.objects.all().order_by('-create_date'):
 			devname =Network_Assets.objects.get(id=conffile.network_assets_id).hostname
 			conffiledic.append({'id':conffile.id,'hostname':devname,'filename':conffile.filename,'date':conffile.create_date,
 								'file_detail':conffile.file_detail})
 		return render(request, 'filemanage/file_download_list.html',{'assets':assets,'conffile':conffiledic})
 	elif request.method == 'POST':
-		print(os.getcwd())
-		assets_id =request.POST.get('assets_name')
-		file_detail = request.POST.get('conffile_detail')
-		f = request.FILES.get('import_file')
-		assets = Network_Assets.objects.get(id=assets_id)
-		Conffile.objects.create(filename=f.name,file_detail=file_detail,network_assets=assets)
-		filename = os.path.join(os.getcwd() + '/conffile/', f.name)
-		if os.path.isdir(os.path.dirname(filename)) is not True: os.makedirs(os.path.dirname(filename))
-		fobj = open(filename, 'wb')
-		for chrunk in f.chunks():
-			fobj.write(chrunk)
-		fobj.close()
-		return JsonResponse({'msg': "修改成功~", "code": '502'})
+		if request.POST.get('op')=='add':
+			print(os.getcwd())
+			assets_id =request.POST.get('assets_name')
+			file_detail = request.POST.get('conffile_detail')
+			f = request.FILES.get('import_file')
+			assets = Network_Assets.objects.get(id=assets_id)
+			Conffile.objects.create(filename=f.name,file_detail=file_detail,network_assets=assets)
+			filename = os.path.join(os.getcwd() + '/conffile/', f.name)
+			if os.path.isdir(os.path.dirname(filename)) is not True: os.makedirs(os.path.dirname(filename))
+			fobj = open(filename, 'wb')
+			for chrunk in f.chunks():
+				fobj.write(chrunk)
+			fobj.close()
+			return JsonResponse({'msg': "修改成功~", "code": '502'})
+		elif request.POST.get('op') == 'del':
+			id =request.POST.get('file_id')
+			f = Conffile.objects.get(id=id)
+			filename = os.path.join(os.getcwd() + '/conffile/', f.filename)
+			if os.path.exists(filename):
+				os.remove(filename)
+				f.delete()
+				return JsonResponse({'msg': "文件已删除~", "code": '502'})
+			else:
+				f.delete()
+				return JsonResponse({'msg': "文件已删除~", "code": '502'})
+
+
 
 
 

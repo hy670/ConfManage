@@ -119,6 +119,10 @@
                                                 <td class="text-center">
                                                     {{ file.date }}
                                                 </td>
+                                                <td>
+                                                     <button  type="button" class="btn btn-default" onclick="delconffile(this,{{file.id}})"><i class="glyphicon glyphicon-trash"></i></button>
+                                                </td>
+
                                         </tr>
                                         {% endfor %}
 	                                    </tbody>
@@ -147,6 +151,7 @@ $(function(){
         }
     })
 })
+
 function addconffile(obj){
 		var btnObj = $(obj);
 		btnObj.attr('disabled',true);
@@ -156,6 +161,7 @@ function addconffile(obj){
         var conffile_detail =document.getElementById("conffile_detail").value
         var form_data = new FormData();
         var import_file =$( '#import_file')[0].files[0];
+        form_data.append('op','add');
         form_data.append('assets_name',assets_name);
         form_data.append('conffile_detail',conffile_detail);
         form_data.append('import_file',import_file);
@@ -180,6 +186,38 @@ function addconffile(obj){
 
             });
 }
+
+function delconffile(obj,id){
+		var txt=  "是否确认删除？";
+		var btnObj = $(obj);
+		btnObj.attr('disabled',true);
+		var option = {
+			title: "删除当前文件",
+			btn: parseInt("0011",2),
+			onOk: function(){
+				$.ajax({
+					  dataType: "JSON",
+			          type:"POST",  //提交类似
+					  url: '/conffile/list/',
+                      data:{'op':'del','file_id':id},
+				      success:function(response){
+				    	btnObj.removeAttr('disabled');
+			            window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
+			            location.reload();
+				      },
+		              error:function(response){
+		            	btnObj.removeAttr('disabled');
+		            	window.wxc.xcConfirm("删除失败！", window.wxc.xcConfirm.typeEnum.error);
+		              }
+					});
+			},
+			onCancel:function(){
+			},
+			onClose:function(){
+			}
+		}
+		window.wxc.xcConfirm(txt, "custom", option);
+	}
 
 $(document).ready(function() {
     $('#ansible_server').multiselect({
