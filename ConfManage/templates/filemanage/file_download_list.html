@@ -178,6 +178,7 @@ function addconffile(obj){
 
                    btnObj.removeAttr('disabled');
                    window.wxc.xcConfirm("上传成功！", window.wxc.xcConfirm.typeEnum.success);
+                   $('#add_file_order').hide();
                 },
                  error:function(response){
 		            	btnObj.removeAttr('disabled');
