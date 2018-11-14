@@ -1,17 +1,25 @@
 #!/usr/bin/env python
 # _#_ coding:utf-8 _*_
+from django.db.models import Count
 from django.shortcuts import render
 from ConfManage.models import Assets, Network_Assets
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from ConfManage.utils.logger import logger
 
+@login_required(login_url='/login')
+def wssh_list(request):
+	assetsList = Assets.objects.all().order_by("-id")
+
+	assetsNumber = Assets.objects.values('assets_type').annotate(dcount=Count('assets_type'))
+	return render(request, 'webssh/ssh_list.html', {"user": request.user, "totalAssets": assetsList.count(),
+	                                                   "assetsList": assetsList, "assetsNumber": assetsNumber
+	                                                    })
 
 @login_required(login_url='/login')
-
 def wssh(request, sid):
 	try:
-		server = Network_Assets.objects.get(id=sid)
+		server = Network_Assets.objects.get(assets_id=sid)
 		if request.user.is_superuser:
 			serverList = Network_Assets.objects.all()
 			return render(request, 'webssh/webssh.html', {"user": request.user, "server": server,
