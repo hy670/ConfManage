@@ -1,0 +1,247 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+<!-- ACE Editor -->   
+<link href="/static/dist/css/bootstrap-multiselect.css" rel="stylesheet">
+<script src="/static/dist/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+<link href="/static/dist/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/dist/js/fileinput.js" type="text/javascript"></script>
+<style type="text/css"> 
+	td.details-control {
+	    background: url('/static/img/details_open.png') no-repeat center center;
+	    cursor: pointer;
+	}
+	tr.shown td.details-control {
+	    background: url('/static/img/details_close.png') no-repeat center center;
+	} 
+</style>	
+{% endblock %}
+{% block page-content %}
+
+<div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header"><i class="fa fa-file-pdf-o"></i> 配置文件对比</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>  
+            <div class="row">	
+				 <div class="col-lg-12" id="file_diff" >
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            	<i class="fa  fa-rss"></i> 配置文件比较
+                        </div>
+                        <div class="panel-body">
+							<div class="col-lg-12">
+								<legend>
+									<i class="fa  fa-paper-plane-o"></i> 目标设备文件选择
+								</legend>
+                                <div class="row">
+								<div class="form-group col-lg-6" >
+									<label><font color='red'>* </font>设备名称</label>
+									<select class="form-control" name="server_model" id="server_model" onchange="javascript:dev_select();">
+										<option value="" name="server_model" selected="selected">选择设备</option>
+                                        {% for asset in assets %}
+                                        <option value="{{ asset.id }}" name="server_model">{{ asset.hostname }}</option>
+                                        {% endfor %}
+									</select>		
+								</div>
+                                </div>
+                              <div class="row">
+								<div id="conffile_1" name="conffile_1" class="form-group col-lg-6" style="display:none;">
+									 <label>配置文件1</label>
+	                                 <select class="form-control" name="ansible_group"  id="conffile_select_1"  required>
+	                                 	<option name="ansible_group" value="" selected="selected">请选择文件</option>
+	                                 </select>
+								</div>
+                               <div id="conffile_2" name="conffile_2" class="form-group col-lg-6" style="display:none;">
+									 <label>配置文件2</label>
+	                                 <select class="form-control" name="ansible_group"  id="conffile_select_2"  required>
+	                                 	<option name="ansible_group" value="" selected="selected">请选择文件</option>
+	                                 </select>
+								</div>
+                                </div>
+                                <div class="form-group">
+                                <button id="compare" type="button" class="btn btn-primary" style="display:none;" onclick="comparefiles(this)">
+				                	比较
+                                </button>
+                                </div>
+                              </div>
+
+							</div>					
+							<!-- /.col-lg-6 (nested) -->
+							</div>
+						</div>            
+					</div>
+</div>
+
+
+
+<script type="text/javascript"> 
+
+
+
+$(document).ready(function() {
+    $('#ansible_server').multiselect({
+        enableClickableOptGroups: true,
+        enableCollapsibleOptGroups: true,
+        includeSelectAllOption: true,
+       	enableFiltering: true,            
+    });
+});
+
+	$("#order_files").fileinput({
+/* 		uploadUrl: '/order/file/upload/apply/',  */
+    showUpload: false,
+    showCaption: false,
+    browseClass: "btn btn-primary btn-md",
+    fileType: "any",
+    previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+    overwriteInitial: false,
+    maxFileSize: 50000,
+    maxFileCount:10,
+	    dropZoneTitle:"拖拽文件上传...",
+    dropZoneEnabled: true,
+    slugCallback: function(filename) {
+        return filename.replace('(', '_').replace(']', '_');
+    }	    
+}); 
+
+
+
+function dev_select(){
+	   var obj = document.getElementById("server_model"); 
+	   var index = obj.selectedIndex;
+	   var value = obj.options[index].value;
+	   $.ajax({
+				dataType: "JSON",
+				url:'/conffile/diff/', //请求地址
+				type:"POST",  //提交类似
+                data:{'op':'list_conffile','file_id':value},
+				success:function(response){
+                    var selectHtml;
+                    var binlogHtml;
+					for (var i=0; i <response["files"].length; i++){
+						 selectHtml += '<option name="conffile" value="'+ response["files"][i]["conffile.id"] +'">' + response["files"][i]["conffile.name"] + '</option>'
+					};
+					binlogHtml =  binlogHtml + selectHtml ;
+					document.getElementById("conffile_select_1").innerHTML= binlogHtml;
+					document.getElementById("conffile_select_2").innerHTML= binlogHtml;
+                    if($('#conffile_1').is(':hidden')){
+        	            $('#conffile_1').show();
+                    }
+                    if($('#conffile_2').is(':hidden')){
+        	            $('#conffile_2').show();
+                    }
+                     if($('#compare').is(':hidden')) {
+                         $('#compare').show();
+                     }
+				},
+                error:function(response){
+		            window.wxc.xcConfirm(response, window.wxc.xcConfirm.typeEnum.error);
+		              }
+
+			});
+
+}
+
+
+function comparefiles(){
+	   var obj = document.getElementById("server_model");
+        var file1 = document.getElementById("conffile_select_1").value;
+	   var file2 = document.getElementById("conffile_select_2").value;
+	   $.ajax({
+				dataType: "JSON",
+				url:'/conffile/diff/', //请求地址
+				type:"POST",  //提交类似
+                data:{'op':'compare_conffile','file1':file1,'file2':file2},
+				success:function(response){
+				     newWindow=window.open('','');
+                     newWindow.document.write(response.result);
+                     newWindow.focus();
+				},
+                error:function(response){
+		            window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
+		            }
+
+			});
+
+}
+
+function format ( data ) {
+	var serHtml = '';
+	serList = JSON.parse(data["dest_server"]);
+	for  (var i=0; i <serList.length; i++){
+		serHtml += serList[i] + ',';
+	}
+    var trHtml = '<tr><td>目标目录:</td><td>'+ data["dest_path"]  + '</td><td>目标服务器:</td><td>'+ serHtml.substring(0,serHtml.length-1) +'</td></tr>'	;
+	for (var i=0; i <data["files"].length; i++){	
+		trHtml += '<tr><td>名称:</td><td>'+ data["files"][i]["file_path"].replace("/upload/file/upload/","") +'</td><td>类型:</td><td>'+ data["files"][i]["file_type"] +'</td></tr>'			        
+	};	
+    var vHtml = '<fieldset>' +
+    			'<legend>文件上传信息</legend>' +
+    				'<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;word-break:break-all; word-wrap:break-all;">'+
+    				  trHtml  +
+    				'</table>'
+			'</fieldset>'; 				
+    return vHtml;
+}	
+	 
+
+	$(document).ready(function() {
+	    var table = $('#taskTableList').DataTable( {
+/* 	        "ajax": "../ajax/data/objects.txt", */
+	        "columns": [
+	            {
+	                "className":      'details-control',
+	                "orderable":      false,
+	                "data":           null,
+	                "defaultContent": ''
+	            },
+	            { "data": "id" },
+	            { "data": "用途描述" },
+	            { "data": "文件路径" },
+	            { "data": "宿主"},
+	            { "data": "权限" },
+	            { "data": "状态" },
+	            { "data": "申请时间" },
+	            { "data": "操作" }       
+	        ],
+	        "order": [[8, 'asc']]
+	    } );    
+	    
+	    // Add event listener for opening and closing details
+	    $('#taskTableList tbody').on('click', 'td.details-control', function () {
+	    	var dataList = [];
+	        var tr = $(this).closest('tr');
+	        var row = table.row( tr );
+	        dbId = row.data()["id"];
+	        $.ajax({
+	            url : "/api/file/upload/"+dbId+"/",
+	            type : "GET",
+	            async : false,
+	            data : {"id":dbId},
+	            dataType : "json",
+	            success : function(result) {
+	            	dataList = result;
+	            }
+	        });	        
+/* 	    	console.log(dataList); */
+	        if ( row.child.isShown() ) {
+	            // This row is already open - close it
+	            row.child.hide();
+	            tr.removeClass('shown');
+	        }
+	        else {
+	            // Open this row
+	            row.child( format(dataList) ).show();
+	            tr.addClass('shown');
+	        }
+	    } );
+	} );	
+
+	
+		
+	
+</script>
+{% endblock %}

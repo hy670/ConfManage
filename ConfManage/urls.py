@@ -52,6 +52,7 @@ urlpatterns = [
 	url(r'^webssh/list/$', wssh.wssh_list),
 	url(r'^webssh/(?P<sid>[0-9]+)/$', wssh.wssh),
 	url(r'^conffile/list/$', conffile.conffile_list),
+	url(r'^conffile/diff/$', conffile.conffile_diff),
 
 
 ]
