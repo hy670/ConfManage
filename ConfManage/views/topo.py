@@ -8,22 +8,21 @@ import chardet
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
-from ConfManage.models import Assets, Network_Assets,Conffile
+from ConfManage.models import Assets, Network_Assets,Conffile,Line_Assets
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from ConfManage.utils.logger import logger
 
 
 @login_required(login_url='/login')
-def conffile_list(request):
+def topo_graph(request):
 	if request.method == 'GET':
-		assets = Network_Assets.objects.filter(is_master=True)
-		conffiledic = []
-		for conffile in Conffile.objects.all().order_by('-create_date'):
-			devname =Network_Assets.objects.get(id=conffile.network_assets_id).hostname
-			conffiledic.append({'id':conffile.id,'hostname':devname,'filename':conffile.filename,'date':conffile.create_date,
-								'file_detail':conffile.file_detail})
-		return render(request, 'filemanage/file_list.html', {'assets':assets, 'conffile':conffiledic})
+		nodelist =[]
+		for asset in Assets.objects.all():
+			if asset.assets_type in ['switch','route','firewall']:
+				net_asset = Network_Assets.objects.get(assets_id=asset.id)
+				nodelist.append({'name':net_asset.hostname,'type':asset.assets_type})
+		return render(request, 'topo/topo_graph.html',{'nodelist':nodelist})
 	elif request.method == 'POST':
 		if request.POST.get('op')=='add':
 			print(os.getcwd())
