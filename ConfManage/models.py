@@ -84,7 +84,7 @@ class Server_Assets(models.Model):
 class Network_Assets(models.Model):
 	assets = models.OneToOneField('Assets', on_delete=models.CASCADE)
 	hostname = models.CharField(max_length=100, blank=True, null=True)
-	ip = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name='管理ip')
+	ip = models.CharField( max_length=100, blank=True, null=True, verbose_name='管理ip')
 	username = models.CharField(max_length=100, blank=True, null=True)
 	passwd = models.CharField(max_length=100, blank=True, null=True)
 	sudo_passwd = models.CharField(max_length=100, blank=True, null=True)
@@ -97,6 +97,7 @@ class Network_Assets(models.Model):
 
 	class Meta:
 		db_table = 'confmanage_network_assets'
+		unique_together = ('ip', 'is_master')
 		permissions = (
 			("can_read_network_assets", "读取网络资产权限"),
 			("can_change_network_assets", "更改网络资产权限"),
@@ -126,9 +127,26 @@ class Line_Assets(models.Model):
 
 
 class Conffile(models.Model):
-
 	network_assets = models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
 	filename = models.TextField(max_length=150, blank=True, null=True, verbose_name='文件名称')
+	file_detail = models.TextField(max_length=200, blank=True, null=True, verbose_name='文件说明')
+	create_date = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		db_table = 'confmanage_conffile'
+		permissions = (
+			("can_read_conffile", "读取网络配置文件"),
+			("can_change_conffile", "更改网络配置文件"),
+			("can_add_conffile", "添加网络配置文件"),
+			("can_delete_conffile", "删除网络配置文件"),
+		)
+		verbose_name = '网络配置文件表'
+		verbose_name_plural = '网络配置文件表'
+
+
+class edges(models.Model):
+	fromdev = models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
+	todev = models.TextField(max_length=150, blank=True, null=True, verbose_name='文件名称')
 	file_detail = models.TextField(max_length=200, blank=True, null=True, verbose_name='文件说明')
 	create_date = models.DateTimeField(auto_now_add=True)
 

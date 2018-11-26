@@ -12,17 +12,20 @@ from ConfManage.models import Assets, Network_Assets,Conffile,Line_Assets
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from ConfManage.utils.logger import logger
+from ConfManage.utils import graph
 
 
 @login_required(login_url='/login')
 def topo_graph(request):
 	if request.method == 'GET':
 		nodelist =[]
-		for asset in Assets.objects.all():
-			if asset.assets_type in ['switch','route','firewall']:
-				net_asset = Network_Assets.objects.get(assets_id=asset.id)
-				nodelist.append({'name':net_asset.hostname,'type':asset.assets_type})
-		return render(request, 'topo/topo_graph.html',{'nodelist':nodelist})
+		edgelist =[]
+		for node in graph.topology.node:
+			nodelist.append({"id":node.name,"label":node.name})
+		for edge in graph.topology.edges:
+			edgelist.append({"from":edge[0].name,"to":edge[1].name})
+		topo ={"nodes":nodelist,"edges":edgelist}
+		return render(request, 'topo/topo_graph.html',{'topo':topo})
 	elif request.method == 'POST':
 		if request.POST.get('op')=='add':
 			print(os.getcwd())

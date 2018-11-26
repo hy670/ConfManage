@@ -1,13 +1,12 @@
 #!/usr/bin/env python  
 # _#_ coding:utf-8 _*_  
-import os, xlrd, time
+import os, xlrd
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from ConfManage.models import *
 from django.db.models import Count
 import json
-import IPy
 from django.contrib.auth.models import Group, User
 from ConfManage.utils import base
 from django.contrib.auth.decorators import permission_required
@@ -99,12 +98,14 @@ def assets_add(request, format=None):
 				Server_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
+				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		else:
 			try:
 				Network_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
+				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		return JsonResponse({'msg': "添加成功~", "code": '502'})
 
