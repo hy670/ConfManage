@@ -1,0 +1,111 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+<!-- ACE Editor -->   
+<script src="http://cdn.bootcss.com/ace/1.2.4/ace.js"></script>
+<script src="http://cdn.bootcss.com/ace/1.2.4/ext-language_tools.js"></script>
+<script src="http://cdn.bootcss.com/ace/1.2.4/ext-old_ie.js"></script>
+<script src="http://cdn.bootcss.com/ace/1.2.4/theme-monokai.js"></script> 
+<link href="/static/dist/css/bootstrap-multiselect.css" rel="stylesheet">
+<script src="/static/dist/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+<link href="/static/dist/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/dist/js/fileinput.js" type="text/javascript"></script>
+<style type="text/css"> 
+	td.details-control {
+	    background: url('/static/img/details_open.png') no-repeat center center;
+	    cursor: pointer;
+	}
+	tr.shown td.details-control {
+	    background: url('/static/img/details_close.png') no-repeat center center;
+	} 
+	#compile-editor {
+		/* position: absolute; */
+	width: 100%;
+	height: 400px;
+   }		
+</style>
+
+  <style type="text/css">
+        #tpContainer {
+            width: 1100px;
+            height: 550px;
+            border: 1px solid lightgray;
+        }
+    </style>
+
+{% endblock %}
+{% block page-content %}
+
+
+    <div id="page-wrapper">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-bar-chart-o fa-fw"></i> 网络拓扑图
+						</div>
+						<!-- /.panel-heading -->
+						<div class="panel-body">
+                            <div id="tpContainer" ></div>
+						</div>
+						<!-- /.panel-body -->
+					</div>
+
+				</div>
+				<!-- /.col-lg-8 -->
+<!-- 				<div class="col-lg-4">
+                    <div class="chat-panel panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-comments fa-fw"></i> ChatOps
+                        </div>
+                        /.panel-heading
+                        <div class="panel-body">
+                            <ul class="chat" id="chatTalk">
+                            </ul>
+                        </div>
+                        /.panel-body
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <input id="inputChatRoom" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-warning btn-sm" id="btnChatRoom">
+                                        Send
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        /.panel-footer
+                    </div>
+				</div> -->
+				<!-- /.col-lg-4 -->
+			</div>
+			<!-- /.row -->
+		</div>
+
+
+    <script src="/static/js/vis.min.js"></script>
+    <link href="/static/css/vis.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+       var nodes = new vis.DataSet({{ topo.nodes|safe}});
+
+      // 创建关系数组
+      var edges = new vis.DataSet({{ topo.edges|safe}});
+
+      // 创建一个网络
+      var container = document.getElementById('tpContainer');
+
+      // vis数据
+      var data = {
+          nodes: nodes,
+          edges: edges
+      };
+      var options = {
+      };
+
+      // 初始化网络
+      var network = new vis.Network(container, data, options);
+		</script>
+
+
+
+{% endblock %}

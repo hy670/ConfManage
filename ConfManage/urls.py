@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from ConfManage.views import (index, policy, users, assets,wssh,conffile)
+from ConfManage.views import (index, policy, users, assets, wssh, conffile, topo)
 
 urlpatterns = [
 	url(r'^$', index.index),
@@ -53,6 +53,6 @@ urlpatterns = [
 	url(r'^webssh/(?P<sid>[0-9]+)/$', wssh.wssh),
 	url(r'^conffile/list/$', conffile.conffile_list),
 	url(r'^conffile/diff/$', conffile.conffile_diff),
-
+	url(r'^topo_graph/$', topo.topo_graph),
 
 ]

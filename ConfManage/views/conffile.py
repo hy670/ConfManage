@@ -3,6 +3,8 @@
 from datetime import *
 import os
 import difflib
+
+import chardet
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -73,9 +75,12 @@ def conffile_diff(request):
 			file2 = request.POST.get('file2')
 			filename1 = os.path.join(os.getcwd() + '/conffile/', Conffile.objects.get(id=file1).filename)
 			filename2 = os.path.join(os.getcwd() + '/conffile/', Conffile.objects.get(id=file2).filename)
+			with open(filename1, "rb") as f:
+				data = f.read()
+				encode = chardet.detect(data)
 			try:
-				f1 = open(filename1, 'r', encoding='UTF-8')
-				f2 = open(filename2, 'r', encoding='UTF-8')
+				f1 = open(filename1, 'r', encoding=encode["encoding"])
+				f2 = open(filename2, 'r', encoding=encode["encoding"])
 			except IOError:
 				print("ERROR: 没有找到文件:或读取文件失败！")
 			d = difflib.HtmlDiff()
