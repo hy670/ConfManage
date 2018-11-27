@@ -170,7 +170,6 @@ class Server_Edges(models.Model):
 	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
 	dst = models.ForeignKey('Server_Assets',on_delete=models.CASCADE)
 	create_date = models.DateTimeField(auto_now_add=True)
-	update_date = models.DateTimeField(auto_now_add=True)
 	'''自定义添加只读权限-系统自带了add change delete三种权限'''
 
 	class Meta:

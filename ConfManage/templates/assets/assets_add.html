@@ -295,7 +295,6 @@
 		for (var i = 0; i < form.length; ++i) {
 			var name = form[i].name;
 			var value = form[i].value;
-			alert(name+":"+value);
 			var assetStart = name.indexOf("asset_");
 			if (assetStart==0 && value.length == 0 && assets.indexOf(name)>=0 ){
 				$("[name='"+ name +"']").parent().addClass("has-error");
