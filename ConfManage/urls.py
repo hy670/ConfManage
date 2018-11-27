@@ -54,5 +54,6 @@ urlpatterns = [
 	url(r'^conffile/list/$', conffile.conffile_list),
 	url(r'^conffile/diff/$', conffile.conffile_diff),
 	url(r'^topo_graph/$', topo.topo_graph),
+	url(r'^topo_edge/$', topo.topo_edge),
 
 ]

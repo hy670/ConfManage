@@ -2,92 +2,90 @@
 # _#_ coding:utf-8 _*_
 from datetime import *
 import os
-import difflib
-
-import chardet
-from django.db.models import Count
+from importlib import reload
 from django.http import JsonResponse
 from django.shortcuts import render
-from ConfManage.models import Assets, Network_Assets,Conffile,Line_Assets
+from ConfManage.models import Assets, Network_Assets,Server_Assets,Line_Assets,Edges,Server_Edges,Network_Edges,Line_Edges
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
+import ConfManage.utils.topograph
+from ConfManage.utils.topograph import Topo
 from ConfManage.utils.logger import logger
-from ConfManage.utils import graph
 
 
 @login_required(login_url='/login')
 def topo_graph(request):
 	if request.method == 'GET':
-		nodelist =[]
-		edgelist =[]
-		for node in graph.topology.node:
-			nodelist.append({"id":node.name,"label":node.name})
-		for edge in graph.topology.edges:
-			edgelist.append({"from":edge[0].name,"to":edge[1].name})
-		topo ={"nodes":nodelist,"edges":edgelist}
+		reload(ConfManage.utils.topograph)
+		from ConfManage.utils.topograph import Topo
+		nodelist = Topo.nodes
+		edgelist =Topo.edges
+		topo = {'nodes':nodelist,'edges':edgelist}
 		return render(request, 'topo/topo_graph.html',{'topo':topo})
 	elif request.method == 'POST':
-		if request.POST.get('op')=='add':
-			print(os.getcwd())
-			assets_id =request.POST.get('assets_name')
-			file_detail = request.POST.get('conffile_detail')
-			assets = Network_Assets.objects.get(id=assets_id)
-			f = request.FILES.get('import_file')
-			filename = assets.hostname+'-'+datetime.now().strftime("%Y%m%d%H%M%S")+"."+f.name.split(".")[-1]
-			filepath = os.path.join(os.getcwd() + '/conffile/', filename)
-			if os.path.isdir(os.path.dirname(filepath)) is not True: os.makedirs(os.path.dirname(filepath))
-			fobj = open(filepath, 'wb')
-			for chrunk in f.chunks():
-				fobj.write(chrunk)
-			fobj.close()
-			Conffile.objects.create(filename=filename, file_detail=file_detail, network_assets=assets)
-			return JsonResponse({'msg': "修改成功~", "code": '502'})
-		elif request.POST.get('op') == 'del':
-			id =request.POST.get('file_id')
-			f = Conffile.objects.get(id=id)
-			filename = os.path.join(os.getcwd() + '/conffile/', f.filename)
-			if os.path.exists(filename):
-				os.remove(filename)
-				f.delete()
-				return JsonResponse({'msg': "文件已删除~", "code": '502'})
-			else:
-				f.delete()
-				return JsonResponse({'msg': "文件已删除~", "code": '502'})
+		pass
 
 @login_required(login_url='/login')
-def conffile_diff(request):
+def topo_edge(request):
 	if request.method == 'GET':
-		assets = Network_Assets.objects.filter(is_master=True)
-		conffiledic = []
-		for conffile in Conffile.objects.all().order_by('-create_date'):
-			devname =Network_Assets.objects.get(id=conffile.network_assets_id).hostname
-			conffiledic.append({'id':conffile.id,'hostname':devname,'filename':conffile.filename,'date':conffile.create_date,
-								'file_detail':conffile.file_detail})
-		return render(request, 'filemanage/file_diff.html',{'assets':assets,'conffile':conffiledic})
+		return render(request, 'topo/topo_edge.html')
 	elif request.method == 'POST':
-		if request.POST.get('op')=='list_conffile':
-			assets_id =request.POST.get('file_id')
-			files_query = Conffile.objects.filter(network_assets=assets_id)
-			files = []
-			for file in files_query:
-				files.append({"conffile.id":file.id,"conffile.name":file.filename})
-			return JsonResponse({'msg': "修改成功~", "files":files})
-		elif request.POST.get('op')=='compare_conffile':
-			file1 = request.POST.get('file1')
-			file2 = request.POST.get('file2')
-			filename1 = os.path.join(os.getcwd() + '/conffile/', Conffile.objects.get(id=file1).filename)
-			filename2 = os.path.join(os.getcwd() + '/conffile/', Conffile.objects.get(id=file2).filename)
-			with open(filename1, "rb") as f:
-				data = f.read()
-				encode = chardet.detect(data)
+		if request.POST.get('op')=='type_select':
+			srcdic = []
+			dstdic = []
+			link_type = request.POST.get('link_type')
+			netasset = Network_Assets.objects.filter(is_master=True)
+			for net in netasset:
+				srcdic.append({'id':net.id,'name':net.hostname})
+			if link_type == "server":
+				serverasset = Server_Assets.objects.all()
+				for server in serverasset:
+					dstdic.append({'id': server.id, 'name': server.hostname})
+				return JsonResponse({'src':srcdic,'dst':dstdic})
+			elif link_type == "net":
+				return JsonResponse({'src': srcdic, 'dst': srcdic})
+			elif link_type == "line":
+				lineasset = Line_Assets.objects.filter(line_is_master=True)
+				for line in lineasset:
+					dstdic.append({'id': line.id, 'name': line.line_name})
+				return JsonResponse({'src': srcdic, 'dst': dstdic})
+		elif request.POST.get('op')=='add_link':
+			link_type = request.POST.get('link_type')
+			src = request.POST.get('src')
+			dst = request.POST.get('dst')
 			try:
-				f1 = open(filename1, 'r', encoding=encode["encoding"])
-				f2 = open(filename2, 'r', encoding=encode["encoding"])
-			except IOError:
-				print("ERROR: 没有找到文件:或读取文件失败！")
-			d = difflib.HtmlDiff()
-			result = d.make_file(f1.readlines(), f2.readlines())
-			return JsonResponse({'msg': "修改成功~", "result": result})
+				srcasset = Network_Assets.objects.get(id=src)
+			except Exception as ex:
+				print(ex)
+			try:
+				edge = Edges.objects.create(edges_type=link_type)
+			except Exception as ex:
+				print(ex)
+			if link_type == "server":
+				dstasset =Server_Assets.objects.get(id=dst)
+				try:
+					Server_Edges.objects.create(Edges=edge,src=srcasset,dst=dstasset)
+				except Exception as ex:
+					print(ex)
+					edge.delete()
+				return JsonResponse({'msg':'添加成功'})
+			elif link_type == "net":
+				dstasset = Network_Assets.objects.get(id=dst)
+				try:
+					Network_Edges.objects.create(Edges=edge, src=srcasset, dst=dstasset)
+				except Exception as ex:
+					print(ex)
+					edge.delete()
+				return JsonResponse({'msg': '添加成功'})
+			elif link_type == "line":
+				dstasset = Line_Assets.objects.get(id=dst)
+				try:
+					Line_Edges.objects.create(Edges=edge, src=srcasset, dst=dstasset)
+				except Exception as ex:
+					print(ex)
+					edge.delete()
+				return JsonResponse({'msg': '添加成功'})
+
 
 
 
