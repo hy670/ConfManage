@@ -84,7 +84,7 @@ class Server_Assets(models.Model):
 class Network_Assets(models.Model):
 	assets = models.OneToOneField('Assets', on_delete=models.CASCADE)
 	hostname = models.CharField(max_length=100, blank=True, null=True)
-	ip = models.CharField(unique=True, max_length=100, blank=True, null=True, verbose_name='管理ip')
+	ip = models.CharField( max_length=100, blank=True, null=True, verbose_name='管理ip')
 	username = models.CharField(max_length=100, blank=True, null=True)
 	passwd = models.CharField(max_length=100, blank=True, null=True)
 	sudo_passwd = models.CharField(max_length=100, blank=True, null=True)
@@ -97,6 +97,7 @@ class Network_Assets(models.Model):
 
 	class Meta:
 		db_table = 'confmanage_network_assets'
+		unique_together = ('ip', 'is_master')
 		permissions = (
 			("can_read_network_assets", "读取网络资产权限"),
 			("can_change_network_assets", "更改网络资产权限"),
@@ -126,7 +127,6 @@ class Line_Assets(models.Model):
 
 
 class Conffile(models.Model):
-
 	network_assets = models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
 	filename = models.TextField(max_length=150, blank=True, null=True, verbose_name='文件名称')
 	file_detail = models.TextField(max_length=200, blank=True, null=True, verbose_name='文件说明')
@@ -142,3 +142,85 @@ class Conffile(models.Model):
 		)
 		verbose_name = '网络配置文件表'
 		verbose_name_plural = '网络配置文件表'
+
+
+class Edges(models.Model):
+	edges_type_choices = (
+		('server', u'服务器'),
+		('net', u'网络设备'),
+		('line', u'线路'),
+	)
+	edges_type = models.CharField(choices=edges_type_choices, max_length=100, default='net', verbose_name='链路类型')
+	create_date = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		db_table = 'confmanage_edges'
+		permissions = (
+			("can_read_edges", "读取链路信息"),
+			("can_change_edges", "更改链路"),
+			("can_add_edges", "添加链路"),
+			("can_delete_edges", "删除链路"),
+		)
+		verbose_name = '链路配置表'
+		verbose_name_plural = '链路配置表'
+
+
+class Server_Edges(models.Model):
+	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
+	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
+	dst = models.ForeignKey('Server_Assets',on_delete=models.CASCADE)
+	create_date = models.DateTimeField(auto_now_add=True)
+	update_date = models.DateTimeField(auto_now_add=True)
+	'''自定义添加只读权限-系统自带了add change delete三种权限'''
+
+	class Meta:
+		db_table = 'confmanage_server_edges'
+		unique_together = ('src', 'dst')
+		permissions = (
+			("can_read_server_edges", "读取服务器链路"),
+			("can_change_server_edges", "更改服务器链路"),
+			("can_add_server_edges", "添加服务器链路"),
+			("can_delete_server_edges", "删除服务器链路"),
+		)
+		verbose_name = '服务器链路表'
+		verbose_name_plural = '服务器链路表'
+
+
+class Network_Edges(models.Model):
+	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
+	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE,related_name='src')
+	dst = models.ForeignKey('Network_Assets',on_delete=models.CASCADE,related_name='dst')
+	create_date = models.DateTimeField(auto_now_add=True)
+	'''自定义添加只读权限-系统自带了add change delete三种权限'''
+
+	class Meta:
+		db_table = 'confmanage_network_edges'
+		unique_together = ('src', 'dst')
+		permissions = (
+			("can_read_network_edges", "读取网络链路"),
+			("can_change_network_edges", "更改网络链路"),
+			("can_add_network_edges", "添加网络链路"),
+			("can_delete_network_edges", "删除网络链路"),
+		)
+		verbose_name = '网络链路表'
+		verbose_name_plural = '网络链路表'
+
+
+class Line_Edges(models.Model):
+	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
+	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
+	dst = models.ForeignKey('Line_Assets',on_delete=models.CASCADE)
+	create_date = models.DateTimeField(auto_now_add=True)
+	'''自定义添加只读权限-系统自带了add change delete三种权限'''
+
+	class Meta:
+		db_table = 'confmanage_line_edges'
+		unique_together = ('src', 'dst')
+		permissions = (
+			("can_read_line_edges", "读取线路链路"),
+			("can_change_line_edges", "更改线路链路"),
+			("can_add_line_edges", "添加线路链路"),
+			("can_delete_line_edges", "删除线路链路"),
+		)
+		verbose_name = '线路链路表'
+		verbose_name_plural = '线路链路表'

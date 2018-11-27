@@ -99,12 +99,14 @@ def assets_add(request, format=None):
 				Server_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
+				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		else:
 			try:
 				Network_Assets.objects.create(**dic)
 			except Exception as ex:
 				print(ex)
+				assets.delete()
 				return JsonResponse({'msg': "添加失败~", "code": '502'})
 		return JsonResponse({'msg': "添加成功~", "code": '502'})
 

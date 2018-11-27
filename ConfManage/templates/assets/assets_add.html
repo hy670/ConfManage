@@ -161,7 +161,7 @@
                                                 <div class="form-group">
 												 <label class="col-sm-2 control-label">主备状态</label>
 												 <div class="col-sm-6">
-												 	<select class="form-control center" id="net_is_master" >
+												 	<select class="form-control center" id="net_is_master" name="net_is_master">
                                                         <option selected="selected" value="">请选择</option>
                                                         <option value="True" name="assets_type">主</option>
                                                         <option value="False" name="assets_type">备</option>
@@ -295,6 +295,7 @@
 		for (var i = 0; i < form.length; ++i) {
 			var name = form[i].name;
 			var value = form[i].value;
+			alert(name+":"+value);
 			var assetStart = name.indexOf("asset_");
 			if (assetStart==0 && value.length == 0 && assets.indexOf(name)>=0 ){
 				$("[name='"+ name +"']").parent().addClass("has-error");
@@ -307,7 +308,7 @@
 			
 		};
 		var asset_data = getFormData(document.getElementById('addAssets'),'');
-		alert(asset_data)
+
 		var btnObj = $(obj);
 		if (asset_data.assets.assets_type=="server" || asset_data.assets.assets_type=="vmser"){
 			var assets_type = 'server';
@@ -316,7 +317,7 @@
 			var assets_type = 'net';
 		}
         var test = JSON.stringify({'assets_type':assets_type,'data':asset_data});
-		alert(test)
+		alert()
 		$.ajax({
 			dataType: "JSON",
 			url:'/assets_add/', //请求地址
