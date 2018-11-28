@@ -1,7 +1,7 @@
 # -*- coding:utf8 -*-
 import IPy
 import networkx
-from ConfManage.utils import usg, f1030, nsg5000, devicebase
+from ConfManage.utils import usg4000ep, f1030, nsg5000, devicebase
 from ConfManage.utils.regularlist import RegularList
 
 
@@ -207,8 +207,6 @@ def regularcheck(checkfirewall):
 	return policymiclist
 
 
-
-
 def anychangenet(srcdev, passdev):
 	srcaddrlist = []
 
@@ -222,13 +220,13 @@ def anychangenet(srcdev, passdev):
 	return srcaddrlist
 
 
-usg100 = usg.USG('usg100')
+usg100 = usg4000ep.USG4000EP('usg100')
 
 f1030 = f1030.F1030('f1030')
 nsg5000 = nsg5000.NSG5000('nsg5000')
 
 # 创建防火墙列表
-firewalllist = [usg, f1030, nsg5000]
+firewalllist = [usg4000ep, f1030, nsg5000]
 hxsw = devicebase.EthSW('hxsw')
 
 # 创建网络节点并添加至网络节点列表

@@ -157,9 +157,9 @@ class PolicyMic:
 		print('  ' + str(self.service))
 
 
-class USG:
+class USG4000EP:
 	def __init__(self, name=""):
-		self.name = "usg100"
+		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['internet-internetaddr', 'intranet-nsg5000']
 		self.addrlist = []
