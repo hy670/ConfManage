@@ -6,7 +6,7 @@ from ConfManage.models import *
 
 
 def isnetaddr(addr):
-	for netaddr in netaddrlist:
+	for netaddr in Topo.netaddrlist:
 		if addr in IPy.IP(netaddr.netaddr):
 			return True
 	if IPy.IP(addr).iptype() == 'PUBLIC':
@@ -17,11 +17,11 @@ def isnetaddr(addr):
 		return False
 
 def iplocate(addr):
-	for netaddr in netaddrlist:
+	for netaddr in Topo.netaddrlist:
 		if addr in IPy.IP(netaddr.netaddr):
 			return netaddr
 	if IPy.IP(addr).iptype() == 'PUBLIC':
-		return internet
+		return Topo.internet
 	else:
 		return False
 
@@ -43,7 +43,7 @@ def iszmbiepolicy(checkfirewall):
 			for port in checkfirewall.portlink:
 				if checkpoliy.srceth in port:
 					srcdev = port.split('-')[1]
-			for i in topology.node:
+			for i in Topo.nxtopology.nodes:
 				if i.name == srcdev:
 					srcnetlist = anychangenet(i, checkfirewall)
 		else:
@@ -52,7 +52,7 @@ def iszmbiepolicy(checkfirewall):
 			for port in checkfirewall.portlink:
 				if checkpoliy.dsteth in port:
 					dstdev = port.split('-')[1]
-			for i in topology.node:
+			for i in Topo.nxtopology.nodes:
 				if i.name == dstdev:
 					dstnetlist = anychangenet(i, checkfirewall)
 		else:
@@ -60,7 +60,7 @@ def iszmbiepolicy(checkfirewall):
 		if len(dstnetlist) > 0 and len(srcnetlist) > 0:
 			for srcnet in srcnetlist:
 				for dstnet in dstnetlist:
-					routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
+					routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 					iscontent = 0
 					# 遍历路径设备列表
 					for i in range(len(routelist)):
@@ -120,17 +120,17 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	dstnet = ""
 	srcnet = ""
 	if 	dstaddr == "0.0.0.0" or dstaddr == "0.0.0.0/0":
-		dstnet = internet
+		dstnet = Topo.internet
 	else:
-		for i in netaddrlist:
+		for i in Topo.netaddrlist:
 			if 1 == IPy.IP(i.netaddr).overlaps(dstaddr):
 				dstnet = i
 				break
 
 	if srcaddr == "0.0.0.0" or srcaddr == "0.0.0.0/0":
-		srcnet = internet
+		srcnet = Topo.internet
 	else:
-		for i in netaddrlist:
+		for i in Topo.netaddrlist:
 			if 1 == IPy.IP(i.netaddr).overlaps(srcaddr):
 				srcnet = i
 				break
@@ -138,11 +138,13 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	if not srcnet or not dstnet:
 		return False
 	else:
-		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
+		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 	# 遍历路径设备列表
+	print(routelist)
 	for i in range(len(routelist)):
 		searchpolicylist = []
 		if routelist[i].type == 'firewall':
+			print(routelist[i].name)
 			# 根据上下游设备 确定检测策略经过本机的安全域或端口
 			srceth = ''
 			dsteth = ''
@@ -151,7 +153,8 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 					srceth = port.split('-')[0]
 				if routelist[i + 1].name in port:
 					dsteth = port.split('-')[0]
-
+			print(srceth)
+			print(dsteth)
 			# 遍历主机原子策略表，与经过的安全域策略比较是否有相应的策略
 			for j in routelist[i].policymiclist:
 				if j.srceth == srceth and j.dsteth == dsteth:
@@ -178,7 +181,7 @@ def regularcheck(checkfirewall):
 	for i in RegularList.regularlist:
 		srcnet = iplocate(i['srcaddr'])
 		dstnet = iplocate(i['dstaddr'])
-		routelist = networkx.shortest_path(topology, source=srcnet, target=dstnet)
+		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 		srceth = ''
 		dsteth = ''
 
@@ -205,18 +208,20 @@ def regularcheck(checkfirewall):
 def anychangenet(srcdev, passdev):
 	srcaddrlist = []
 
-	for i in netaddrlist:
-		routelist = networkx.shortest_path(topology, source=srcdev, target=i)
+	for i in  Topo.netaddrlist:
+		routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=i)
 		if passdev not in routelist:
 			srcaddrlist.append(i)
-	routelist = networkx.shortest_path(topology, source=srcdev, target=internet)
+	routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=internet)
 	if passdev not in routelist:
-		srcaddrlist.append(internet)
+		srcaddrlist.append(Topo.internet)
 	return srcaddrlist
 
 class Topo:
 	nodes =[]
 	edges =[]
+	netaddrlist = []
+	internet =""
 	nxtopology = networkx.Graph()
 	netassets = Network_Assets.objects.filter(is_master=True)
 	serassets = Server_Assets.objects.all()
@@ -237,10 +242,16 @@ class Topo:
 			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
 		nodes.append({'id': netasset.hostname, 'label': netasset.hostname})
 	for serasset in serassets:
-		nxtopology.add_node(devicebase.NetAddr(serasset.hostname,serasset.ip))
+		netdev = devicebase.NetAddr(serasset.hostname, serasset.ip)
+		netaddrlist.append(netdev)
+		nxtopology.add_node(netdev)
 		nodes.append({'id': serasset.hostname, 'label': serasset.hostname})
 	for lineasset in lineassets:
-		nxtopology.add_node(devicebase.NetAddr(lineasset.line_name, lineasset.line_ip))
+		netdev = devicebase.NetAddr(lineasset.line_name, lineasset.line_ip)
+		if netdev.netaddr == "0.0.0.0" or netdev.netaddr == "0.0.0.0/0":
+			internet =netdev
+		netaddrlist.append(netdev)
+		nxtopology.add_node(netdev)
 		nodes.append({'id': lineasset.line_name, 'label': lineasset.line_name})
 	netedges =Network_Edges.objects.all()
 	seredges = Server_Edges.objects.all()
@@ -248,14 +259,32 @@ class Topo:
 	for netedge in netedges:
 		src = netedge.src.hostname
 		dst = netedge.dst.hostname
+		for nxnode in nxtopology.nodes:
+			if nxnode.name == src:
+				nxsrc = nxnode
+			if nxnode.name == dst:
+				nxdst = nxnode
+		nxtopology.add_edge(nxsrc,nxdst)
 		edges.append({'from': src, 'to': dst})
 	for seredge in seredges:
 		src = seredge.src.hostname
 		dst = seredge.dst.hostname
+		for nxnode in nxtopology.nodes:
+			if nxnode.name == src:
+				nxsrc = nxnode
+			if nxnode.name == dst:
+				nxdst = nxnode
+		nxtopology.add_edge(nxsrc,nxdst)
 		edges.append({'from': src, 'to': dst})
 	for lineedge in lineedges:
 		src = lineedge.src.hostname
 		dst = lineedge.dst.line_name
+		for nxnode in nxtopology.nodes:
+			if nxnode.name == src:
+				nxsrc = nxnode
+			if nxnode.name == dst:
+				nxdst = nxnode
+		nxtopology.add_edge(nxsrc,nxdst)
 		edges.append({'from': src, 'to': dst})
 
 

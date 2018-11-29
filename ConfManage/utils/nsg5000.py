@@ -99,7 +99,7 @@ class NSG5000:
 	def __init__(self, name=""):
 		self.name = name
 		self.type = 'firewall'
-		self.portlink = ['extranet-usg100', 'intranet-hxsw']
+		self.portlink = ['extranet-WANFW-USG6000EP-M', 'intranet-HXSW-01']
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []

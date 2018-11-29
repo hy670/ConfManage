@@ -161,7 +161,7 @@ class USG4000EP:
 	def __init__(self, name=""):
 		self.name = name
 		self.type = 'firewall'
-		self.portlink = ['internet-internetaddr', 'intranet-nsg5000']
+		self.portlink = ['internet-互联网电信', 'intranet-WWFW-M']
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []
