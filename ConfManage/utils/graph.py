@@ -1,8 +1,7 @@
 # -*- coding:utf8 -*-
 import IPy
 import networkx
-from ConfManage.utils import usg, f1030, nsg5000, devicebase
-import matplotlib.pyplot as plt
+from ConfManage.utils import usg4000ep, f1030, nsg5000, devicebase
 from ConfManage.utils.regularlist import RegularList
 
 
@@ -31,8 +30,6 @@ def iplocate(addr):
 def iszmbiepolicy(checkfirewall):
 	zmbiepolicylist = []
 
-	print('begin' + checkfirewall.name + 'policycheck')
-	print(checkfirewall.name + '######---独立存在的策略---######')
 	# 遍历需要检测防火墙的原子策略表
 	for checkpoliy in checkfirewall.policymiclist:
 		srcdev = ''
@@ -210,50 +207,6 @@ def regularcheck(checkfirewall):
 	return policymiclist
 
 
-
-def showgraph():
-	labels = {}
-	labels[usg100] = 'usg100'
-	labels[f1030] = 'f1030'
-	labels[wzaddr] = 'wzaeddr'
-	labels[nsg5000] = 'nsg5000'
-	labels[jtaddr] = 'jtaddr'
-	labels[hxsw] = 'hxsw'
-	labels[webaddr] = 'webaddr'
-	labels[dbaddr] = 'dbaddr'
-	labels[appaddr] = 'appaddr'
-	labels[dbaddr] = 'dbaddr'
-	labels[internet] = 'internet'
-	labels[testaddr] = 'testaddr'
-
-	# 获取graph中的边权重
-	# edge_labels = networkx.get_edge_attributes(topology, 'weight')
-	# print('weight of all edges:', edge_labels)
-
-	# 生成节点位置
-	pos = networkx.spring_layout(topology)
-
-	# print('position of all nodes:', pos)
-
-	# 把节点画出来
-	networkx.draw_networkx_nodes(topology, pos, node_color='g', node_size=500, alpha=0.8)
-
-	# 把边画出来
-	networkx.draw_networkx_edges(topology, pos, width=1.0, alpha=0.5, edge_color='b')
-
-	# 把节点的标签画出来
-	networkx.draw_networkx_labels(topology, pos, labels, font_size=16)
-
-	# 把边权重画出来
-	# networkx.draw_networkx_edge_labels(topology, pos, edge_labels)
-
-	plt.axis('on')
-	# 去掉坐标刻度
-	plt.xticks([])
-	plt.yticks([])
-	plt.show()
-
-
 def anychangenet(srcdev, passdev):
 	srcaddrlist = []
 
@@ -267,13 +220,13 @@ def anychangenet(srcdev, passdev):
 	return srcaddrlist
 
 
-usg100 = usg.USG('usg100')
+usg100 = usg4000ep.USG4000EP('usg100')
 
 f1030 = f1030.F1030('f1030')
 nsg5000 = nsg5000.NSG5000('nsg5000')
 
 # 创建防火墙列表
-firewalllist = [usg, f1030, nsg5000]
+firewalllist = [usg4000ep, f1030, nsg5000]
 hxsw = devicebase.EthSW('hxsw')
 
 # 创建网络节点并添加至网络节点列表

@@ -30,9 +30,9 @@
 								<div class="col-sm-2">
 									 <select class="form-control center" id="selAssetsType" >
 									 		<option selected="selected" value="">请选择设备</option>
-											<option value="usg" name="assets_type">USG</option>
-											<option value="f1030" name="assets_type">F1030</option>
-											<option value="nsg" name="assets_type">NSG</option>
+                                           {% for firewall in firewalllist %}
+                                               <option value={{ firewall.name }} name="assets_type">{{ firewall.name }}</option>
+                                           {% endfor %} }
 									</select>
 								</div>
                                 <div class="col-sm-1">

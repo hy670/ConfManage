@@ -53,6 +53,9 @@ def topo_edge(request):
 			link_type = request.POST.get('link_type')
 			src = request.POST.get('src')
 			dst = request.POST.get('dst')
+			print(link_type)
+			print(src)
+			print(dst)
 			try:
 				srcasset = Network_Assets.objects.get(id=src)
 			except Exception as ex:
