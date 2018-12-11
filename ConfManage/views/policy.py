@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy,regularcheck
 from ConfManage.utils.is_ip import is_ip
 from ConfManage.utils.topograph import Topo,searchpolicy
-from ConfManage.models import Applied_policy
+from ConfManage.models import Applied_policy,Network_Assets,Assets
 
 
 @login_required(login_url='/login')
@@ -30,6 +30,32 @@ def policy_list(request):
 									 'port': i.service['port']}
 					policydiclist.append(temppolicydic)
 				return JsonResponse({'msg': '200', 'policy': policydiclist})
+
+@login_required(login_url='/login')
+def policy_zone(request):
+	if request.method == "GET":
+		firewalllist = []
+		nodeslist = []
+		for nxnode in Topo.nxtopology.nodes:
+			if nxnode.type == "firewall":
+				firewalllist.append({'name': nxnode.name})
+			nodeslist.append({'name': nxnode.name})
+		return render(request, 'policy/policy_zone.html',{'nodes':nodeslist,'firewalllist':firewalllist})
+	elif request.method == "POST":
+		nodelist = []
+		if request.POST.get('op') == 'add_policy_zone':
+			asset = request.POST.get('link_type')
+			zone = request.POST.get('zone')
+			dst_asset = request.POST.get('asset_name')
+			netasset = Network_Assets.objects.get(hostname=asset)
+			print(zone)
+			print(asset)
+			print(dst_asset)
+			print(netasset)
+			for nxnode in Topo.nxtopology.nodes:
+				if nxnode.name == dst_asset:
+					assets_type =nxnode.type
+					print(assets_type)
 
 @login_required(login_url='/login')
 def policy_search(request):
@@ -67,19 +93,19 @@ def policy_search(request):
 @login_required(login_url='/login')
 def policy_redundancy_check(request):
 	if request.method == "GET":
-		return render(request, 'policy/policy_redundancy_check.html')
+		firewalllist = []
+		for nxnode in Topo.nxtopology.nodes:
+			if nxnode.type == "firewall":
+				firewalllist.append({'name': nxnode.name})
+		return render(request, 'policy/policy_redundancy_check.html',{'firewalllist':firewalllist})
 	elif request.method == "POST":
 		policydiclist = []
 		dev = request.POST.get('dev')
-		if dev == 'usg':
-			policydiclist = usg100.redundantcheck()
-			return JsonResponse({'msg': '200', 'policy': policydiclist})
-		elif dev == 'f1030':
-			policydiclist = f1030.redundantcheck()
-			return JsonResponse({'msg': '200', 'policy': policydiclist})
-		elif dev == 'nsg':
-			policydiclist = nsg5000.redundantcheck()
-			return JsonResponse({'msg': '200', 'policy': policydiclist})
+		for nxnode in Topo.nxtopology.nodes:
+			if  dev == nxnode.name:
+				policydiclist = nxnode.redundantcheck()
+				return JsonResponse({'msg': '200', 'policy': policydiclist})
+
 
 @login_required(login_url='/login')
 def policy_iszmbie_check(request):

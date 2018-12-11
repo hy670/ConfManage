@@ -40,6 +40,7 @@ urlpatterns = [
 	url(r'^assets/batch/delete/', assets.assets_delete),
 	url(r'^assets/batch/dumps/', assets.assets_dumps),
 	url(r'^assets/groups/(?P<id>[0-9]+)/$', assets.assets_groups),
+	url(r'^policy_zone/', policy.policy_zone),
 	url(r'^policy_list/', policy.policy_list),
 	url(r'^policy_search/', policy.policy_search),
 	url(r'^policy_redundancy_check/', policy.policy_redundancy_check),

@@ -223,3 +223,22 @@ class Line_Edges(models.Model):
 		)
 		verbose_name = '线路链路表'
 		verbose_name_plural = '线路链路表'
+class Firewall_Policy_Zone(models.Model):
+	Network_Assets = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
+	zone = models.CharField(max_length=100, blank=True, null=True)
+	assets_type = models.CharField(max_length=100, blank=True, null=True)
+	assets_name = models.CharField(max_length=100, blank=True, null=True)
+	create_date = models.DateTimeField(auto_now_add=True)
+	'''自定义添加只读权限-系统自带了add change delete三种权限'''
+
+	class Meta:
+		db_table = 'confmanage_firewall_policy_zone'
+		unique_together = ('zone', 'assets_name')
+		permissions = (
+			("can_read_firewall_policy_zone", "读取防火墙安全域列表"),
+			("can_change_firewall_policy_zone", "更改防火墙安全域列表"),
+			("can_add_firewall_policy_zone", "添加防火墙安全域列表"),
+			("can_delete_firewall_policy_zone", "删除防火墙安全域列表"),
+		)
+		verbose_name = '防火墙安全域列表'
+		verbose_name_plural = '防火墙安全域列表'

@@ -212,7 +212,7 @@ def anychangenet(srcdev, passdev):
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=i)
 		if passdev not in routelist:
 			srcaddrlist.append(i)
-	routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=internet)
+	routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=Topo.internet)
 	if passdev not in routelist:
 		srcaddrlist.append(Topo.internet)
 	return srcaddrlist
@@ -236,10 +236,13 @@ class Topo:
 				nxtopology.add_node(nsg5000.NSG5000(netasset.hostname))
 			elif asset.model == 'F1030':
 				nxtopology.add_node(f1030.F1030(netasset.hostname))
+			else:
+				nxtopology.add_node(devicebase.EthSW(netasset.hostname))
 		elif asset.assets_type == 'switch':
 			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
 		elif asset.assets_type == 'route':
 			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+
 		nodes.append({'id': netasset.hostname, 'label': netasset.hostname})
 	for serasset in serassets:
 		netdev = devicebase.NetAddr(serasset.hostname, serasset.ip)
@@ -259,6 +262,8 @@ class Topo:
 	for netedge in netedges:
 		src = netedge.src.hostname
 		dst = netedge.dst.hostname
+		nxsrc = ""
+		nxdst = ""
 		for nxnode in nxtopology.nodes:
 			if nxnode.name == src:
 				nxsrc = nxnode
@@ -269,6 +274,8 @@ class Topo:
 	for seredge in seredges:
 		src = seredge.src.hostname
 		dst = seredge.dst.hostname
+		nxsrc = ""
+		nxdst = ""
 		for nxnode in nxtopology.nodes:
 			if nxnode.name == src:
 				nxsrc = nxnode
@@ -279,6 +286,8 @@ class Topo:
 	for lineedge in lineedges:
 		src = lineedge.src.hostname
 		dst = lineedge.dst.line_name
+		nxsrc = ""
+		nxdst = ""
 		for nxnode in nxtopology.nodes:
 			if nxnode.name == src:
 				nxsrc = nxnode
