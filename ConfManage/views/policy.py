@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy,regularcheck
 from ConfManage.utils.is_ip import is_ip
 from ConfManage.utils.topograph import Topo,searchpolicy
-from ConfManage.models import Applied_policy,Network_Assets,Assets
+from ConfManage.models import Applied_policy,Network_Assets,Assets,Server_Assets,Line_Assets
 
 
 @login_required(login_url='/login')
@@ -48,15 +48,24 @@ def policy_zone(request):
 			zone = request.POST.get('zone')
 			dst_asset = request.POST.get('asset_name')
 			netasset = Network_Assets.objects.get(hostname=asset)
+			assets_type = ''
+			net_asset = Network_Assets.objects.all()
+			for asset in net_asset:
+				if asset.hostname == dst_asset:
+					assets_type ='network'
+			if not assets_type :
+				ser_asset = Server_Assets.objects.all()
+				for asset in ser_asset:
+					if asset.hostname == dst_asset:
+						assets_type = 'server'
+			if not assets_type:
+				line_asset = Line_Assets.objects.all()
+				for asset in line_asset:
+					if asset.line_name == dst_asset:
+						assets_type = 'line'
 			print(zone)
-			print(asset)
+			print(assets_type)
 			print(dst_asset)
-			print(netasset)
-			for nxnode in Topo.nxtopology.nodes:
-				if nxnode.name == dst_asset:
-					assets_type =nxnode.type
-					print(assets_type)
-
 @login_required(login_url='/login')
 def policy_search(request):
 	if request.method == "GET":
