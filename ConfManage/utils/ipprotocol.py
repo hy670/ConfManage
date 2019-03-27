@@ -3,7 +3,7 @@
 
 class IpProtocol:
 	ipprotocallist =[]
-	f = open('./ConfManage/utils/resource/ip-protocol', 'r', encoding="UTF-8")
+	f = open('E:/project/ConfManage/ConfManage/utils/resource/ip-protocol', 'r', encoding="UTF-8")
 	for line in f:
 		key = line.strip().split(' ',2)
 		if len(key)>2:

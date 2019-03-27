@@ -5,31 +5,32 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy,regularcheck
+from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy, regularcheck
 from ConfManage.utils.is_ip import is_ip
-from ConfManage.utils.topograph import Topo,searchpolicy
-from ConfManage.models import Applied_policy,Network_Assets,Assets,Server_Assets,Line_Assets
+from ConfManage.utils.topograph import Topo, searchpolicy
+from ConfManage.models import Applied_policy, Network_Assets, Assets, Server_Assets, Line_Assets
 
 
 @login_required(login_url='/login')
 def policy_list(request):
 	if request.method == "GET":
-		firewalllist =[]
+		firewalllist = []
 		for nxnode in Topo.nxtopology.nodes:
 			if nxnode.type == "firewall":
-				firewalllist.append({'name':nxnode.name})
-		return render(request, 'policy/policy_list.html',{'firewalllist':firewalllist})
+				firewalllist.append({'name': nxnode.name})
+		return render(request, 'policy/policy_list.html', {'firewalllist': firewalllist})
 	elif request.method == "POST":
 		policydiclist = []
 		dev = request.POST.get('dev')
 		for nxnode in Topo.nxtopology.nodes:
-			if  dev == nxnode.name:
+			if dev == nxnode.name:
 				for i in nxnode.policymiclist:
 					temppolicydic = {'dev': nxnode.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-									 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-									 'port': i.service['port']}
+					                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+					                 'port': i.service['port']}
 					policydiclist.append(temppolicydic)
 				return JsonResponse({'msg': '200', 'policy': policydiclist})
+
 
 @login_required(login_url='/login')
 def policy_zone(request):
@@ -40,7 +41,7 @@ def policy_zone(request):
 			if nxnode.type == "firewall":
 				firewalllist.append({'name': nxnode.name})
 			nodeslist.append({'name': nxnode.name})
-		return render(request, 'policy/policy_zone.html',{'nodes':nodeslist,'firewalllist':firewalllist})
+		return render(request, 'policy/policy_zone.html', {'nodes': nodeslist, 'firewalllist': firewalllist})
 	elif request.method == "POST":
 		nodelist = []
 		if request.POST.get('op') == 'add_policy_zone':
@@ -52,8 +53,8 @@ def policy_zone(request):
 			net_asset = Network_Assets.objects.all()
 			for asset in net_asset:
 				if asset.hostname == dst_asset:
-					assets_type ='network'
-			if not assets_type :
+					assets_type = 'network'
+			if not assets_type:
 				ser_asset = Server_Assets.objects.all()
 				for asset in ser_asset:
 					if asset.hostname == dst_asset:
@@ -66,6 +67,8 @@ def policy_zone(request):
 			print(zone)
 			print(assets_type)
 			print(dst_asset)
+
+
 @login_required(login_url='/login')
 def policy_search(request):
 	if request.method == "GET":
@@ -93,11 +96,17 @@ def policy_search(request):
 			for key in tempdic:
 				if len(tempdic[key]) > 0:
 					for i in tempdic[key]:
-						temppolicydic = {'dev': key, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-										 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-										 'port': i.service['port']}
+						temppolicydic = {'dev': key,
+						                 'id': i.policyid,
+						                 'srceth': i.srceth,
+						                 'dsteth': i.dsteth,
+						                 'srcaddr': i.srcaddr,
+						                 'dstaddr': i.dstaddr,
+						                 'protocol': i.service['protocol'],
+						                 'port': i.service['port']}
 						policydiclist.append(temppolicydic)
 			return JsonResponse({'policy': policydiclist, "code": '400'})
+
 
 @login_required(login_url='/login')
 def policy_redundancy_check(request):
@@ -106,12 +115,12 @@ def policy_redundancy_check(request):
 		for nxnode in Topo.nxtopology.nodes:
 			if nxnode.type == "firewall":
 				firewalllist.append({'name': nxnode.name})
-		return render(request, 'policy/policy_redundancy_check.html',{'firewalllist':firewalllist})
+		return render(request, 'policy/policy_redundancy_check.html', {'firewalllist': firewalllist})
 	elif request.method == "POST":
 		policydiclist = []
 		dev = request.POST.get('dev')
 		for nxnode in Topo.nxtopology.nodes:
-			if  dev == nxnode.name:
+			if dev == nxnode.name:
 				policydiclist = nxnode.redundantcheck()
 				return JsonResponse({'msg': '200', 'policy': policydiclist})
 
@@ -133,12 +142,13 @@ def policy_iszmbie_check(request):
 			policydiclist = iszmbiepolicy(nsg5000)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 
+
 @login_required(login_url='/login')
 def policy_regular_list(request):
 	if request.method == "GET":
-		regularlist=Applied_policy.objects.all()
+		regularlist = Applied_policy.objects.all()
 		return render(request, 'policy/policy_regular_list.html',
-		              {'regularlist':regularlist})
+		              {'regularlist': regularlist})
 	elif request.method == "POST":
 		option = request.POST.get('option')
 		if option == '0':
@@ -160,10 +170,12 @@ def policy_regular_list(request):
 				return JsonResponse({'msg': "名称中不能包含空格!!!", "code": '502'})
 			else:
 				try:
-					Applied_policy.objects.create(name=name,srcaddr=srcaddr,dstaddr=dstaddr,protocol=protocol,port=port,proposer=proposer)
+					Applied_policy.objects.create(name=name, srcaddr=srcaddr, dstaddr=dstaddr, protocol=protocol,
+					                              port=port, proposer=proposer)
 				except Exception as ex:
 					print(ex)
 				return JsonResponse({'msg': '200', "code": "200"})
+
 
 @login_required(login_url='/login')
 def policy_regular_check(request):
@@ -177,24 +189,23 @@ def policy_regular_check(request):
 			policymiclist = regularcheck(usg100)
 			for i in policymiclist:
 				temppolicydic = {'dev': nsg5000.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 		elif dev == 'f1030':
 			policymiclist = regularcheck(f1030)
 			for i in policymiclist:
 				temppolicydic = {'dev': nsg5000.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
 		elif dev == 'nsg':
 			policymiclist = regularcheck(nsg5000)
 			for i in policymiclist:
 				temppolicydic = {'dev': nsg5000.name, 'id': i.policyid, 'srceth': i.srceth, 'dsteth': i.dsteth,
-								 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
-								 'port': i.service['port']}
+				                 'srcaddr': i.srcaddr, 'dstaddr': i.dstaddr, 'protocol': i.service['protocol'],
+				                 'port': i.service['port']}
 				policydiclist.append(temppolicydic)
 			return JsonResponse({'msg': '200', 'policy': policydiclist})
-
