@@ -111,20 +111,21 @@ def assets_add(request, format=None):
 
 @login_required(login_url='/login')
 def assets_list(request):
-	print("1")
 	if request.method == 'GET':
 		userList = User.objects.all()
 		assetsList = Assets.objects.all().order_by("-id")
 		assetsNumber = Assets.objects.values('assets_type').annotate(dcount=Count('assets_type'))
-		return render(request, 'assets/assets_list.html', dict(user=request.user, totalAssets=assetsList.count(),
-								baseAssets=getBaseAssets(), assetsList=assetsList,
-								assetsNumber=assetsNumber, userList=userList),
+		return render(request, 'assets/assets_list.html',
+		              dict(user=request.user,
+		                    totalAssets=assetsList.count(),
+							baseAssets=getBaseAssets(),
+                           assetsList=assetsList,
+							assetsNumber=assetsNumber,
+                           userList=userList),
 					  )
 	elif request.method == 'POST':
 		assets_id = request.POST.get('assets_id')
-		print(assets_id)
 		if request.POST.get('op') == 'del':
-			print('1')
 			try:
 				assets_type = Assets.objects.get(id=assets_id).assets_type
 			except Exception as ex:
