@@ -1,12 +1,13 @@
 #!/usr/bin/env python  
 # _#_ coding:utf-8 _*_  
-import os, xlrd
+import os, xlrd, time
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from ConfManage.models import *
 from django.db.models import Count
 import json
+import IPy
 from django.contrib.auth.models import Group, User
 from ConfManage.utils import base
 from django.contrib.auth.decorators import permission_required

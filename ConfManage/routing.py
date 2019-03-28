@@ -1,7 +1,7 @@
 from channels.auth import AuthMiddlewareStack
 from channels.routing import URLRouter, ProtocolTypeRouter
 from django.conf.urls import url
-from ConfManage.webssh import wssh
+from ConfManage.djchannels import wssh
 
 application = ProtocolTypeRouter({
 	"websocket": AuthMiddlewareStack(

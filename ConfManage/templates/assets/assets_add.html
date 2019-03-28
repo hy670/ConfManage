@@ -307,7 +307,7 @@
 			
 		};
 		var asset_data = getFormData(document.getElementById('addAssets'),'');
-		alert(asset_data)
+
 		var btnObj = $(obj);
 		if (asset_data.assets.assets_type=="server" || asset_data.assets.assets_type=="vmser"){
 			var assets_type = 'server';
@@ -316,7 +316,7 @@
 			var assets_type = 'net';
 		}
         var test = JSON.stringify({'assets_type':assets_type,'data':asset_data});
-		alert(test)
+		alert()
 		$.ajax({
 			dataType: "JSON",
 			url:'/assets_add/', //请求地址

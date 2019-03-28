@@ -25,7 +25,7 @@ SECRET_KEY = 'x+u%@$*1810rlq0m)$&&v%=y0pod*gaiw428ifb4dc(ul-6f*4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ConfManage',
     'channels',
-
 ]
 
 MIDDLEWARE = [
@@ -57,8 +56,8 @@ ROOT_URLCONF = 'ConfManage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["/Users/mac/Documents/SourceCode/ConfManage/ConfManage/templates",
-                 "/Users/mac/Documents/SourceCode/ConfManage/ConfManage/static"],
+        'DIRS': ["E:\\project\\ConfManage\\ConfManage\\templates",
+                 "E:\\project\\ConfManage\\ConfManage\\static"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,32 +72,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ConfManage.wsgi.application'
 
-
-# django-channels配置
 CHANNEL_LAYERS = {
-  "default": {
-    "BACKEND": "channels_redis.core.RedisChannelLayer",
-    "CONFIG": {
-      "hosts": [("127.0.0.1", 6379)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("192.168.216.130", 6379)],
+        },
     },
-  },
 }
 
 ASGI_APPLICATION = "ConfManage.routing.application"
-
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'confmanage',        #数据库名字
-        'USER': 'root',          #账号
-        'PASSWORD': '123456',      #密码
-        'HOST': '127.0.0.1',    #IP
-        'PORT': '12345',                   #端口
-
+         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'confmanage',
+        'USER':'root',
+        'PASSWORD':'!QAZ2wsx',
+        'HOST':'127.0.0.1',
+        'PORT':'3306',
     }
 }
 
@@ -127,13 +121,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Shanghai'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -141,7 +135,7 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-     '/Users/mac/Documents/SourceCode/ConfManage/ConfManage/static',
+     'E:\\project\\ConfManage\\ConfManage\\static',
     )
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

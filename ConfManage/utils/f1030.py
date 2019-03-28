@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 import IPy
 import re
+import os
 
 
 class Addr:
@@ -164,9 +165,14 @@ class F1030:
 			else:
 				for j in i.service:
 					tempservice = self.locatserbyname(j)
+					if j =="LZweblogicport":
+
+						print(tempservice.sercontent)
 					if tempservice != 0:
 						for sercontent in tempservice.sercontent:
 							tempsercontent.append(sercontent)
+					else:
+						tempsercontent.append({'protocol': '-1', 'port': '0'})
 			if not tempdstaddrcontent:
 				pass
 			if not tempsrcaddrcontent:
@@ -185,7 +191,9 @@ class F1030:
 						self.policymiclist.append(temppolicydetail)
 
 	def parseconffile(self):
-		f = open('./conffile/FW1310.conf', 'r', encoding="UTF-8")
+		ls = os.getcwd()
+		print(ls)
+		f = open('./conffile/FW1310.conf', 'r', encoding="GBK")
 		key = ''
 		for line in f:
 			if not line[0].isspace():
@@ -229,6 +237,9 @@ class F1030:
 								continue
 						elif tokks[2] == 'icmp':
 							servicedic = {'protocol': '1', 'port': '-1'}
+						elif tokks[2] == 'group-object':
+							servicedic = {'protocol': '-1', 'port': '-1'}
+
 						self.serlist[len(self.serlist) - 1].sercontent.append(servicedic)
 				elif 'policy' in key:
 					tokks = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())
@@ -312,3 +323,6 @@ class F1030:
 										policydiclist.append(temppolicydic2)
 										number = number + 1
 		return policydiclist
+
+
+

@@ -1,8 +1,10 @@
-from ConfManage.utils import f1030
+from ConfManage.utils import f1030,usg4000ep
+from ConfManage.utils.topograph import Topo, searchpolicy
 
 
-f1030 = f1030.F1030('f1030')
-f1030.redundantcheck()
+tempdic = searchpolicy("10.16.25.100", "10.16.17.188", "6", "161")
+
+
 
 
 

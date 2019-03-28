@@ -5,7 +5,7 @@ import os
 from importlib import reload
 from django.http import JsonResponse
 from django.shortcuts import render
-from ConfManage.models import Assets, Network_Assets,Server_Assets,Line_Assets,Edges,Server_Edges,Network_Edges,Line_Edges
+from ConfManage.models import *
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 import ConfManage.utils.topograph
@@ -19,29 +19,55 @@ def topo_graph(request):
 		reload(ConfManage.utils.topograph)
 		from ConfManage.utils.topograph import Topo
 		nodelist = Topo.nodes
-		edgelist =Topo.edges
-		topo = {'nodes':nodelist,'edges':edgelist}
-		return render(request, 'topo/topo_graph.html',{'topo':topo})
+		edgelist = Topo.edges
+		topo = {'nodes': nodelist, 'edges': edgelist}
+		return render(request, 'topo/topo_graph.html', {'topo': topo})
 	elif request.method == 'POST':
 		pass
+
 
 @login_required(login_url='/login')
 def topo_edge(request):
 	if request.method == 'GET':
-		return render(request, 'topo/topo_edge.html')
+		edges = Edges.objects.all()
+		seredges = Server_Edges.objects.all()
+		netedges = Network_Edges.objects.all()
+		lineedges = Line_Edges.objects.all()
+
+		edgesdic = []
+		for edge in edges:
+			edgeid = edge.id
+			edgetype = edge.edges_type
+			if edgetype == "net":
+				for netedge in netedges:
+					if edge.id == netedge.Edges_id:
+						srcdev = Network_Assets.objects.get(id=netedge.src_id).hostname
+						dstdev = Network_Assets.objects.get(id=netedge.dst_id).hostname
+			elif edge.edges_type == "line":
+				for lineedge in lineedges:
+					if edge.id == lineedge.Edges_id:
+						srcdev = Network_Assets.objects.get(id=lineedge.src_id).hostname
+						dstdev = Line_Assets.objects.get(id=lineedge.dst_id).line_name
+			elif edge.edges_type == "server":
+				for seredge in seredges:
+					if edge.id == seredge.Edges_id:
+						srcdev = Network_Assets.objects.get(id=seredge.src_id).hostname
+						dstdev = Server_Assets.objects.get(id=seredge.dst_id).hostname
+			edgesdic.append({'id': str(edgeid), 'type': edgetype, 'srcdev': srcdev, 'dstdev': dstdev})
+		return render(request, 'topo/topo_edge.html', {'edges':edgesdic})
 	elif request.method == 'POST':
-		if request.POST.get('op')=='type_select':
+		if request.POST.get('op') == 'type_select':
 			srcdic = []
 			dstdic = []
 			link_type = request.POST.get('link_type')
 			netasset = Network_Assets.objects.filter(is_master=True)
 			for net in netasset:
-				srcdic.append({'id':net.id,'name':net.hostname})
+				srcdic.append({'id': net.id, 'name': net.hostname})
 			if link_type == "server":
 				serverasset = Server_Assets.objects.all()
 				for server in serverasset:
 					dstdic.append({'id': server.id, 'name': server.hostname})
-				return JsonResponse({'src':srcdic,'dst':dstdic})
+				return JsonResponse({'src': srcdic, 'dst': dstdic})
 			elif link_type == "net":
 				return JsonResponse({'src': srcdic, 'dst': srcdic})
 			elif link_type == "line":
@@ -49,7 +75,7 @@ def topo_edge(request):
 				for line in lineasset:
 					dstdic.append({'id': line.id, 'name': line.line_name})
 				return JsonResponse({'src': srcdic, 'dst': dstdic})
-		elif request.POST.get('op')=='add_link':
+		elif request.POST.get('op') == 'add_link':
 			link_type = request.POST.get('link_type')
 			src = request.POST.get('src')
 			dst = request.POST.get('dst')
@@ -65,13 +91,13 @@ def topo_edge(request):
 			except Exception as ex:
 				print(ex)
 			if link_type == "server":
-				dstasset =Server_Assets.objects.get(id=dst)
+				dstasset = Server_Assets.objects.get(id=dst)
 				try:
-					Server_Edges.objects.create(Edges=edge,src=srcasset,dst=dstasset)
+					Server_Edges.objects.create(Edges=edge, src=srcasset, dst=dstasset)
 				except Exception as ex:
 					print(ex)
 					edge.delete()
-				return JsonResponse({'msg':'添加成功'})
+				return JsonResponse({'msg': '添加成功'})
 			elif link_type == "net":
 				dstasset = Network_Assets.objects.get(id=dst)
 				try:
@@ -88,8 +114,5 @@ def topo_edge(request):
 					print(ex)
 					edge.delete()
 				return JsonResponse({'msg': '添加成功'})
-
-
-
-
-
+		elif  request.POST.get('op') == 'del_edge':
+			print(request.POST.get('id'))

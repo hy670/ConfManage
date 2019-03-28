@@ -16,6 +16,7 @@ def isnetaddr(addr):
 	else:
 		return False
 
+
 def iplocate(addr):
 	for netaddr in Topo.netaddrlist:
 		if addr in IPy.IP(netaddr.netaddr):
@@ -24,6 +25,7 @@ def iplocate(addr):
 		return Topo.internet
 	else:
 		return False
+
 
 def iszmbiepolicy(checkfirewall):
 	zmbiepolicylist = []
@@ -88,38 +90,39 @@ def iszmbiepolicy(checkfirewall):
 												j.dstaddr).overlaps(
 											checkpoliy.dstaddr) == 1:
 											if checkpoliy.service['protocol'] == '0' or j.service['protocol'] == '0':
-												#print("-----------------------匹配---------------------------------------")
-												#print(routelist[i].name)
-												#checkpoliy.printpolicymic()
-												#j.printpolicymic()
+												# print("-----------------------匹配---------------------------------------")
+												# print(routelist[i].name)
+												# checkpoliy.printpolicymic()
+												# j.printpolicymic()
 												iscontent = 2
 												break
-											elif checkpoliy.service['port'] == j.service['port'] and checkpoliy.service['protocol'] == j.service[
+											elif checkpoliy.service['port'] == j.service['port'] and checkpoliy.service[
+												'protocol'] == j.service[
 												'protocol']:
-												#print("-------------------------匹配-------------------------------------")
-												#checkpoliy.printpolicymic()
-												#j.printpolicymic()
+												# print("-------------------------匹配-------------------------------------")
+												# checkpoliy.printpolicymic()
+												# j.printpolicymic()
 												iscontent = 2
 												break
 							# 标识  表示 1= 相关安全域策略未匹配 2= 匹配（存在相对应的策略）
 							if iscontent == 1:
-
 								temppolicydic = {'dev': routelist[i].name, 'id': checkpoliy.policyid,
-												 'srceth': checkpoliy.srceth,
-												 'dsteth': checkpoliy.dsteth,
-												 'srcaddr': checkpoliy.srcaddr,
-												 'dstaddr': checkpoliy.dstaddr,
-												 'protocol': checkpoliy.service['protocol'],
-												 'port': checkpoliy.service['port']}
+								                 'srceth': checkpoliy.srceth,
+								                 'dsteth': checkpoliy.dsteth,
+								                 'srcaddr': checkpoliy.srcaddr,
+								                 'dstaddr': checkpoliy.dstaddr,
+								                 'protocol': checkpoliy.service['protocol'],
+								                 'port': checkpoliy.service['port']}
 								zmbiepolicylist.append(temppolicydic)
 
 	return zmbiepolicylist
+
 
 def searchpolicy(srcaddr, dstaddr, protocol, service):
 	searchpolicydic = {}
 	dstnet = ""
 	srcnet = ""
-	if 	dstaddr == "0.0.0.0" or dstaddr == "0.0.0.0/0":
+	if dstaddr == "0.0.0.0" or dstaddr == "0.0.0.0/0":
 		dstnet = Topo.internet
 	else:
 		for i in Topo.netaddrlist:
@@ -173,10 +176,10 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 		searchpolicydic.update({routelist[i].name: searchpolicylist})
 	return searchpolicydic
 
-def regularcheck(checkfirewall):
 
+def regularcheck(checkfirewall):
 	policymiclist = checkfirewall.policymiclist.copy()
-	regularpolicylist =[]
+	regularpolicylist = []
 
 	for i in RegularList.regularlist:
 		srcnet = iplocate(i['srcaddr'])
@@ -198,17 +201,18 @@ def regularcheck(checkfirewall):
 		else:
 			for j in policymiclist:
 
-				if j.srceth==srceth and j.dsteth==dsteth:
-					if IPy.IP(i['srcaddr'])==IPy.IP(j.srcaddr) and IPy.IP(i['dstaddr']).overlaps(j.dstaddr) == 1:
-							if i['protocol'] == j.service['protocol'] and i['port'] == j.service['port']:
-								policymiclist.remove(j)
+				if j.srceth == srceth and j.dsteth == dsteth:
+					if IPy.IP(i['srcaddr']) == IPy.IP(j.srcaddr) and IPy.IP(i['dstaddr']).overlaps(j.dstaddr) == 1:
+						if i['protocol'] == j.service['protocol'] and i['port'] == j.service['port']:
+							policymiclist.remove(j)
 
 	return policymiclist
+
 
 def anychangenet(srcdev, passdev):
 	srcaddrlist = []
 
-	for i in  Topo.netaddrlist:
+	for i in Topo.netaddrlist:
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcdev, target=i)
 		if passdev not in routelist:
 			srcaddrlist.append(i)
@@ -217,21 +221,23 @@ def anychangenet(srcdev, passdev):
 		srcaddrlist.append(Topo.internet)
 	return srcaddrlist
 
+
 class Topo:
-	nodes =[]
-	edges =[]
+	nodes = []
+	edges = []
 	netaddrlist = []
-	internet =""
+	internet = ""
 	nxtopology = networkx.Graph()
 	netassets = Network_Assets.objects.filter(is_master=True)
 	serassets = Server_Assets.objects.all()
 	lineassets = Line_Assets.objects.filter(line_is_master=True)
 	for netasset in netassets:
 		asset = Assets.objects.get(id=netasset.assets_id)
+		names = locals()
 		if asset.assets_type == 'firewall':
-			if asset.model =='USG4000EP':
+			if asset.model == 'USG4000EP':
 				nxtopology.add_node(usg4000ep.USG4000EP(netasset.hostname))
-			elif  asset.model =='NSG5500':
+			elif asset.model == 'NSG5500':
 				nxtopology.add_node(nsg5000.NSG5000(netasset.hostname))
 			elif asset.model == 'F1030':
 				nxtopology.add_node(f1030.F1030(netasset.hostname))
@@ -241,6 +247,7 @@ class Topo:
 			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
 		elif asset.assets_type == 'route':
 			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+
 		nodes.append({'id': netasset.hostname, 'label': netasset.hostname})
 	for serasset in serassets:
 		netdev = devicebase.NetAddr(serasset.hostname, serasset.ip)
@@ -267,7 +274,7 @@ class Topo:
 				nxsrc = nxnode
 			if nxnode.name == dst:
 				nxdst = nxnode
-		nxtopology.add_edge(nxsrc,nxdst)
+		nxtopology.add_edge(nxsrc, nxdst)
 		edges.append({'from': src, 'to': dst})
 	for seredge in seredges:
 		src = seredge.src.hostname
@@ -279,7 +286,7 @@ class Topo:
 				nxsrc = nxnode
 			if nxnode.name == dst:
 				nxdst = nxnode
-		nxtopology.add_edge(nxsrc,nxdst)
+		nxtopology.add_edge(nxsrc, nxdst)
 		edges.append({'from': src, 'to': dst})
 	for lineedge in lineedges:
 		src = lineedge.src.hostname
@@ -291,10 +298,5 @@ class Topo:
 				nxsrc = nxnode
 			if nxnode.name == dst:
 				nxdst = nxnode
-		nxtopology.add_edge(nxsrc,nxdst)
+		nxtopology.add_edge(nxsrc, nxdst)
 		edges.append({'from': src, 'to': dst})
-
-
-
-
-

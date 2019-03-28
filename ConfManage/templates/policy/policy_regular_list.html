@@ -100,39 +100,25 @@
 
     function deleteregular(number)
     {
-            var txt=  "是否确认删除？";
-            var option = {
-				title: "id-"+number,
-				btn: parseInt("0011",2),
-				onOk: function(){
-					$.ajax({
-                        dataType : "json",
-                          type: 'POST',
-                          url: '/policy_regular_list/',
-                          data: {
-                          "option": 0,
-                          "number":number
-				            },
+
+
+			$.ajax({
+				  type: 'POST',
+				  url: '/policy_regular_list/',
+				  data: {
+				      "option": 0,
+					  "number":number
+
+				  },
+                  dataType : "json",
 			      success:function(response){
 
-                      window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success, {
-                        onOk: function () {
-                            location.reload();
-                    }
-
-                });
+                      location.reload();
 				    },
                   error:function(response){
 	            	window.wxc.xcConfirm("查询操作失败", window.wxc.xcConfirm.typeEnum.error);
 	            },
-				});
-				},
-				onCancel:function(){
-				},
-				onClose:function(){
-				}
-			}
-            window.wxc.xcConfirm(txt, "custom", option);
+				})
 
     }
      function addregular(number)

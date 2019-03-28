@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding:utf-8
 import logging.config
-logging.config.fileConfig("./conf/logger.ini")
+logging.config.fileConfig("E:\project\ConfManage\conf\logger.ini")
 logger = logging.getLogger("ConfManage")
 
 
