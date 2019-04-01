@@ -14,6 +14,7 @@ from ConfManage.utils.graph import topology
 def index(request):
     nodelist =topology.node()
     edges = topology.edges()
+    #
     return render(request,'index.html', {'nodelist': nodelist,'edges':edges})
 
 def login(request):

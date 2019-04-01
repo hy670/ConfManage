@@ -8,13 +8,15 @@ import IPy
 
 
 class NetAddr:
-    def __init__(self, name, netaddr):
+    def __init__(self, assetid, name, netaddr):
+        self.assetid = assetid
         self.name = name
         self.type = 'netaddr'
         self.netaddr = netaddr
 
 
 class EthSW:
-    def __init__(self, name):
-        self.name = name
-        self.type = 'SW'
+    def __init__(self,assetid, name):
+		self.assetid = assetid
+		self.name = name
+		self.type = 'SW'

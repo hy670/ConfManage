@@ -223,6 +223,7 @@ function add_link(){
                 data:{'op':'add_link','link_type':link_type,'src':srcdev,'dst':dstdev},
 				success:function(response){
 				     window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+				     location.reload('/topo_edge/');
 				},
                 error:function(response){
 		            window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
@@ -319,7 +320,7 @@ function deleteedges(obj,id){
 				      success:function(response){
 				    	btnObj.removeAttr('disabled');
 			            window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
-			            location.reload('/assets_list/');
+			            location.reload('/topo_edge/');
 				      },
 		              error:function(response){
 		            	btnObj.removeAttr('disabled');

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy, regularcheck
 from ConfManage.utils.is_ip import is_ip
+from ConfManage.utils.logger import logger
 from ConfManage.utils.topograph import Topo, searchpolicy
 from ConfManage.models import Applied_policy, Network_Assets, Assets, Server_Assets, Line_Assets
 
@@ -40,6 +41,7 @@ def policy_zone(request):
 		for nxnode in Topo.nxtopology.nodes:
 			if nxnode.type == "firewall":
 				firewalllist.append({'name': nxnode.name})
+			print()
 			nodeslist.append({'name': nxnode.name})
 		return render(request, 'policy/policy_zone.html', {'nodes': nodeslist, 'firewalllist': firewalllist})
 	elif request.method == "POST":

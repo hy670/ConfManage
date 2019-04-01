@@ -178,7 +178,8 @@ class PolicyMic:
 
 
 class USG4000EP:
-	def __init__(self, name=""):
+	def __init__(self, id="", name=""):
+		self.id = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['internet-互联网电信', 'intranet-WWFW-M']
@@ -525,6 +526,7 @@ class USG4000EP:
 	def redundantcheck(self):
 		number = 1
 		policydiclist = []
+		print(len(self.policymiclist))
 		for i in range(len(self.policymiclist)):
 			for j in range(i + 1, len(self.policymiclist)):
 				if self.policymiclist[i].policyid != self.policymiclist[j].policyid:

@@ -223,6 +223,8 @@ class Line_Edges(models.Model):
 		)
 		verbose_name = '线路链路表'
 		verbose_name_plural = '线路链路表'
+
+
 class Firewall_Policy_Zone(models.Model):
 	Network_Assets = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
 	zone = models.CharField(max_length=100, blank=True, null=True)

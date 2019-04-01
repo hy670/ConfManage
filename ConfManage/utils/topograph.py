@@ -143,11 +143,9 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	else:
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 	# 遍历路径设备列表
-	print(routelist)
 	for i in range(len(routelist)):
 		searchpolicylist = []
 		if routelist[i].type == 'firewall':
-			print(routelist[i].name)
 			# 根据上下游设备 确定检测策略经过本机的安全域或端口
 			srceth = ''
 			dsteth = ''
@@ -156,8 +154,6 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 					srceth = port.split('-')[0]
 				if routelist[i + 1].name in port:
 					dsteth = port.split('-')[0]
-			print(srceth)
-			print(dsteth)
 			# 遍历主机原子策略表，与经过的安全域策略比较是否有相应的策略
 			for j in routelist[i].policymiclist:
 				if j.srceth == srceth and j.dsteth == dsteth:
