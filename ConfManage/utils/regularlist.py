@@ -6,7 +6,7 @@ import IPy
 class RegularList:
 	regularlist = []
 	regular = []
-	f = open('E:/project/ConfManage/ConfManage/utils/regular/regular.txt', 'r')
+	f = open('./ConfManage/utils/regular/regular.txt', 'r')
 	i = 0
 	for line in f:
 		toos = line.strip().split(" ")

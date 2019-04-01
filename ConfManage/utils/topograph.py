@@ -143,11 +143,9 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	else:
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 	# 遍历路径设备列表
-	print(routelist)
 	for i in range(len(routelist)):
 		searchpolicylist = []
 		if routelist[i].type == 'firewall':
-			print(routelist[i].name)
 			# 根据上下游设备 确定检测策略经过本机的安全域或端口
 			srceth = ''
 			dsteth = ''
@@ -156,8 +154,6 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 					srceth = port.split('-')[0]
 				if routelist[i + 1].name in port:
 					dsteth = port.split('-')[0]
-			print(srceth)
-			print(dsteth)
 			# 遍历主机原子策略表，与经过的安全域策略比较是否有相应的策略
 			for j in routelist[i].policymiclist:
 				if j.srceth == srceth and j.dsteth == dsteth:
@@ -236,26 +232,26 @@ class Topo:
 		names = locals()
 		if asset.assets_type == 'firewall':
 			if asset.model == 'USG4000EP':
-				nxtopology.add_node(usg4000ep.USG4000EP(netasset.hostname))
+				nxtopology.add_node(usg4000ep.USG4000EP(netasset.id, netasset.hostname))
 			elif asset.model == 'NSG5500':
-				nxtopology.add_node(nsg5000.NSG5000(netasset.hostname))
+				nxtopology.add_node(nsg5000.NSG5000(netasset.id, netasset.hostname))
 			elif asset.model == 'F1030':
-				nxtopology.add_node(f1030.F1030(netasset.hostname))
+				nxtopology.add_node(f1030.F1030(netasset.id, netasset.hostname))
 			else:
-				nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+				nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 		elif asset.assets_type == 'switch':
-			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+			nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 		elif asset.assets_type == 'route':
-			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+			nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 
 		nodes.append({'id': netasset.hostname, 'label': netasset.hostname})
 	for serasset in serassets:
-		netdev = devicebase.NetAddr(serasset.hostname, serasset.ip)
+		netdev = devicebase.Server(serasset.id, serasset.hostname, serasset.ip)
 		netaddrlist.append(netdev)
 		nxtopology.add_node(netdev)
 		nodes.append({'id': serasset.hostname, 'label': serasset.hostname})
 	for lineasset in lineassets:
-		netdev = devicebase.NetAddr(lineasset.line_name, lineasset.line_ip)
+		netdev = devicebase.NetAddr(lineasset.id, lineasset.line_name, lineasset.line_ip)
 		if netdev.netaddr == "0.0.0.0" or netdev.netaddr == "0.0.0.0/0":
 			internet = netdev
 		netaddrlist.append(netdev)

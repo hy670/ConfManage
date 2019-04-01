@@ -96,10 +96,12 @@ class PolicyMic:
 
 
 class NSG5000:
-	def __init__(self, name=""):
+	def __init__(self, id="", name=""):
+		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['extranet-WANFW-USG6000EP-M', 'intranet-HXSW-01']
+		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []
@@ -211,12 +213,12 @@ class NSG5000:
 									tempsercontent.append({'protocol': str(defaultserdic['protocol']), 'port': str(defaultserdic['port'])})
 									break
 					if isdefault ==0 :
-							print(j)
+						pass
 			if not tempdstaddrcontent:
 				pass
 			if not tempsrcaddrcontent:
 				pass
-			if  not tempsercontent:
+			if not tempsercontent:
 				pass
 
 			for j in tempsrcaddrcontent:
@@ -287,10 +289,15 @@ class NSG5000:
 							i.dstaddr.append(tokks[5].split('"')[1])
 						elif tokks[4] == 'sip':
 							i.srcaddr.append(tokks[5].split('"')[1])
-
+		fpolicy = open('./conffile/nsg5000/config_NETWORK', 'r', encoding="UTF-8")
+		for line in fpolicy:
+			tokks = re.split(' ', line.strip())
+			if tokks[0] == 'zone':
+				self.zone.append(re.split('"',tokks[1])[1])
 	def redundantcheck(self):
 		number = 1
 		policydiclist = []
+		print(len(self.policymiclist))
 		for i in range(len(self.policymiclist)):
 			for j in range(i + 1, len(self.policymiclist)):
 				if self.policymiclist[i].policyid != self.policymiclist[j].policyid:

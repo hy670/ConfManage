@@ -2,6 +2,7 @@
 import IPy
 import re
 import os
+from ConfManage.utils.logger import logger
 
 
 class Addr:
@@ -81,10 +82,12 @@ class PolicyMic:
 
 
 class F1030:
-	def __init__(self, name=""):
+	def __init__(self, id="", name=""):
+		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['DB-dbaddr', 'APP-appaddr', 'VPN-jtaddr', 'VPN-wzaddr', 'extranet-hxsw']
+		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []
@@ -165,9 +168,6 @@ class F1030:
 			else:
 				for j in i.service:
 					tempservice = self.locatserbyname(j)
-					if j =="LZweblogicport":
-
-						print(tempservice.sercontent)
 					if tempservice != 0:
 						for sercontent in tempservice.sercontent:
 							tempsercontent.append(sercontent)
@@ -191,9 +191,9 @@ class F1030:
 						self.policymiclist.append(temppolicydetail)
 
 	def parseconffile(self):
+		logger.info("开始解析F1030配置文件")
 		ls = os.getcwd()
-		print(ls)
-		f = open('./conffile/FW1310.conf', 'r', encoding="GBK")
+		f = open('./conffile/FW1310.conf', 'r', encoding="UTF-8")
 		key = ''
 		for line in f:
 			if not line[0].isspace():
@@ -209,7 +209,8 @@ class F1030:
 							self.serlist.append(tempser)
 					elif tokks[0] == 'object-policy':
 						key = tokks[0].split('-')[1] + ':' + tokks[2]
-
+				elif tokks[0] == 'security-zone':
+					self.zone.append(tokks[2])
 				else:
 					key = ''
 			elif key:
@@ -249,7 +250,6 @@ class F1030:
 						self.policylist[len(self.policylist) - 1].srceth = key.split(':')[1].split('-')[0]
 						self.policylist[len(self.policylist) - 1].dsteth = key.split(':')[1].split('-')[1]
 						for i in range(3, len(tokks), 2):
-
 							if tokks[i] == 'counting' or tokks[i] == 'logging':
 								continue
 							policydic[tokks[i]] = tokks[i + 1]
@@ -270,6 +270,7 @@ class F1030:
 	def redundantcheck(self):
 		number = 1
 		policydiclist = []
+		print(len(self.policymiclist))
 		for i in range(len(self.policymiclist)):
 			for j in range(i + 1, len(self.policymiclist)):
 				if self.policymiclist[i].policyid != self.policymiclist[j].policyid:

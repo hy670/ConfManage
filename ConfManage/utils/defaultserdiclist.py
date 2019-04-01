@@ -4,7 +4,7 @@ import pymysql
 
 class DefaultSerDicList:
 	defaultserdiclist =[]
-	f = open('E:/project/ConfManage/ConfManage/utils/resource/well-known-port', 'r', encoding="UTF-8")
+	f = open('./ConfManage/utils/resource/well-known-port', 'r', encoding="UTF-8")
 	for line in f:
 		key = line.strip().split(' ')
 		if len(key)==3:
