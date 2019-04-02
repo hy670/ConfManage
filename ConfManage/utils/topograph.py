@@ -161,7 +161,6 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 				if j.srceth == srceth and j.dsteth == dsteth:
 					if IPy.IP(srcaddr).overlaps(j.srcaddr) == 1 or IPy.IP(j.srcaddr).overlaps(
 							srcaddr) == 1:
-						print(j.)
 						if IPy.IP(dstaddr).overlaps(j.dstaddr) == 1 or IPy.IP(j.dstaddr).overlaps(
 								dstaddr) == 1:
 							if protocol == '0' or j.service['protocol'] == '0':
