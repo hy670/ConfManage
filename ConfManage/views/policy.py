@@ -1,6 +1,8 @@
 #!/usr/bin/env python  
 # _#_ coding:utf-8 _*_
 from importlib import reload
+
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -9,7 +11,7 @@ from ConfManage.utils.graph import usg100, f1030, nsg5000, iszmbiepolicy, regula
 from ConfManage.utils.is_ip import is_ip
 from ConfManage.utils.logger import logger
 from ConfManage.utils.topograph import Topo, searchpolicy
-from ConfManage.models import Applied_policy, Network_Assets, Assets, Server_Assets, Line_Assets
+from ConfManage.models import Applied_policy, Network_Assets, Assets, Server_Assets, Line_Assets, Firewall_Policy_Zone
 
 
 @login_required(login_url='/login')
@@ -38,37 +40,40 @@ def policy_zone(request):
 	if request.method == "GET":
 		firewalllist = []
 		nodeslist = []
+		zonelist = []
 		for nxnode in Topo.nxtopology.nodes:
 			if nxnode.type == "firewall":
-				firewalllist.append({'name': nxnode.name})
-			print()
-			nodeslist.append({'name': nxnode.name})
-		return render(request, 'policy/policy_zone.html', {'nodes': nodeslist, 'firewalllist': firewalllist})
+				firewalllist.append({'assetid':nxnode.assetid, 'name': nxnode.name})
+			nodeslist.append({'assetid':nxnode.assetid,'name': nxnode.name})
+		zones = Firewall_Policy_Zone.objects.all()
+		for zone in zones:
+			zonelist.append({'id':zone.id, 'firewall':zone.Network_Assets.hostname,'zone':zone.zone, 'asset_type':zone.assets_type, 'asset_name':zone.assets_name})
+		return render(request, 'policy/policy_zone.html', {'nodes': nodeslist, 'firewalllist': firewalllist,'zonelist':zonelist})
 	elif request.method == "POST":
-		nodelist = []
 		if request.POST.get('op') == 'add_policy_zone':
-			asset = request.POST.get('link_type')
+			firewall = request.POST.get('firewall')
 			zone = request.POST.get('zone')
-			dst_asset = request.POST.get('asset_name')
-			netasset = Network_Assets.objects.get(hostname=asset)
-			assets_type = ''
-			net_asset = Network_Assets.objects.all()
-			for asset in net_asset:
-				if asset.hostname == dst_asset:
-					assets_type = 'network'
-			if not assets_type:
-				ser_asset = Server_Assets.objects.all()
-				for asset in ser_asset:
-					if asset.hostname == dst_asset:
-						assets_type = 'server'
-			if not assets_type:
-				line_asset = Line_Assets.objects.all()
-				for asset in line_asset:
-					if asset.line_name == dst_asset:
-						assets_type = 'line'
-			print(zone)
-			print(assets_type)
-			print(dst_asset)
+			dstdev_group = json.loads(request.POST.get('dstdev_group'))
+			for dstdev in dstdev_group:
+				for nxnode in Topo.nxtopology.nodes:
+					if nxnode.name == dstdev:
+						netasset = Network_Assets.objects.get(id=int(firewall))
+						Firewall_Policy_Zone.objects.create(Network_Assets=netasset,zone=zone,assets_type=nxnode.type,assets_name=nxnode.name)
+			return JsonResponse({'msg':"安全域配置成功", "code": '400'})
+		elif request.POST.get('op') == 'dev_select':
+			assetid = request.POST.get('assetid')
+			nodeslist = []
+			for nxnode in Topo.nxtopology.nodes:
+				if  nxnode.type == "firewall" and nxnode.assetid == int(assetid):
+					zonelist =nxnode.zone
+				else:
+					nodeslist.append({'assetid': nxnode.assetid, 'name': nxnode.name})
+			return JsonResponse({'zone':zonelist ,'nodes':nodeslist, "code": '400'})
+		elif request.POST.get('op') == 'del_zone':
+			id = request.POST.get('id')
+			Firewall_Policy_Zone.objects.get(id=id).delete()
+			return JsonResponse({'msg': "安全域删除成功", "code": '400'})
+
 
 
 @login_required(login_url='/login')
@@ -76,7 +81,6 @@ def policy_search(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_search.html')
 	elif request.method == "POST":
-
 		dev = request.POST.get('dev')
 		srcaddr = request.POST.get('srcaddr')
 		dstaddr = request.POST.get('dstaddr')

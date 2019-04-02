@@ -227,17 +227,17 @@ nsg5000 = nsg5000.NSG5000('nsg5000')
 
 # 创建防火墙列表
 firewalllist = [usg4000ep, f1030, nsg5000]
-hxsw = devicebase.EthSW('hxsw')
+hxsw = devicebase.EthSW(1,'hxsw')
 
 # 创建网络节点并添加至网络节点列表
 netaddrlist = []
-wzaddr = devicebase.NetAddr('wzaddr', '10.16.19.2')
-jtaddr = devicebase.NetAddr('jtaddr', '10.16.19.1')
-dbaddr = devicebase.NetAddr('dbaddr', '10.16.26.0/24')
-internet = devicebase.NetAddr('internet', '0.0.0.0/0')
-testaddr = devicebase.NetAddr('testaddr', '10.16.17.0/24')
-webaddr = devicebase.NetAddr('webaddr', '10.16.18.0/24')
-appaddr = devicebase.NetAddr('appaddr', '10.16.25.0/24')
+wzaddr = devicebase.NetAddr(1,'wzaddr', '10.16.19.2')
+jtaddr = devicebase.NetAddr(2,'jtaddr', '10.16.19.1')
+dbaddr = devicebase.NetAddr(3,'dbaddr', '10.16.26.0/24')
+internet = devicebase.NetAddr(4,'internet', '0.0.0.0/0')
+testaddr = devicebase.NetAddr(5,'testaddr', '10.16.17.0/24')
+webaddr = devicebase.NetAddr(6,'webaddr', '10.16.18.0/24')
+appaddr = devicebase.NetAddr(7,'appaddr', '10.16.25.0/24')
 
 netaddrlist.append(wzaddr)
 netaddrlist.append(jtaddr)

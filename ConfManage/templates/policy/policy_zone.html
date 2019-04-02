@@ -39,31 +39,31 @@
                                 <div class="row">
 								<div class="form-group col-lg-6" >
 									<label><font color='red'>设备选择 </font></label>
-									<select class="form-control" name="link_type" id="link_type" >
+									<select class="form-control" name="firewall" id="firewall" onchange="javascript:dev_select();" >
 										<option value="" name="server_model" selected="selected">选择设备</option>
                                        {% for firewall in firewalllist %}
-                                               <option value={{ firewall.name }} name="assets_type">{{ firewall.name }}</option>
+                                               <option value={{ firewall.assetid }} name="assets_type">{{ firewall.name }}</option>
                                            {% endfor %} }
 									</select>		
 								</div>
                                 </div>
                               <div class="row">
-								<div  class="form-group col-lg-6" >
+								<div  id="select_zone" name="select_zone" class="form-group col-lg-6" style="display:none;" >
 									 <label>安全域</label>
-	                                <input type="text" class="form-control" id="zone"  name="zone" placeholder="安全域名称" class="input-xlarge" value="" />
+	                                 <select class="form-control" name="zone_group"  id="zone_group"  required>
+	                                 	<option  value="" selected="selected">请选择安全域</option>
+	                                 </select>
 								</div>
-                               <div id="dst" name="dst" class="form-group col-lg-6" >
+                               <div id="dst" name="dst" class="form-group col-lg-6" style="display:none;">
 									 <label>对端设备</label>
-	                                 <select class="form-control" name="ansible_group"  id="asset_name"  required>
+	                                 <select   multiple="multiple" class="form-control" name="dstdev_group"  id="dstdev_group"  required>
 	                                 	<option name="ansible_group" value="" selected="selected">请选择设备</option>
-                                         {% for node in nodes %}
-                                               <option value={{ node.name }} name="asset_name">{{ node.name }}</option>
-                                           {% endfor %} }
+
 	                                 </select>
 								</div>
                                 </div>
                                 <div class="form-group">
-                                <button id="addlink" type="button" class="btn btn-primary"  onclick="add_policy_zone(this)">
+                                <button id="addzone" type="button" class="btn btn-primary"  onclick="add_policy_zone(this)">
 				                	比较
                                 </button>
                                 </div>
@@ -74,6 +74,63 @@
 							</div>
 						</div>            
 					</div>
+            <div class="panel-body">
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="assetsListTable">
+                                <thead>
+									  <tr>
+									  	   <th class="text-center">详情</th>
+									  	   <th class="text-center"><input type="checkbox" onclick="checkAllBox()"/>全选</th>
+									  	   <th class="text-center">ID</th>
+									       <th class="text-center">防火墙名称</th>
+									       <th class="text-center">安全域</th>
+                                           <th class="text-center">对端设备类型</th>
+                                          <th class="text-center">对端设备名称</th>
+									       <th class="text-center">操作</th>
+									    </tr>
+								        <tfoot>
+								            <tr>
+                                                <th class="text-center">详情</th>
+                                               <th class="text-center">全选</th>
+                                               <th class="text-center">ID</th>
+                                               <th class="text-center">防火墙名称</th>
+                                               <th class="text-center">安全域</th>
+                                                 <th class="text-center">对端设备类型</th>
+                                               <th class="text-center">对端设备名称</th>
+                                               <th class="text-center">操作</th>
+								            </tr>
+								        </tfoot>
+                                </thead>
+                                <tbody>
+                                	{% for zone in  zonelist %}
+	                                    <tr class="odd gradeX">
+	                                    	 <td class="text-center"></td>
+	                                    	 <td class="text-center"><input type="checkbox" value={{zone.id}} name="ckbox"/></td>
+	                                    	 <td class="text-center">{{ zone.id }}</td>
+                                             <td class="text-center">{{ zone.firewall }}</td>
+									         <td class="text-center">{{ zone.zone }}</td>
+									         <td class="text-center">{{ zone.asset_type }}</td>
+									         <td class="text-center">{{ zone.asset_name }}</td>
+									         <td class="text-center">
+									         	<button  type="button" class="btn btn-default" onclick="deletezone(this,{{zone.id}})"><i class="glyphicon glyphicon-trash"></i></button>
+									         </td>
+	                                    </tr>
+	                                 {% endfor %}
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                            <div class="well">
+								<h4>设备资产更新说明</h4>
+	                            <ol>
+	                                <li><p>点击<i class="glyphicon glyphicon-info-sign"></i>查看设备资产明细</li>
+	                                <li><p>点击<i class="glyphicon glyphicon-refresh"></i>更新设备信息</p></li>
+	                                <li><p>点击<i class="glyphicon glyphicon-edit"></i>编辑设备信息</p></li>
+	                                <li><p>点击<i class="glyphicon glyphicon-trash"></i>删除设备信息</p></li>
+	                            </ol>
+
+
+                                <a class="btn btn-default btn-lg btn-block" target="_blank" href="/assets_add"><i class="fa fa-plus-circle "></i>新增资产</a>
+                            </div>
+                        </div>
 </div>
 
 
@@ -107,60 +164,67 @@ $(document).ready(function() {
         return filename.replace('(', '_').replace(']', '_');
     }	    
 }); 
-
-
-
-function type_select(){
-	   var obj = document.getElementById("link_type");
+<!--防火墙设备选择-->
+function dev_select(){
+	   var obj = document.getElementById("firewall");
 	   var index = obj.selectedIndex;
 	   var value = obj.options[index].value;
 	   $.ajax({
 				dataType: "JSON",
 				url:'/policy_zone/', //请求地址
 				type:"POST",  //提交类似
-                data:{'op':'type_select','asset':value},
+                data:{'op':'dev_select','assetid':value},
 				success:function(response){
-                    var srcHtml;
-                    var dstHtml;
-					for (var i=0; i <response["src"].length; i++){
-						 srcHtml += '<option name="conffile" value="'+ response["src"][i]["id"] +'">' + response["src"][i]["name"] + '</option>'
+                    var selectHtml;
+                    var binlogHtml;
+                    var selectHtml2;
+                    var binlogHtml2;
+					for (var i=0; i <response["zone"].length; i++){
+						 selectHtml +='<option  value="'+response["zone"][i]+'">'+response["zone"][i]+'</option>'
 					};
-					for (var i=0; i <response["dst"].length; i++){
-						 dstHtml += '<option name="conffile" value="'+ response["dst"][i]["id"] +'">' + response["dst"][i]["name"] + '</option>'
+					binlogHtml =  binlogHtml + selectHtml ;
+					document.getElementById("zone_group").innerHTML= binlogHtml;
+					for (var i=0; i <response["nodes"].length; i++){
+						 selectHtml2 +='<option  value="'+response["nodes"][i].name+'">'+response["nodes"][i].name+'</option>'
 					};
-
-					document.getElementById("src_select").innerHTML= srcHtml;
-					document.getElementById("dst_select").innerHTML= dstHtml;
-                    if($('#src').is(':hidden')){
-        	            $('#src').show();
+					binlogHtml2 =  binlogHtml2 + selectHtml2 ;
+					document.getElementById("dstdev_group").innerHTML= binlogHtml2;
+                    if($('#select_zone').is(':hidden')){
+        	            $('#select_zone').show();
                     }
                     if($('#dst').is(':hidden')){
         	            $('#dst').show();
                     }
-                     if($('#addlink').is(':hidden')) {
-                         $('#addlink').show();
+                     if($('#compare').is(':hidden')) {
+                         $('#compare').show();
                      }
 				},
                 error:function(response){
-		            window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
+		            window.wxc.xcConfirm(response, window.wxc.xcConfirm.typeEnum.error);
 		              }
 
 			});
 
 }
-
-
+<!--增加安全域配置-->
 function add_policy_zone(){
-	   var link_type = document.getElementById("link_type").value;
-       var zone = document.getElementById("zone").value;
-	   var asset_name = document.getElementById("asset_name").value;
+	   var firewall = document.getElementById("firewall").value;
+       var zone = document.getElementById("zone_group").value;
+       var dstdev_select = document.getElementById("dstdev_group");
+        var dstdev_group = [];
+        for(i=0;i<dstdev_select.length;i++){
+            if(dstdev_select.options[i].selected){
+            dstdev_group.push(dstdev_select[i].value);
+            }
+        }
 	   $.ajax({
 				dataType: "JSON",
 				url:'/policy_zone/', //请求地址
 				type:"POST",  //提交类似
-                data:{'op':'add_policy_zone','link_type':link_type,'zone':zone,'asset_name':asset_name},
+                data:{'op':'add_policy_zone','firewall':firewall,'zone':zone,'dstdev_group':JSON.stringify(dstdev_group)},
 				success:function(response){
 				     window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+				     location.reload('/policy_zone/');
 				},
                 error:function(response){
 		            window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
@@ -190,7 +254,7 @@ function format ( data ) {
 }	
 	 
 
-	$(document).ready(function() {
+$(document).ready(function() {
 	    var table = $('#taskTableList').DataTable( {
 /* 	        "ajax": "../ajax/data/objects.txt", */
 	        "columns": [
@@ -240,8 +304,40 @@ function format ( data ) {
 	            tr.addClass('shown');
 	        }
 	    } );
-	} );	
+	} );
 
+<!--删除安全域配置-->
+function deletezone(obj,id){
+		var txt=  "是否确认删除？";
+		var btnObj = $(obj);
+		btnObj.attr('disabled',true);
+		var option = {
+			title: "删除当前资产",
+			btn: parseInt("0011",2),
+			onOk: function(){
+				$.ajax({
+					  dataType: "JSON",
+			          type:"POST",  //提交类似
+					  url: '/policy_zone/',
+                      data:{'op':'del_zone','id':id},
+				      success:function(response){
+				    	btnObj.removeAttr('disabled');
+			            window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
+			            location.reload('/policy_zone/');
+				      },
+		              error:function(response){
+		            	btnObj.removeAttr('disabled');
+		            	window.wxc.xcConfirm("删除失败！", window.wxc.xcConfirm.typeEnum.error);
+		              }
+					});
+			},
+			onCancel:function(){
+			},
+			onClose:function(){
+			}
+		}
+		window.wxc.xcConfirm(txt, "custom", option);
+	}
 	
 		
 	

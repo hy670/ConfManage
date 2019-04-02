@@ -3,6 +3,7 @@ import networkx
 from ConfManage.utils import usg4000ep, f1030, nsg5000, devicebase
 from ConfManage.utils.regularlist import RegularList
 from ConfManage.models import *
+from ConfManage.utils.logger import logger
 
 
 def isnetaddr(addr):
@@ -129,7 +130,6 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 			if 1 == IPy.IP(i.netaddr).overlaps(dstaddr):
 				dstnet = i
 				break
-
 	if srcaddr == "0.0.0.0" or srcaddr == "0.0.0.0/0":
 		srcnet = Topo.internet
 	else:
@@ -142,6 +142,7 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 		return False
 	else:
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
+	print(routelist)
 	# 遍历路径设备列表
 	for i in range(len(routelist)):
 		searchpolicylist = []
@@ -155,21 +156,24 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 				if routelist[i + 1].name in port:
 					dsteth = port.split('-')[0]
 			# 遍历主机原子策略表，与经过的安全域策略比较是否有相应的策略
+			logger.info("srceth:"+srceth+"  "+"dsteth:"+dsteth)
 			for j in routelist[i].policymiclist:
 				if j.srceth == srceth and j.dsteth == dsteth:
 					if IPy.IP(srcaddr).overlaps(j.srcaddr) == 1 or IPy.IP(j.srcaddr).overlaps(
 							srcaddr) == 1:
+						print(j.)
 						if IPy.IP(dstaddr).overlaps(j.dstaddr) == 1 or IPy.IP(j.dstaddr).overlaps(
 								dstaddr) == 1:
 							if protocol == '0' or j.service['protocol'] == '0':
-								# print("--------------------------------------------------------------")
-								# checkpoliy.printpolicymic()
+								#print("--------------------------------------------------------------")
+								#checkpoliy.printpolicymic()
 								searchpolicylist.append(j)
 							elif protocol == j.service['protocol'] and service == j.service['port']:
 								# print("--------------------------------------------------------------")
 								# checkpoliy.printpolicymic()
 								searchpolicylist.append(j)
 		searchpolicydic.update({routelist[i].name: searchpolicylist})
+	print(searchpolicydic)
 	return searchpolicydic
 
 
@@ -232,26 +236,26 @@ class Topo:
 		names = locals()
 		if asset.assets_type == 'firewall':
 			if asset.model == 'USG4000EP':
-				nxtopology.add_node(usg4000ep.USG4000EP(netasset.hostname))
+				nxtopology.add_node(usg4000ep.USG4000EP(netasset.id, netasset.hostname))
 			elif asset.model == 'NSG5500':
-				nxtopology.add_node(nsg5000.NSG5000(netasset.hostname))
+				nxtopology.add_node(nsg5000.NSG5000(netasset.id, netasset.hostname))
 			elif asset.model == 'F1030':
-				nxtopology.add_node(f1030.F1030(netasset.hostname))
+				nxtopology.add_node(f1030.F1030(netasset.id, netasset.hostname))
 			else:
-				nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+				nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 		elif asset.assets_type == 'switch':
-			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+			nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 		elif asset.assets_type == 'route':
-			nxtopology.add_node(devicebase.EthSW(netasset.hostname))
+			nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
 
 		nodes.append({'id': netasset.hostname, 'label': netasset.hostname})
 	for serasset in serassets:
-		netdev = devicebase.NetAddr(serasset.hostname, serasset.ip)
+		netdev = devicebase.Server(serasset.id, serasset.hostname, serasset.ip)
 		netaddrlist.append(netdev)
 		nxtopology.add_node(netdev)
 		nodes.append({'id': serasset.hostname, 'label': serasset.hostname})
 	for lineasset in lineassets:
-		netdev = devicebase.NetAddr(lineasset.line_name, lineasset.line_ip)
+		netdev = devicebase.NetAddr(lineasset.id, lineasset.line_name, lineasset.line_ip)
 		if netdev.netaddr == "0.0.0.0" or netdev.netaddr == "0.0.0.0/0":
 			internet = netdev
 		netaddrlist.append(netdev)

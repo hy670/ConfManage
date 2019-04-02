@@ -179,10 +179,11 @@ class PolicyMic:
 
 class USG4000EP:
 	def __init__(self, id="", name=""):
-		self.id = id
+		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['internet-互联网电信', 'intranet-WWFW-M']
+		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []
@@ -386,7 +387,7 @@ class USG4000EP:
 						self.policymiclist.append(tempmetapolicy)
 
 	def parseconffile(self):
-		f = open('E://project//ConfManage//conffile//usg.conf', 'r', encoding="UTF-8")
+		f = open('./conffile/usg.conf', 'r', encoding="UTF-8")
 		linedone = 0
 		linemum = 0
 		while not linedone:
@@ -518,9 +519,11 @@ class USG4000EP:
 							policydic[tokss[i]] = tokss[i + 1].split('"')[1]
 						temppolicy.policycontent = policydic
 						self.policylist.append(temppolicy)
+					elif key[1] == 'seczone':
+						tokss = re.split(' ', line.strip())
+						self.zone.append(re.split('"',tokss[4])[1])
 			else:
 				linedone = 1
-
 		f.close()
 
 	def redundantcheck(self):

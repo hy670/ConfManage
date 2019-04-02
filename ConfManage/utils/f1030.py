@@ -83,10 +83,11 @@ class PolicyMic:
 
 class F1030:
 	def __init__(self, id="", name=""):
-		self.id = id
+		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['DB-dbaddr', 'APP-appaddr', 'VPN-jtaddr', 'VPN-wzaddr', 'extranet-hxsw']
+		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
 		self.ruleaddrgrplist = []
@@ -208,6 +209,8 @@ class F1030:
 							self.serlist.append(tempser)
 					elif tokks[0] == 'object-policy':
 						key = tokks[0].split('-')[1] + ':' + tokks[2]
+				elif tokks[0] == 'security-zone':
+					self.zone.append(tokks[2])
 				else:
 					key = ''
 			elif key:
