@@ -8,13 +8,17 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from ConfManage.utils.graph import topology
+import ConfManage.utils.topograph
+from importlib import reload
 
 @login_required(login_url='/login')
 def index(request):
-    nodelist =topology.node()
-    edges = topology.edges()
-    return render(request,'index.html', {'nodelist': nodelist,'edges':edges})
+    reload(ConfManage.utils.topograph)
+    from ConfManage.utils.topograph import Topo
+    nodelist = Topo.nodes
+    edgelist = Topo.edges
+    topo = {'nodes': nodelist, 'edges': edgelist}
+    return render(request,'index.html', {'topo': topo})
 
 def login(request):
     if request.session.get('username') is not None:

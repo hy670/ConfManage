@@ -26,7 +26,7 @@ urlpatterns = [
 	url(r'^logout', index.logout),
 	url(r'^config', index.config),
 	url(r'^noperm', index.noperm),
-	url(r'^assets_config', assets.assets_config),
+	url(r'^assets_line', assets.assets_line),
 	url(r'^assets_add', assets.assets_add),
 	url(r'^assets_list/', assets.assets_list),
 	url(r'^assets_mod/(?P<aid>[0-9]+)/$', assets.assets_modf),

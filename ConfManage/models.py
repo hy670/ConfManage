@@ -36,7 +36,6 @@ class Assets(models.Model):
 		('route', u'路由器'),
 		('firewall', u'防火墙'),
 		('storage', u'存储设备'),
-		('line', u'线路资源')
 	)
 	assets_type = models.CharField(choices=assets_type_choices, max_length=100, default='server', verbose_name='资产类型')
 	name = models.CharField(max_length=100, verbose_name='资产编号', unique=True)
@@ -224,6 +223,8 @@ class Line_Edges(models.Model):
 		)
 		verbose_name = '线路链路表'
 		verbose_name_plural = '线路链路表'
+
+
 class Firewall_Policy_Zone(models.Model):
 	Network_Assets = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
 	zone = models.CharField(max_length=100, blank=True, null=True)

@@ -521,7 +521,7 @@ class USG4000EP:
 						self.policylist.append(temppolicy)
 					elif key[1] == 'seczone':
 						tokss = re.split(' ', line.strip())
-						self.zone.append(re.split('"',tokss[4])[1])
+						self.zone.append(re.split('"', tokss[4])[1])
 			else:
 				linedone = 1
 		f.close()
@@ -542,21 +542,21 @@ class USG4000EP:
 								if self.policymiclist[i].service['protocol'] == '0' or self.policymiclist[j].service[
 									'protocol'] == '0':
 									temppolicydic1 = {'number': number, 'dev': self.name,
-									                  'id': self.policymiclist[i].policyid,
-									                  'srceth': self.policymiclist[i].srceth,
-									                  'dsteth': self.policymiclist[i].dsteth,
-									                  'srcaddr': self.policymiclist[i].srcaddr,
-									                  'dstaddr': self.policymiclist[i].dstaddr,
-									                  'protocol': self.policymiclist[i].service['protocol'],
-									                  'port': self.policymiclist[i].service['port']}
+													  'id': self.policymiclist[i].policyid,
+													  'srceth': self.policymiclist[i].srceth,
+													  'dsteth': self.policymiclist[i].dsteth,
+													  'srcaddr': self.policymiclist[i].srcaddr,
+													  'dstaddr': self.policymiclist[i].dstaddr,
+													  'protocol': self.policymiclist[i].service['protocol'],
+													  'port': self.policymiclist[i].service['port']}
 									temppolicydic2 = {'number': number, 'dev': self.name,
-									                  'id': self.policymiclist[j].policyid,
-									                  'srceth': self.policymiclist[j].srceth,
-									                  'dsteth': self.policymiclist[j].dsteth,
-									                  'srcaddr': self.policymiclist[j].srcaddr,
-									                  'dstaddr': self.policymiclist[j].dstaddr,
-									                  'protocol': self.policymiclist[j].service['protocol'],
-									                  'port': self.policymiclist[j].service['port']}
+													  'id': self.policymiclist[j].policyid,
+													  'srceth': self.policymiclist[j].srceth,
+													  'dsteth': self.policymiclist[j].dsteth,
+													  'srcaddr': self.policymiclist[j].srcaddr,
+													  'dstaddr': self.policymiclist[j].dstaddr,
+													  'protocol': self.policymiclist[j].service['protocol'],
+													  'port': self.policymiclist[j].service['port']}
 									policydiclist.append(temppolicydic1)
 									policydiclist.append(temppolicydic2)
 									number = number + 1
@@ -564,21 +564,21 @@ class USG4000EP:
 									'protocol']:
 									if self.policymiclist[i].service['port'] == self.policymiclist[j].service['port']:
 										temppolicydic1 = {'number': number, 'dev': self.name,
-										                  'id': self.policymiclist[i].policyid,
-										                  'srceth': self.policymiclist[i].srceth,
-										                  'dsteth': self.policymiclist[i].dsteth,
-										                  'srcaddr': self.policymiclist[i].srcaddr,
-										                  'dstaddr': self.policymiclist[i].dstaddr,
-										                  'protocol': self.policymiclist[i].service['protocol'],
-										                  'port': self.policymiclist[i].service['port']}
+														  'id': self.policymiclist[i].policyid,
+														  'srceth': self.policymiclist[i].srceth,
+														  'dsteth': self.policymiclist[i].dsteth,
+														  'srcaddr': self.policymiclist[i].srcaddr,
+														  'dstaddr': self.policymiclist[i].dstaddr,
+														  'protocol': self.policymiclist[i].service['protocol'],
+														  'port': self.policymiclist[i].service['port']}
 										temppolicydic2 = {'number': number, 'dev': self.name,
-										                  'id': self.policymiclist[j].policyid,
-										                  'srceth': self.policymiclist[j].srceth,
-										                  'dsteth': self.policymiclist[j].dsteth,
-										                  'srcaddr': self.policymiclist[j].srcaddr,
-										                  'dstaddr': self.policymiclist[j].dstaddr,
-										                  'protocol': self.policymiclist[j].service['protocol'],
-										                  'port': self.policymiclist[j].service['port']}
+														  'id': self.policymiclist[j].policyid,
+														  'srceth': self.policymiclist[j].srceth,
+														  'dsteth': self.policymiclist[j].dsteth,
+														  'srcaddr': self.policymiclist[j].srcaddr,
+														  'dstaddr': self.policymiclist[j].dstaddr,
+														  'protocol': self.policymiclist[j].service['protocol'],
+														  'port': self.policymiclist[j].service['port']}
 										policydiclist.append(temppolicydic1)
 										policydiclist.append(temppolicydic2)
 										number = number + 1

@@ -117,7 +117,7 @@
               </div>
                     <!-- /.panel -->
          </div>    
-                <div class="col-lg-6">
+         <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                            	<i class="fa fa-bookmark"></i> 设备资产明细
@@ -131,80 +131,7 @@
                     <!-- /.panel -->
                 </div> 
      </div>
-     <div class="row">
-          <div class="col-lg-12">
-              <div class="panel panel-default">
-                  <div class="panel-heading">
-                      <i class="fa fa-keyboard-o  fa-fw"></i> 资产查询
-                  </div>
-                  <div class="panel-body">
-				      <div class="col-xs-6 col-sm-3">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">设备状态:</label>
-								<div class="col-sm-8">
-									<select class="form-control"  id="selStatus"  >
-										<option selected="selected" value="">请选择一个类型</option>
-										<option value="0" name="status">已上线</option>	
-										<option value="1" name="status">已下线</option>	
-										<option value="2" name="status">维修中</option>	
-										<option value="3" name="status">已入库</option>	
-										<option value="4" name="status">未使用</option>				   		
-									</select>
-								</div>
-							</div>
-				      </div>                  
-				      <div class="col-xs-6 col-sm-3">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">所属产品线:</label>
-								<div class="col-sm-8">
-									 <select class="form-control" id="selProject" >
-									 	<option selected="selected" value="">请选择一个类型</option>
-									 	{% for b in baseAssets.project %}
-									 		<option value="{{b.id}}" name="project">{{b.project_name}}</option>
-									 	{% endfor %}				
-									</select>
-								</div>
-							</div>
-				      </div>                  
-				      <div class="col-xs-6 col-sm-3">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">所属业务:</label>
-								<div class="col-sm-8">
-									 <select class="form-control" id="selBusiness" >
-									 	<option selected="selected" value="">请选择一个类型</option>
-									 	{% for s in baseAssets.service %}
-									 		<option value="{{s.id}}" name="business">{{s.service_name}}</option>
-									 	{% endfor %}										 					
-									</select> 
-								</div>
-							</div>
-				      </div>
-<!-- 				      <div class="col-xs-6 col-sm-3">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">IP地址:</label>
-							<div class="input-group">
-								<input type="text" class="form-control">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">Search</button>
-								</span>
-							</div>								
-							</div>
-				      </div> -->		
-				      <div class="col-xs-6 col-sm-3">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">IP地址:</label>
-								<div class="col-sm-8">
-									<input type="text" id="ip" class="form-control" value="">
-								</div>
-							</div>
-				      </div>				      		      				      
-                  </div>
-                  <div class="panel-footer">
-                  <div id="divSelectedType"></div>
-                  </div>
-              </div>
-          </div>      
-     </div>
+
      
 	 <div class="row">
 	 		<div class="col-lg-12">
@@ -293,30 +220,6 @@
 									         <td class="text-center">{{ a.model|default:"无" }}</td>
 									         <td class="text-center">
 									         	<a href="/assets_view/{{a.id}}" style="text-decoration:none;"><button  type="button" class="btn btn-default"><abbr title="查看详细信息"><i class="glyphicon glyphicon-info-sign"></i></abbr></button></a>
-									         	{% if a.assets_type == "server" or a.assets_type == "vmser" %}
-												<div class="btn-group">				
-												   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-												   	   <font class="glyphicon glyphicon-refresh"></font>
-												       <span class="caret"></span>
-												   </button>										   									         	
-										         	<ul class="dropdown-menu" role="menu">
-														  <li>
-													      	<a href="javascript:" onclick='assetsUpdate(this,{{a.server_assets.id}},"{{a.server_assets.ip}}","setup")'>更新主体信息</a>
-													      </li>		
-													      <li>
-													      	<a href="javascript:" onclick='assetsUpdate(this,{{a.server_assets.id}},"{{a.server_assets.ip}}","crawHw")'>更新内存硬盘</a>
-													      </li>							         	
-										         	</ul>
-												</div>									         	
-									         	{% else %}
-												<div class="btn-group">				
-												   <button type="button" class="btn btn-success dropdown-toggle disabled" data-toggle="dropdown">
-												   	   <font class="glyphicon glyphicon-refresh"></font>
-												       <span class="caret"></span>
-												   </button>										   									         	
-												</div>
-									         	{% endif %}
-									         	
 									         	<a href="/assets_mod/{{a.id}}" style="text-decoration:none;"><button  type="button" class="btn btn-default"><abbr title="修改资料"><i class="glyphicon glyphicon-edit"></i></abbr></button></a>
 									         	<button  type="button" class="btn btn-default" onclick="deleteAssets(this,{{a.id}})"><i class="glyphicon glyphicon-trash"></i></button>
 									         </td>
@@ -435,69 +338,9 @@
                     }
                     changepage(1);
                 }
-            })             
-			//所属项目
-            $('#selProject').change(function () {
-                if ($('#selProject').val() != "") {
-                    $("#hdnProject").val($('#selProject').val());
-                    var span = "<span class='label label-success' id='spanSelinux'>" + $("#selProject").find("option:selected").text()
-                    + " <img alt='' src='/static/img/close.png' onclick='removeself(this)' /><input name='project' type='hidden' value='"
-                    + $('#selProject').val() + "' /></span> &nbsp;";
-                    if ($("#spanSelinux").length == 0) {
-                        $('#divSelectedType').append(span);
-                    }
-                    else {
-                        $("#spanSelinux").html($("#selProject").find("option:selected").text()
-                         + " <img alt='' src='/static/img/close.png' onclick='removeself(this)' /><input name='project' type='hidden' value='"
-                         + $('#selProject').val() + "' /></span> &nbsp;");
-                    }
-                    changepage(1);
-                }
-            })            
+            })
             
         })
-
-        function search_go() {
-            var parameter = {};
-            $("input[type='hidden']").each(function () {
-                var key = $(this).prop('name');
-                var value = $(this).val();
-                if (key != "csrfmiddlewaretoken"){
-                	parameter[key] = value;
-                }
-                
-            })
-
-            var count = 0;
-            for (var i in parameter) {
-                count += i;
-                break;
-            }
-            if (count == 0) {
-                return false;
-            }
-
-            $.post('/assets_search/', parameter, function (result) {
-                if (result["data"].length > 0) {
-/*                 	document.getElementById("div-search-result").style.display = ""; */
-						 var table = $('#assetsListTable').dataTable();
-						 oSettings = table.fnSettings();
-						 table.fnClearTable(this);
-						 for (var i=0; i<result["data"].length; i++)
-						 {
-						   table.oApi._fnAddData(oSettings, result["data"][i]);
-						 }
-						 oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-						 table.fnDraw();                	               	
-                }
-                else{
-                	//没有数据就清空
-                	var table = $('#assetsListTable').dataTable();
-                	table.fnClearTable(this);
-                }
-            })
-        }
-
         function changepage(pageindex) {
             curpage = pageindex;
             search_go();
@@ -720,27 +563,6 @@
 	           		},
 	           {% endfor %}                
 				];
-	
-	    var plotObj = $.plot($("#assets_per"), data, {
-	        series: {
-	            pie: {
-	                show: true
-	            }
-	        },
-	        grid: {
-	            hoverable: true
-	        },
-	        tooltip: true,
-	        tooltipOpts: {
-	            content: "%p.0%, %s", // show percentages, rounding to 2 decimal places
-	            shifts: {
-	                x: 20,
-	                y: 0
-	            },
-	            defaultTheme: false
-	        }
-	    });
-	
 	});
 
 	$(function() {
@@ -809,42 +631,6 @@
 		window.wxc.xcConfirm(txt, "custom", option);			   
 	}
 
-	function assetsUpdate(obj, id,ip,type){
-			var btnObj = $(obj);
-			var txt=  "是否确认更新？";
-			var option = {
-					title: "更新主机("+ip+")硬件信息",
-					btn: parseInt("0011",2),
-					onOk: function(){
-						$.ajax({
-							  type: 'POST',
-							  url: '/assets_facts/',
-							  data:{
-									"ip":ip,
-									"server_id":id,
-									"type":type
-								},
-						      success:function(response){			            
-					                if (response["code"]=="200"){ 
-					                	window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.success);
-
-					                }
-						        	else{
-						        		window.wxc.xcConfirm(response["msg"], window.wxc.xcConfirm.typeEnum.error);
-						        	}						                
-							},
-				            error:function(response){
-				            	window.wxc.xcConfirm("请求数据错误！", window.wxc.xcConfirm.typeEnum.error);
-				            },		
-							});
-					},
-					onCancel:function(){	
-					},
-					onClose:function(){
-					}
-				}			
-			window.wxc.xcConfirm(txt, "custom", option);
-		}
 				
 
 	   
