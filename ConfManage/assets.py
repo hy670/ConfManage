@@ -33,7 +33,7 @@ def getBaseAssets():
 @login_required(login_url='/login')
 def assets_config(request):
 	if request.method == "GET":
-		return render(request, 'assets/assets_config.html', {"user": request.user, "baseAssets": getBaseAssets()}, )
+		return render(request, 'assets/assets_line.html', {"user": request.user, "baseAssets": getBaseAssets()}, )
 	elif request.method == "POST":
 		if request.POST.get('op') == 'add':
 			line_name = request.POST.get('line_name')

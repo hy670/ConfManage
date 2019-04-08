@@ -3,626 +3,451 @@
 
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-<title>配置管理系统</title>
+    <title>配置管理系统</title>
 
-<!-- jQuery -->
-<script src="/static/vendor/jquery/jquery.min.js"></script>
+    <!-- jQuery -->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
 
-<!-- Bootstrap Core CSS -->
-<link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- MetisMenu CSS -->
-<link href="/static/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="/static/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
-<!-- Custom CSS -->
-<link href="/static/dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/static/dist/css/sb-admin-2.css" rel="stylesheet">
 
-<!-- Morris Charts CSS -->
-<link href="/static/vendor/morrisjs/morris.css" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="/static/vendor/morrisjs/morris.css" rel="stylesheet">
 
-<!-- Custom Fonts -->
-<link href="/static/vendor/font-awesome/css/font-awesome.min.css"
-	rel="stylesheet" type="text/css">
+    <!-- Custom Fonts -->
+    <link href="/static/vendor/font-awesome/css/font-awesome.min.css"
+          rel="stylesheet" type="text/css">
 
-<!-- Multiselect CSS -->
-<link rel="stylesheet" href="/static/dist/css/bootstrap-select.css"
-	type="text/css" />
+    <!-- Multiselect CSS -->
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-select.css"
+          type="text/css"/>
 
-<!-- Bootstrap Core JavaScript -->
-<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<!-- Metis Menu Plugin JavaScript -->
-<script src="/static/vendor/metisMenu/metisMenu.min.js"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/static/vendor/metisMenu/metisMenu.min.js"></script>
 
-<!-- Morris Charts JavaScript -->
-<script src="/static/vendor/raphael/raphael.min.js"></script>
-<script src="/static/vendor/morrisjs/morris.min.js"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="/static/vendor/raphael/raphael.min.js"></script>
+    <script src="/static/vendor/morrisjs/morris.min.js"></script>
 
-<!-- Custom Theme JavaScript -->
-<script src="/static/dist/js/sb-admin-2.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="/static/dist/js/sb-admin-2.js"></script>
 
-<!-- Flot Charts JavaScript -->
-<script src="/static/vendor/flot/excanvas.min.js"></script>
-<script src="/static/vendor/flot/jquery.flot.js"></script>
-<script src="/static/vendor/flot/jquery.flot.pie.js"></script>
-<script src="/static/vendor/flot/jquery.flot.resize.js"></script>
-<script src="/static/vendor/flot/jquery.flot.time.js"></script>
-<script src="/static/vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
-
-
-<!--    弹窗开始样式 -->
-<script src="/static/dist/js/xcConfirm.js" type="text/javascript"
-	charset="utf-8"></script>
-<link rel="stylesheet" type="text/css"
-	href="/static/dist/css/xcConfirm.css" />
-<!--   csrf -->
-<script src="/static/js/csrf.js"></script>
-
-<!-- Multiselect JavaScript -->
-<script type="text/javascript" src="/static/dist/js/bootstrap-select.js"></script>
-
-<!-- Echat JavaScript -->
-<script type="text/javascript" src="/static/js/echarts.js"></script>
+    <!-- Flot Charts JavaScript -->
+    <script src="/static/vendor/flot/excanvas.min.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.pie.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.resize.js"></script>
+    <script src="/static/vendor/flot/jquery.flot.time.js"></script>
+    <script src="/static/vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
 
 
-<!-- Datetimepicker -->
-<link rel="stylesheet"
-	href="/static/dist/css/bootstrap-datetimepicker.min.css"
-	type="text/css" />
-<script type="text/javascript"
-	src="/static/js/bootstrap-datetimepicker.js"></script>
-{% block ace-content %} {% endblock %}
-<!-- DataTables JavaScript -->
-<link rel="stylesheet" href="/static/dist/css/jquery.dataTables.min.css">
-<script src="/static/js/jquery.dataTables.min.js"></script>
-<style type="text/css">
-	pre {
-		overflow: auto;
-		white-space: normal;
-		white-space: pre-wrap; /* css-3 */
-		white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
-		white-space: -o-pre-wrap; /* Opera 7 */
-		word-wrap: break-word; /* Internet Explorer 5.5+ */
-		border: 1px solid #ccc;
-		padding: 5px;
-		margin: 10px;
-		font-family: Consolas, monospace;
-		color: #ADFF2F;
-		background-color: #000000;
-	}
-  .dropdown-menu {
-		max-height: 500px;
-		overflow-y: auto;
-		overflow-x: hidden;
-	} 
-</style>
-<!-- Jtopo JavaScript -->
+    <!--    弹窗开始样式 -->
+    <script src="/static/dist/js/xcConfirm.js" type="text/javascript"
+            charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/xcConfirm.css"/>
+    <!--   csrf -->
+    <script src="/static/js/csrf.js"></script>
+
+    <!-- Multiselect JavaScript -->
+    <script type="text/javascript" src="/static/dist/js/bootstrap-select.js"></script>
+
+    <!-- Echat JavaScript -->
+    <script type="text/javascript" src="/static/js/echarts.js"></script>
+
+
+    <!-- Datetimepicker -->
+    <link rel="stylesheet"
+          href="/static/dist/css/bootstrap-datetimepicker.min.css"
+          type="text/css"/>
+    <script type="text/javascript"
+            src="/static/js/bootstrap-datetimepicker.js"></script>
+    {% block ace-content %} {% endblock %}
+    <!-- DataTables JavaScript -->
+    <link rel="stylesheet" href="/static/dist/css/jquery.dataTables.min.css">
+    <script src="/static/js/jquery.dataTables.min.js"></script>
+    <style type="text/css">
+        pre {
+            overflow: auto;
+            white-space: normal;
+            white-space: pre-wrap; /* css-3 */
+            white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+            white-space: -o-pre-wrap; /* Opera 7 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 10px;
+            font-family: Consolas, monospace;
+            color: #ADFF2F;
+            background-color: #000000;
+        }
+
+        .dropdown-menu {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+    <!-- Jtopo JavaScript -->
 
 
 </head>
 
 <body>
 
-	<div id="wrapper">
+<div id="wrapper">
 
-		<!-- Navigation -->
-		<nav class="navbar navbar-default navbar-static-top" role="navigation"
-			style="margin-bottom: 0">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="/">网络配置管理系统-NetConfManage v2.0</a>
-			</div>
-			<!-- /.navbar-header -->
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">网络配置管理</a>
 
-			<ul class="nav navbar-top-links navbar-right">
-				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#"> <i class="fa fa-bell fa-fw">
-					</i><span class="badge" id="deploy_order_count"></span> <i
-						class="fa fa-caret-down"></i>
+        </div>
+        <!-- /.navbar-header -->
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw"></i>
+                    <span class="badge" id="deploy_order_count"></span>
+                    <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages" id="deploy_order"></ul>
+                <!-- /.dropdown-messages -->
+            </li>
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"> {{ user }}
+                    <i class="fa fa-user fa-fw"></i>
+                    <i class="fafa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="/user/center/"><i class="fa fa-user fa-fw"></i>User Profile</a></li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i>Logout</a></li>
+                </ul> <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+        <!-- /.navbar-top-links -->
 
-				</a>
-					<ul class="dropdown-menu dropdown-messages" id="deploy_order">
-					</ul> <!-- /.dropdown-messages --></li>
-				<!-- /.dropdown -->
-				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#"> {{user}} <i
-						class="fa fa-user fa-fw"></i>
-					<i class="fafa-caret-down">
-						</i></a>
-					<ul class="dropdown-menu dropdown-user">
-						<li><a href="/user/center/"><i class="fa fa-user fa-fw"></i>
-								User Profile</a></li>
-						<li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
-						</li>
-						<li class="divider"></li>
-						<li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i>
-								Logout</a></li>
-					</ul> <!-- /.dropdown-user --></li>
-				<!-- /.dropdown -->
-			</ul>
-			<!-- /.navbar-top-links -->
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav nav-pills nav-stacked" id="side-menu">
+                    <li><a href="/"><i class="fa fa-dashboard fa-fw"></i>Dashboard</a></li>
+                    <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 资产管理<span class="fa arrow"></span></a>
+                        <ul class="nav  nav-second-level">
+                            <li><a href="/assets_line/">专线&互联网资产管理</a></li>
+                            <li><a href="/assets_add/">添加设备资产</a></li>
+                            <li><a href="/assets_list/">设备资产管理</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 拓扑管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/topo_graph/">拓扑图</a></li>
+                            <li><a href="/topo_edge/">链路管理</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 防火墙策略管理<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/policy_list/">策略列表</a></li>
+                            <li><a href="/policy_zone/">安全域配置</a></li>
+                            <li><a href="/policy_search/">策略查询</a></li>
+                            <li><a href="/policy_redundancy_check/">本机冗余策略</a></li>
+                            <li><a href="/policy_iszmbie_check/">全网僵尸策略</a></li>
+                            <li><a href="#">策略合规性检查<span class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                    <li><a href="/policy_regular_list/">规则管理</a></li>
+                                    <li><a href="/policy_regular_check/">合规性检查</a></li>
 
-			<div class="navbar-default sidebar" role="navigation">
-				<div class="sidebar-nav navbar-collapse">
-					<ul class="nav" id="side-menu">
-						<li class="sidebar-search">
-							<div class="input-group custom-search-form">
-								<input type="text" class="form-control" placeholder="Search...">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">
-										<i class="fa fa-search"></i>
-									</button>
-								</span>
-							</div> <!-- /input-group -->
-						</li>
-						<li><a href="/"><i class="fa fa-dashboard fa-fw"></i>
-								Dashboard</a></li>
-                        <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 资产管理<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-                                <li><a href="/assets_config/">资产配置</a></li>
-								<li><a href="/assets_add/">添加资产</a></li>
-								<li><a href="/assets_list/">资产列表</a></li>
-								<li><a href="/assets_search/">资产查询</a></li>
-								<li><a href="/assets_log/1/">操作日志</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-                        <li><a href="#"><i class="fa  fa-bank fa-fw"></i> 拓扑管理<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-                                <li><a href="/topo_graph/">拓扑图</a></li>
-                                <li><a href="/topo_edge/">链路管理</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="fa  fa-bank fa-fw"></i> 防火墙策略管理<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-                                <li><a href="/policy_list/">策略列表</a></li>
-                                 <li><a href="/policy_zone/">安全域配置</a></li>
-                                <li><a href="/policy_search/">策略查询</a></li>
-                                <li><a href="/policy_redundancy_check/">本机冗余策略</a></li>
-								<li><a href="/policy_iszmbie_check/">全网僵尸策略</a></li>
-								<li><a href="#">策略合规性检查<span class="fa arrow"></span></a>
-									<ul class="nav nav-third-level">
-										<li><a href="/policy_regular_list/">规则管理</a></li>
-                                        <li><a href="/policy_regular_check/">合规性检查</a></li>
+                                </ul>
+                            </li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="glyphicon glyphicon-hdd"></i> 安全基线<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/deploy_add">基线配置</a></li>
+                            <li><a href="/deploy_list">基线检查</a></li>
+                            <!-- 								<li><a href="/deploy_order/1/">部署工单</a></li> -->
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="fa fa-table fa-fw"></i> 自动备份任务管理<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/cron_add">添加任务</a></li>
+                            <li><a href="/cron_config">批量导入</a></li>
+                            <li><a href="/cron_list/1/">任务列表</a></li>
+                            <li><a href="/cron_log/1/">操作日志</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="fa fa-sitemap fa-fw"></i> 配置文件管理<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/conffile/list/">配置文件列表</a></li>
+                            <li><a href="/conffile/diff/">配置文件对比</a></li>
+                            <li><a href="#">脚本工具<span class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                    <li><a href="/apps/script/online/">在线添加</a></li>
+                                    <li><a href="/apps/script/list/">脚本列表</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">剧本配置<span class="fa arrow"></span></a>
+                                <ul class="nav nav-third-level">
+                                    <li><a href="/apps/playbook/upload/">上传剧本</a></li>
+                                    <li><a href="/apps/playbook/online/">在线编辑</a></li>
+                                    <li><a href="/apps/">剧本列表</a></li>
+                                    {% if user.is_superuser %}
+                                        <li><a href="/roles/">剧本管理</a></li>
+                                    {% endif %}
+                                </ul> <!-- /.nav-third-level --></li>
+                            <li><a href="/apps/log/">操作日志</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    <li><a href="#"><i class="fa fa-database fa-fw"></i> WEBSSH<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/webssh/list/">设备列表</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                    {% if user.is_superuser %}
+                        <li><a href="#"><i class="fa fa-tasks fa-fw"></i> 任务调度<span
+                                class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="/task_model/">调度类型</a></li>
+                                <li><a href="/task_view/">运行日志</a></li>
+                            </ul> <!-- /.nav-second-level --></li>
+                    {% endif %}
+                    <li><a href="#"><i class="fa fa-group "></i> 用户中心<span
+                            class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li><a href="/users/manage">用户管理</a></li>
+                            <li><a href="/user/center/">用户配置</a></li>
+                            <li><a href="/logout">退出</a></li>
+                        </ul> <!-- /.nav-second-level --></li>
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <!-- /.navbar-static-side -->
+    </nav>
+    {% block page-content %}
+        <div id="page-wrapper">
 
-									</ul></li>
-							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="glyphicon glyphicon-hdd"></i> 安全基线<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/deploy_add">基线配置</a></li>
-								<li><a href="/deploy_list">基线检查</a></li>
-<!-- 								<li><a href="/deploy_order/1/">部署工单</a></li> -->
-								<li><a href="/deploy_log/1/">操作日志</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="fa fa-table fa-fw"></i> 自动备份任务管理<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/cron_add">添加任务</a></li>
-								<li><a href="/cron_config">批量导入</a></li>
-								<li><a href="/cron_list/1/">任务列表</a></li>
-								<li><a href="/cron_log/1/">操作日志</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="fa fa-sitemap fa-fw"></i> 配置文件管理<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/conffile/list/">配置文件列表</a></li>
-								<li><a href="/conffile/diff/">配置文件对比</a></li>
-								<li><a href="#">脚本工具<span class="fa arrow"></span></a>
-									<ul class="nav nav-third-level">
-										<li><a href="/apps/script/online/">在线添加</a></li>
-										<li><a href="/apps/script/list/">脚本列表</a></li>
-									</ul></li>
-								<li><a href="#">剧本配置<span class="fa arrow"></span></a>
-									<ul class="nav nav-third-level">										
-										<li><a href="/apps/playbook/upload/">上传剧本</a></li>
-										<li><a href="/apps/playbook/online/">在线编辑</a></li>
-										<li><a href="/apps/">剧本列表</a></li>
-										{% if user.is_superuser %}
-										<li><a href="/roles/">剧本管理</a></li>
-										{% endif %}
-									</ul> <!-- /.nav-third-level --></li>
-								<li><a href="/apps/log/">操作日志</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-						<li><a href="#"><i class="fa fa-database fa-fw"></i> WEBSSH<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/webssh/list/">设备列表</a></li>
-							</ul> <!-- /.nav-second-level --></li>							
-						{% if user.is_superuser %}
-						<li><a href="#"><i class="fa fa-tasks fa-fw"></i> 任务调度<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/task_model/">调度类型</a></li>
-								<li><a href="/task_view/">运行日志</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-						{% endif %}
-						<li><a href="#"><i class="fa fa-bookmark fa-fw"></i> 运维知识<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/wiki/add/">新建文档</a></li>
-								<li><a href="/wiki/index/">文档列表</a></li>
-							</ul> <!-- /.nav-second-level --></li>	
-						<li><a href="#"><i class="fa  fa-ticket fa-fw"></i> 工单系统<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="#">工单申请<span class="fa arrow"></span></a>
-									<ul class="nav nav-third-level">
-										<li><a href="/order/deploy/apply/">代码部署</a></li>
-										<li><a href="/order/sql/apply/">上线SQL</a></li>
-										<li><a href="/order/file/upload/list/1/">文件分发</a></li>
-										<li><a href="/order/file/download/list/1/">文件下载</a></li>
-									</ul></li>
-								<li><a href="/order/list/1/">工单列表</a></li>
-								<li><a href="/order/search/">工单查询</a></li>
-							</ul> <!-- /.nav-second-level --></li>													
-						<li><a href="/config"><i class="fa fa-wrench fa-fw"></i>
-								全局配置</a></li>
-						<li><a href="#"><i class="fa fa-group "></i> 用户中心<span
-								class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="/users/manage">用户管理</a></li>
-								<li><a href="/user/center/">用户配置</a></li>
-								<li><a href="/logout">退出</a></li>
-							</ul> <!-- /.nav-second-level --></li>
-					</ul>
-				</div>
-				<!-- /.sidebar-collapse -->
-			</div>
-			<!-- /.navbar-static-side -->
-		</nav>
-		{% block page-content %}
-		<div id="page-wrapper">
-
-			<div class="row">
-				<div class="col-lg-12">
-					<h1 class="page-header">Dashboard</h1>
-				</div>
-				<!-- /.col-lg-12 -->
-			</div>
-			<!-- /.row -->
-			<div class="row">
-				<div class="col-lg-3 col-md-6">
-					<div class="panel panel-primary">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-xs-3">
-									<i class="fa fa-database fa-5x"></i>
-								</div>
-								<div class="col-xs-9 text-right">
-									<div class="huge">{{projectTotal.assets}}</div>
-									<div>设备资产</div>
-								</div>
-							</div>
-						</div>
-						<a href="/assets_list">
-							<div class="panel-footer">
-								<span class="pull-left">查看所有</span> <span class="pull-right"><i
-									class="fa fa-arrow-circle-right"></i></span>
-								<div class="clearfix"></div>
-							</div>
-						</a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="panel panel-green">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-xs-3">
-									<i class="fa fa-github-alt fa-5x"></i>
-								</div>
-								<div class="col-xs-9 text-right">
-									<div class="huge">{{projectTotal.project}}</div>
-									<div>部署项目</div>
-								</div>
-							</div>
-						</div>
-						<a href="/deploy_list/">
-							<div class="panel-footer">
-								<span class="pull-left">查看所有</span> <span class="pull-right"><i
-									class="fa fa-arrow-circle-right"></i></span>
-								<div class="clearfix"></div>
-							</div>
-						</a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="panel panel-yellow">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-xs-3">
-									<i class="fa fa-clock-o fa-5x"></i>
-								</div>
-								<div class="col-xs-9 text-right">
-									<div class="huge">{{projectTotal.cron}}</div>
-									<div>计划任务</div>
-								</div>
-							</div>
-						</div>
-						<a href="/cron_list/1/">
-							<div class="panel-footer">
-								<span class="pull-left">查看所有</span> <span class="pull-right"><i
-									class="fa fa-arrow-circle-right"></i></span>
-								<div class="clearfix"></div>
-							</div>
-						</a>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="panel panel-red">
-						<div class="panel-heading">
-							<div class="row">
-								<div class="col-xs-3">
-									<i class="fa fa-tasks  fa-5x"></i>
-								</div>
-								<div class="col-xs-9 text-right">
-									<div class="huge">{{projectTotal.playbook}}</div>
-									<div>PlayBook</div>
-								</div>
-							</div>
-						</div>
-						<a href="/apps/">
-							<div class="panel-footer">
-								<span class="pull-left">查看所有</span> <span class="pull-right"><i
-									class="fa fa-arrow-circle-right"></i></span>
-								<div class="clearfix"></div>
-							</div>
-						</a>
-					</div>
-				</div>
-			</div>
-			<!-- /.row -->
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-bar-chart-o fa-fw"></i> 网络拓扑图
-						</div>
-						<!-- /.panel-heading -->
-						<div class="panel-body">
-                            <canvas id="canvas" width="1100" height="500"></canvas>
-						</div>
-						<!-- /.panel-body -->
-					</div>
-
-				</div>
-				<!-- /.col-lg-8 -->
-<!-- 				<div class="col-lg-4">
-                    <div class="chat-panel panel panel-default">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-comments fa-fw"></i> ChatOps
-                        </div>
-                        /.panel-heading
-                        <div class="panel-body">
-                            <ul class="chat" id="chatTalk">
-                            </ul>
-                        </div>
-                        /.panel-body
-                        <div class="panel-footer">
-                            <div class="input-group">
-                                <input id="inputChatRoom" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                                <span class="input-group-btn">
-                                    <button class="btn btn-warning btn-sm" id="btnChatRoom">
-                                        Send
-                                    </button>
-                                </span>
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-database fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{ projectTotal.assets }}</div>
+                                    <div>设备资产</div>
+                                </div>
                             </div>
                         </div>
-                        /.panel-footer
-                    </div>					
-				</div> -->
-				<!-- /.col-lg-4 -->
-			</div>
-			<!-- /.row -->
-		</div>
-		<!-- /#page-wrapper -->
+                        <a href="/assets_list">
+                            <div class="panel-footer">
+                                <span class="pull-left">查看所有</span> <span class="pull-right"><i
+                                    class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-github-alt fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{ projectTotal.project }}</div>
+                                    <div>部署项目</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/deploy_list/">
+                            <div class="panel-footer">
+                                <span class="pull-left">查看所有</span> <span class="pull-right"><i
+                                    class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-clock-o fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{ projectTotal.cron }}</div>
+                                    <div>计划任务</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/cron_list/1/">
+                            <div class="panel-footer">
+                                <span class="pull-left">查看所有</span> <span class="pull-right"><i
+                                    class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-tasks  fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{ projectTotal.playbook }}</div>
+                                    <div>PlayBook</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/apps/">
+                            <div class="panel-footer">
+                                <span class="pull-left">查看所有</span> <span class="pull-right"><i
+                                    class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> 网络拓扑图
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="tpContainer"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
 
-	</div>
-	<!-- /#wrapper -->
-	<script src="/static/js/jtopo-0.4.8-min.js"></script>
-   <script type="text/javascript">
-		$(document).ready(function(){
-            var canvas = document.getElementById('canvas');
-            var stage = new JTopo.Stage(canvas);
-            var scene = new JTopo.Scene(stage);
-            scene.background = '/static/img/bg.jpg'
-             {% for node in nodelist %}
-                 {%  if node.type == "firewall" %}
-                     var {{ node.name }} = new firewall('{{node.name}}')
-                 {%  elif node.type == "netaddr" %}
-                    var {{ node.name }} = new netaddr('{{node.name}}')
-                 {%  elif node.type == "SW" %}
-                    var {{ node.name }} = new sw('{{node.name}}')
-                  {% endif %}
-             {% endfor %}
-            {% for edge in edges %}
+                </div>
+                <!-- /.col-lg-8 -->
+                <!-- 				<div class="col-lg-4">
+                                    <div class="chat-panel panel panel-default">
+                                        <div class="panel-heading">
+                                            <i class="fa fa-comments fa-fw"></i> ChatOps
+                                        </div>
+                                        /.panel-heading
+                                        <div class="panel-body">
+                                            <ul class="chat" id="chatTalk">
+                                            </ul>
+                                        </div>
+                                        /.panel-body
+                                        <div class="panel-footer">
+                                            <div class="input-group">
+                                                <input id="inputChatRoom" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-warning btn-sm" id="btnChatRoom">
+                                                        Send
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        /.panel-footer
+                                    </div>
+                                </div> -->
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
 
-                    linkNode({{ edge.0.name }},{{ edge.1.name }})
-             {% endfor %}
-             scene.doLayout(JTopo.layout.TreeLayout('down', 30, 107));
+        </div>
+        <!-- /#wrapper -->
+        <script src="/static/js/vis.min.js"></script>
+        <link href="/static/css/vis.min.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var nodes = [];
+                var edges = new vis.DataSet({{ topo.edges|safe}});
+                for(var i=0,len={{topo.nodes|safe}}.length; i<len; i++)
+                {
 
-
-            function linkNode(nodeA, nodeZ, f){
-                    var link;
-                    if(f){
-                        link = new JTopo.FoldLink(nodeA, nodeZ);
-                    }else{
-                        link = new JTopo.Link(nodeA, nodeZ);
+                    if ({{topo.nodes|safe}}[i].type == 'firewall'){
+                        nodes.push({id: {{topo.nodes|safe}}[i].id, label: {{topo.nodes|safe}}[i].label, image: '/static/icon/h3c/h3_firewall.gif', shape: 'image'});
                     }
-                    link.direction = 'vertical';
-                    scene.add(link);
-                    return link;
+                    else if ({{topo.nodes|safe}}[i].type == 'switch'){
+                        nodes.push({id: {{topo.nodes|safe}}[i].id, label: {{topo.nodes|safe}}[i].label, image: '/static/icon/h3c/h3_switch_s5000.gif', shape: 'image'});
+                    }
+                    else if ({{topo.nodes|safe}}[i].type == 'route'){
+                        nodes.push({id: {{topo.nodes|safe}}[i].id, label: {{topo.nodes|safe}}[i].label, image: '/static/icon/h3c/h3_router_core.gif', shape: 'image'});
+                    }
+                     else if ({{topo.nodes|safe}}[i].type == 'line'){
+                        nodes.push({id: {{topo.nodes|safe}}[i].id, label: {{topo.nodes|safe}}[i].label, image: '/static/icon/h3c/h3_cloud.gif', shape: 'image'});
+                    }
+                      else if ({{topo.nodes|safe}}[i].type == 'server'){
+                        nodes.push({id: {{topo.nodes|safe}}[i].id, label: {{topo.nodes|safe}}[i].label, image: '/static/icon/cisco/blue/c_b_server.gif', shape: 'image'});
+                    }
                 }
-           function firewall(name){
-                    var node = new JTopo.Node();
-                    node.setImage('/static/icon/h3c/h3_firewall.gif', true);
-                    node.text=name;
-                    // node.setLocation(x, y);
-                     node.textPosition = 'Bottom_Center';
-                    scene.add(node);
-                    return node;
-                }
-           function netaddr(name){
-                    var node = new JTopo.Node();
-                    node.setImage('/static/icon/h3c/h3_cloud.gif', true);
-                    node.text=name;
-                    // node.setLocation(x, y);
-                     node.textPosition = 'Bottom_Center';
-                    scene.add(node);
-                    return node;
-                }
-            function sw(name){
-                    var node = new JTopo.Node();
-                    node.setImage('/static/icon/h3c/h3_switch_s5000.gif', true);
-                    node.text=name;
-                     node.textPosition = 'Bottom_Center';
-                    // node.setLocation(x, y);
-                    scene.add(node);
-                    return node;
-                }
-        });
+
+                // 创建关系数组
 
 
-</script>
-	<script type="text/javascript">
+                // 创建一个网络
+                var container = document.getElementById('tpContainer');
 
-	var myChart = echarts.init(document.getElementById('morris-area-chart'));
-	option = {
-		    title : {
-		        text: '最近7天更新统计',
-		        subtext: '更新统计'
-		    },
-		    tooltip : {
-		        trigger: 'axis'
-		    },
-		    legend: {
-		        data:[
-		              {% for ds in userList %}
-		              		'{{ds}}',
-		              {% endfor %}
-		              ]
-		    },
-		    toolbox: {
-		        show : true,
-		        feature : {
-		            mark : {show: true},
-		            dataView : {show: true, readOnly: false},
-		            magicType : {show: true, type: ['line', 'bar']},
-		            restore : {show: true},
-		            saveAsImage : {show: true}
-		        }
-		    },
-		    calculable : true,
-		    xAxis : [
-		        {
-		            type : 'category',
-		            data : [
-		                    {% for ds in dateList %}
-		                    	'{{ds}}',
-		                    {% endfor %}
-		                    ]
-		        }
-		    ],
-		    yAxis : [
-		        {
-		            type : 'value'
-		        }
-		    ],
-		    series : [
-		              {% for ds in orderList %}
-		              	{% for k,v in ds.items %}
-				  	        {
-					            name:'{{k}}',
-					            type:'bar',
-					            data:[
-					                  {% for ds in v %}
-					                  	{{ds}},
-					                  {% endfor %}
-					                  ],
-					            markPoint : {
-					                data : [
-					                    {type : 'max', name: '最大值'},
-					                    {type : 'min', name: '最小值'}
-					                ]
-					            },
-					            markLine : {
-					                data : [
-					                    {type : 'average', name: '平均值'}
-					                ]
-					            }
-					        },	   
-				        {% endfor %}
-		              {% endfor %}
-		    ]
-		};
-	myChart.setOption(option);
-	
-	$(function() {
+                // vis数据
+                var data = {
+                    nodes: nodes,
+                    edges: edges
+                };
+                var options = {};
+
+                // 初始化网络
+                var network = new vis.Network(container, data, options);
+            });
 
 
-	    Morris.Donut({
-	        element: 'morris-donut-chart',
-	        data: [{
-	            label: "项目",
-	            value: {{projectTotal.project}}
-	        },{
-	            label: "任务",
-	            value: {{projectTotal.cron}}
-	        },{
-	            label: "剧本",
-	            value: {{projectTotal.playbook}}
-	        },{
-	            label: "资产",
-	            value: {{projectTotal.assets}}
-	        }],
-	        resize: true
-	    });
-
-	    Morris.Bar({
-	        element: 'morris-bar-chart',
-	        data: [
-	               {% for ds in monthDataList %}
-	               		{
-		               		{% for k,v in ds.items %}
-								{% if k == 'date' %}
-									{{k}}:'{{v}}',
-								{% else %}
-									{{k}}:{{v}},
-		                    	{% endif %}
-		               		{% endfor %}
-	               		},
-	               {% endfor %}
-			],
-	        xkey: 'date',
-	        ykeys: [
-	                {% for ds in userList %}
-	                	'{{ds}}',
-	                {% endfor %}
-	                ],
-	        labels: [
-	                 {% for ds in userList %}
-	             		'{{ds}}',
-	             	{% endfor %}
-	             	],
-	        hideHover: 'auto',
-	        resize: true
-	    });
-
-	});
-
-
-
-</script>
-{% endblock %}			
+        </script>
+        <style type="text/css">
+        #tpContainer {
+            width: 1100px;
+            height: 550px;
+            border: 1px solid lightgray;
+        }
+    </style>
+    {% endblock %}
 </body>
 
 </html>
