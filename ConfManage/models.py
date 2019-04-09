@@ -7,8 +7,8 @@ import sys
 
 class Applied_policy(models.Model):
 	name = models.CharField(max_length=100, verbose_name='策略名称', unique=True)
-	srcaddr = models.CharField(max_length=15, verbose_name='源地址', blank=True, null=True)
-	dstaddr = models.CharField(max_length=15, verbose_name='源地址', blank=True, null=True)
+	srcaddr = models.GenericIPAddressField( verbose_name='源地址', blank=True, null=True)
+	dstaddr = models.GenericIPAddressField( verbose_name='源地址', blank=True, null=True)
 	protocol = models.IntegerField(blank=True, null=True, verbose_name='协议')
 	port = models.IntegerField(blank=True, null=True, verbose_name='端口')
 	proposer = models.CharField(max_length=100, null=True, verbose_name='申请人')
@@ -63,7 +63,7 @@ class Assets(models.Model):
 
 class Server_Assets(models.Model):
 	assets = models.OneToOneField('Assets', on_delete=models.CASCADE)
-	ip = models.CharField(max_length=100, unique=True, blank=True, null=True)
+	ip = models.GenericIPAddressField(unique=True, blank=True, null=True)
 	hostname = models.CharField(max_length=100, blank=True, null=True)
 	create_date = models.DateTimeField(auto_now_add=True)
 	update_date = models.DateTimeField(auto_now_add=True)
@@ -84,7 +84,7 @@ class Server_Assets(models.Model):
 class Network_Assets(models.Model):
 	assets = models.OneToOneField('Assets', on_delete=models.CASCADE)
 	hostname = models.CharField(max_length=100, blank=True, null=True)
-	ip = models.CharField( max_length=100, blank=True, null=True, verbose_name='管理ip')
+	ip = models.GenericIPAddressField( blank=True, null=True, verbose_name='管理ip')
 	username = models.CharField(max_length=100, blank=True, null=True)
 	passwd = models.CharField(max_length=100, blank=True, null=True)
 	sudo_passwd = models.CharField(max_length=100, blank=True, null=True)
@@ -110,7 +110,7 @@ class Network_Assets(models.Model):
 
 class Line_Assets(models.Model):
 	line_name = models.CharField(max_length=100, unique=True)
-	line_ip = models.CharField(max_length=100, blank=True, null=True, verbose_name='IP地址')
+	line_ip = models.GenericIPAddressField(blank=True, null=True, verbose_name='IP地址')
 	line_is_master = models.BooleanField(default=True, verbose_name="是否主设备")
 	'''自定义权限'''
 
