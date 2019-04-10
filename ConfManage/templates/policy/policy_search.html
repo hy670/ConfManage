@@ -9,6 +9,11 @@
         tr.shown td.details-control {
             background: url('/static/img/details_close.png') no-repeat center center;
         }
+        #tpContainer {
+            width: 1100px;
+            height: 100px;
+            border: 1px solid lightgray;
+        }
     </style>
 {% endblock %}
 {% block page-content %}
@@ -19,6 +24,7 @@
             </div>
             <!-- /.col-lg-12 -->
         </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
@@ -54,6 +60,19 @@
                     </div>
                 </div>
             </div>
+             <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> 网络拓扑图
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div id="tpContainer"></div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+            </div>
             <div class="col-lg-12">
                 <div class="panel panel-default">
 
@@ -87,7 +106,60 @@
             </div>
         </div>
     </div>
+    <script src="/static/js/vis.min.js"></script>
+    <link href="/static/css/vis.min.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
+        function route_draw(respnodes,respedges) {
+            var nodes = [];
+            var edges = new vis.DataSet(respedges);
+            for (var i=0,len=respnodes.length;i<len;i++)
+            {
+                alert(respnodes[i].id);
+                if (respnodes[i].type == 'firewall'){
+                    nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/h3c/h3_firewall.gif', shape: 'image',font: { color:'red' }});
+                }
+                else if (respnodes[i].type == 'SW'){
+                    nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/h3c/h3_switch_s5000.gif', shape: 'image'});
+                }
+                else if (respnodes[i].type == 'route'){
+                    nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/h3c/h3_router_core.gif', shape: 'image'});
+                }
+                else if (respnodes[i].type == 'netaddr'){
+                    nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/h3c/h3_cloud.gif', shape: 'image'});
+                }
+                else if (respnodes[i].type == 'server'){
+                    nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/cisco/blue/c_b_server.gif', shape: 'image'});
+                }
+            }
+            var container = document.getElementById('tpContainer');
+            // vis数据
+            var data = {
+                nodes: nodes,
+                edges: edges
+            };
+            var options = {
+                layout: {
+                    hierarchical: {
+                        direction: "LD",
+                        sortMethod: "directed"
+            }
+        },
+                edges:{
+                    arrows: {
+                        to: {enabled: true, scaleFactor:1, type:'arrow'},
+                    }
+                },
+                physics: {
+                    enabled: false,
+                }
+            }
+
+
+
+            // 初始化网络
+            var network = new vis.Network(container, data, options);
+
+        }
 
         function _w_table_rowspan(_w_table_id, _w_table_colnum) {
             _w_table_firsttd = "";
@@ -132,6 +204,7 @@
                         window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
                     else {
                         var tbody = "";
+
                         $.each((response.policy), function (n, item) {
                             var trs = "";
                             trs = "<tr> <td>" + item.dev + "</td> <td>" + item.id + "</td> <td>" + item.srceth + "</td > <td>"
@@ -143,7 +216,7 @@
                         $("#deployTablebody").append(tbody);
                         _w_table_rowspan("#deployTableList", 1);
                         _w_table_rowspan("#deployTableList", 2);
-                        ;
+                        route_draw(response.nodes,response.edges);
                     }
 
                 },

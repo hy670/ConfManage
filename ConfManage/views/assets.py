@@ -15,6 +15,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from ConfManage.utils.logger import logger
 from ConfManage.utils.execl import CellWriter
 from ConfManage.utils.is_ip import is_ip
+from ConfManage import serializers
 
 
 def getBaseAssets():
@@ -39,44 +40,45 @@ def assets_line(request):
 			line_name = request.POST.get('line_name')
 			line_ip = request.POST.get('line_ip')
 			line_is_master = request.POST.get('line_is_master')
+			serializer = serializers.LineAssetsSerializer(data={'line_name':line_name, 'line_ip':line_ip, 'line_is_master':line_is_master})
+			if  serializer.is_valid():
+				print(serializer.errors)
 			if not line_ip or not line_is_master or not line_name:
-				return JsonResponse({'msg': "必选项不许为空~", "code": '502'})
-			elif not is_ip(line_ip):
-				logger.debug(msg="ip地址不合法")
-				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
+				return JsonResponse({'msg': "必选项不许为空~", "code": 502})
+			elif serializer.is_valid():
+				serializer.save()
+				return JsonResponse({'msg': "添加成功~", "code": 400})
 			else:
-				try:
-					Line_Assets.objects.create(line_name=line_name, line_ip=line_ip, line_is_master=line_is_master)
-				except Exception as ex:
-					logger.debug(msg=ex)
-					return JsonResponse({'msg': "添加失败~", "code": '502'})
-				return JsonResponse({'msg': "添加成功~", "code": '400'})
+				return JsonResponse({'msg': str(serializer.errors), "code": 502})
+
 		elif request.POST.get('op') == 'mod':
 			line_id = request.POST.get('line_id')
 			line_name = request.POST.get('line_name')
 			line_ip = request.POST.get('line_ip')
 			line_is_master = request.POST.get('line_is_master')
 			if not line_ip or not line_is_master or not line_name:
-				return JsonResponse({'msg': "必选项不许为空~", "code": '502'})
-			elif not is_ip(line_ip):
-				logger.debug(msg="ip地址不合法")
-				return JsonResponse({'msg': "IP地址不合法~", "code": '502'})
+				return JsonResponse({'msg': "必选项不许为空~", "code":502})
 			else:
 				try:
-					Line_Assets.objects.filter(id=line_id).update(line_ip=line_ip, line_is_master=line_is_master)
-				except Exception as ex:
-					logger.debug(msg='cuowu')
-					logger.debug(msg=ex)
-					return JsonResponse({'msg': "添加失败~", "code": '502'})
-				return JsonResponse({'msg': "添加成功~", "code": '400'})
+					line_snippet = Line_Assets.objects.get(id=line_id)
+					line = serializers.LineAssetsSerializer(line_snippet,data={'line_name':line_name, 'line_ip':line_ip, 'line_is_master':line_is_master})
+				except line_snippet.DoesNotExist:
+					return JsonResponse({'msg': '线路不存在', "code": 502})
+					logger.debug('删除的线路不存在%s',line_name)
+				if line.is_valid():
+					line.save()
+					return JsonResponse({'msg': "修改成功~", "code": 400})
+				else:
+					print(line.errors)
+					return JsonResponse({'msg': '修改失败', "code": 502})
 		elif request.POST.get('op') == 'del':
 			line_id = request.POST.get('id')
 			try:
 				Line_Assets.objects.get(id=line_id).delete()
 			except Exception as ex:
 				logger.debug(msg=ex)
-				return JsonResponse({'msg': "删除失败~", "code": '502'})
-			return JsonResponse({'msg': "删除成功~", "code": '400'})
+				return JsonResponse({'msg': "删除失败~", "code": 502})
+			return JsonResponse({'msg': "删除成功~", "code": 400})
 
 
 @login_required(login_url='/login')
@@ -144,7 +146,7 @@ def assets_list(request):
 				except Exception as ex:
 					logger.debug(msg=ex)
 					return JsonResponse({'msg': "删除失败~", "code": '502'})
-				return JsonResponse({'msg': "删除成功~", "code": '502'})
+				return JsonResponse({'msg': "删除成功~", "code": '400'})
 
 
 @login_required(login_url='/login')

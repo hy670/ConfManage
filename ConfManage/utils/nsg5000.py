@@ -1,6 +1,7 @@
 # -*- coding:utf8 -*-
 import IPy
 import re
+import zipfile
 from ConfManage.utils.defaultserdiclist import DefaultSerDicList
 from ConfManage.utils.ipprotocol import IpProtocol
 
@@ -96,11 +97,11 @@ class PolicyMic:
 
 
 class NSG5000:
-	def __init__(self, id="", name=""):
+	def __init__(self, id="", name="", conf_cwd="./conffile/nsg5000.zip"):
 		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
-		self.portlink = ['extranet-WANFW-USG6000EP-M', 'intranet-HXSW-01']
+		self.conf_cwd = conf_cwd
 		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
@@ -111,7 +112,7 @@ class NSG5000:
 		self.rulesergrplist = []
 		self.policylist = []
 		self.policymiclist = []
-		self.parseconffile()
+		self.parseconffile(conf_cwd)
 		self.creatpolicymic()
 
 	def locataddrbyname(self, addrname):
@@ -233,10 +234,12 @@ class NSG5000:
 						self.policymiclist.append(temppolicydetail)
 
 
-	def parseconffile(self):
+	def parseconffile(self,conf_cwd):
+		conf_zip = zipfile.ZipFile(conf_cwd)
+		conf_obj = conf_zip.read('config_OBJ').decode('utf-8').split('\n')
 		f = open('./conffile/nsg5000/config_OBJ', 'r', encoding="UTF-8")
 		key = ''
-		for line in f:
+		for line in conf_obj:
 			if 'object network address ' in line:
 				key = 'address'
 				self.addrlist.append(Addr(re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', line.strip())[3].split('"')[1]))
@@ -268,8 +271,9 @@ class NSG5000:
 					self.serlist[len(self.serlist)-1].sercontent.append({'protocol':tokks[1],'port':tokks[6]})
 			elif 'exit'== line.strip():
 				key = ''
+		conf_fw = conf_zip.read('config_FIREWALL').decode('utf-8').split('\n')
 		fpolicy = open('./conffile/nsg5000/config_FIREWALL', 'r', encoding="UTF-8")
-		for  policyline in fpolicy:
+		for  policyline in conf_fw:
 			if 'sip' in policyline and 'dip' in policyline:
 				tokks = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', policyline.strip())
 				temppolicy = Policy(tokks[2].split('"')[1])
@@ -289,8 +293,9 @@ class NSG5000:
 							i.dstaddr.append(tokks[5].split('"')[1])
 						elif tokks[4] == 'sip':
 							i.srcaddr.append(tokks[5].split('"')[1])
+		conf_net = conf_zip.read('config_NETWORK').decode('utf-8').split('\n')
 		fpolicy = open('./conffile/nsg5000/config_NETWORK', 'r', encoding="UTF-8")
-		for line in fpolicy:
+		for line in conf_net:
 			tokks = re.split(' ', line.strip())
 			if tokks[0] == 'zone':
 				self.zone.append(re.split('"',tokks[1])[1])

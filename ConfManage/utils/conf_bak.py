@@ -29,12 +29,12 @@ class RuiJeiSW:
 			self.client.connect(self.ip, self.port, self.user, self.password, timeout=5)
 			self.ssh_connect = self.client.invoke_shell()
 		except Exception as e:
-			logger.info("??%s??????????%s", self.hostname, e)
+			logger.info("%s SSH 连接失败，失败原因：%s", self.hostname, e)
 			exit()
 
 	def del_ssh_connect(self):
 		self.client.close()
-		logger.info("??????")
+		logger.info("%s SSH 连接关闭",self.hostname)
 
 	def to_enable(self):
 		self.ssh_connect.send('enable\n')
@@ -45,15 +45,13 @@ class RuiJeiSW:
 			time.sleep(1)
 			out = self.ssh_connect.recv(1024).decode()
 			if "Password:" in out:
-				logger.info("????")
+				logger.info("进入enable 失败，请检查密码是否正确")
 				exit()
 			elif "Ruijie#" in out:
-				logger.info("???????enable??")
+				logger.info("进入enable模式")
 
 	def show_run(self):
 		out = self.ssh_connect.recv(1024).decode()
-		print(out)
-		print("11")
 		self.ssh_connect.send('ls \n')
 		time.sleep(1)
 		out = self.ssh_connect.recv(1024).decode()
@@ -62,7 +60,6 @@ class RuiJeiSW:
 			self.ssh_connect.send('  ')
 			out = self.ssh_connect.recv(1024).decode()
 			conf = conf + out
-		print(conf)
 
 	def show_mac(self):
 		self.ssh_connect.send('show mac \n')
@@ -101,14 +98,13 @@ class RuiJeiSW:
 			out = self.ssh_connect.recv(1024).decode()
 			if 'Destination filename []?' in out:
 				date = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-				filename = date+".cfg"
-				logger.info("???????%s",filename)
+				filename = "ruijie"+date+".cfg"
+				logger.info("备份文件名%s",filename)
 				self.ssh_connect.send(filename+'\n')
 				time.sleep(1)
 				out = self.ssh_connect.recv(1024).decode()
-				print(out)
 				if "Transmission success" in out:
-					logger.info("????")
+					logger.info("%s 备份成功",self.hostname)
 
 		#reout = re.search("(\[(.*?)\][#|$]+)(?P<num>(.*)+)(\[(.*?)\][#|$]+) ", out, re.S)
 

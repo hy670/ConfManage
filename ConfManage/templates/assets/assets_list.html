@@ -11,66 +11,66 @@
           </div>
      </div>
 
-	<div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-desktop fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">{{totalAssets}}</div>
-                                    <div>总资产</div>
-                                </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-desktop fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">{{totalAssets}}</div>
+                                <div>总资产</div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
                     </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-green">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-check  fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">{{assetOnline}}</div>
-                                    <div>防火墙</div>
-                                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-check  fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">{{assetOnline}}</div>
+                                <div>防火墙</div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">View Details</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
                     </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-yellow">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-wrench fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">{{assetMaintain}}</div>
-                                    <div>路由器</div>
-                                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-wrench fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">{{assetMaintain}}</div>
+                                <div>路由器</div>
                             </div>
                         </div>
-                        <a href="#">
-                            <div class="panel-footer">
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
                                 <span class="pull-left">View Details</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                 <div class="clearfix"></div>
@@ -100,7 +100,8 @@
                         </a>
                     </div>
                 </div>
-     </div>            
+     </div>
+
      <div class="row">
          <div class="col-lg-6">
               <div class="panel panel-default">
@@ -131,8 +132,71 @@
                     <!-- /.panel -->
                 </div> 
      </div>
-
-     
+      <!--    资产查询 -->
+    <div class="row">
+          <div class="col-lg-12">
+         <div class="panel panel-default">
+                  <div class="panel-heading">
+                      <i class="fa fa-keyboard-o  fa-fw"></i> 资产查询
+                  </div>
+                  <div class="panel-body">
+                         <!--    资产类型选择框 -->
+				      <div class="col-xs-6 col-sm-4">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">资产类型:</label>
+								<div class="col-sm-8">
+									<select class="form-control"  id="selStatus"  >
+										<option selected="selected" value="">请选择一个类型</option>
+										<option value="server" name="asset_assets_type">服务器</option>
+                                        <option value="vmser" name="asset_assets_type">虚拟机</option>
+                                        <option value="switch" name="asset_assets_type">交换机</option>
+                                        <option value="route" name="asset_assets_type">路由器</option>
+                                        <option value="firewall" name="asset_assets_type">防火墙</option>
+                                        <option value="storage" name="asset_assets_type">存储设备</option>
+									</select>
+								</div>
+							</div>
+				      </div>
+				      <div class="col-xs-6 col-sm-4">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">所属产品线:</label>
+								<div class="col-sm-8">
+									 <select class="form-control" id="selProject" >
+									 	<option selected="selected" value="">请选择一个类型</option>
+									 	{% for b in baseAssets.project %}
+									 		<option value="{{b.id}}" name="project">{{b.project_name}}</option>
+									 	{% endfor %}
+									</select>
+								</div>
+							</div>
+				      </div>
+<!-- 				      <div class="col-xs-6 col-sm-3">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">IP地址:</label>
+							<div class="input-group">
+								<input type="text" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button">Search</button>
+								</span>
+							</div>
+							</div>
+				      </div> -->
+				      <div class="col-xs-6 col-sm-4">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">IP地址:</label>
+								<div class="col-sm-8">
+									<input type="text" id="ip" class="form-control" value="">
+								</div>
+							</div>
+				      </div>
+                  </div>
+                  <div class="panel-footer">
+                  <div id="divSelectedType"></div>
+                  </div>
+              </div>
+          </div>
+    </div>
+    <!--    资产列表 -->
 	 <div class="row">
 	 		<div class="col-lg-12">
                     <div class="panel panel-default">

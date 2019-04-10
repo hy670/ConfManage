@@ -1,4 +1,7 @@
 {% extends 'index.html' %}
+{% block ace-content %}
+<script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+{% endblock %}
 {% block page-content %}
 
     <div id="page-wrapper">
@@ -16,8 +19,7 @@
                         <i class="fa  fa-flash"></i> 出口线路
                     </div>
                     <div class="panel-body">
-                            <button type="button" class="btn btnbtn-xs btn-default" data-toggle="modal"
-                                    data-target="#myLineModal"><i class="glyphicon glyphicon-plus">新增</i></button>
+                            <button type="button" class="btn btnbtn-xs btn-default" data-toggle="modal" data-target="#myLineModal"><i class="glyphicon glyphicon-plus">新增</i></button>
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
@@ -68,7 +70,7 @@
 
 
 
-    <div class="modal fade" id="myLineModal" tabindex="-1" role="dialog" aria-labelledby="myLineModalLabel"
+    <div class="modal fade " id="myLineModal" tabindex="-1" role="dialog" aria-labelledby="myLineModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -83,21 +85,21 @@
                     <form class="form-horizontal" role="form" id="line_assets">
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right"
-                                   for="form-field-4"><strong>线路名称</strong></label>
+                                   for="form-field-4"><font color='red'>* </font><strong>线路名称</strong></label>
                             <div class="col-sm-6">
                                 <input class="form-control" type="text" id="line_name"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right"
-                                   for="form-field-4"><strong>对端IP地址</strong></label>
+                                   for="form-field-4"><font color='red'>* </font><strong>对端IP地址</strong></label>
                             <div class="col-sm-6">
                                 <input class="form-control" type="text" id="line_ip"/>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right"
-                                   for="form-field-4"><strong>主用状态</strong></label>
+                                   for="form-field-4"><font color='red'>* </font><strong>主用状态</strong></label>
                             <div class="col-sm-6">
                                 <select class="form-control center" id="line_is_master">
                                     <option selected="selected" value="">请选择</option>
@@ -168,7 +170,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    <button type="button" id="modmodalclose"class="btn btn-default" data-dismiss="modal">关闭
                     </button>
                     <button type="button" class="btn btn-primary" onclick="modfAssetsData(this)">
                         修改
@@ -197,8 +199,22 @@
                 type: "POST",  //提交类似
                 data: {'op': 'add', 'line_name': line_name, 'line_ip': line_ip, 'line_is_master': line_is_master}, //提交参数
                 success: function (response) {
-                    btnObj.removeAttr('disabled');
-                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success, {
+                    if (response.code == 502)
+                    {
+                        btnObj.removeAttr('disabled');
+                        $.notify({
+                                title: "<strong>资产添加错误:</strong><br>",
+                                message: response.msg
+                            },
+                            {
+                                type: 'danger',
+                                delay: 5000
+                            });
+                        $(myLineModal).modal('hide');
+
+                    }
+                    else if (response.code ==400)
+                        window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success, {
                         onOk: function () {
                             location.reload();
                         }
@@ -206,7 +222,7 @@
                 },
                 error: function (response) {
                     btnObj.removeAttr('disabled');
-                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                   window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
                     /* 	    		location.reload(); */
                 }
             })
@@ -215,7 +231,6 @@
 
         function modfAssetspage(obj, id, name, ip, is_master) {
             var btnObj = $(obj);
-            btnObj.attr('disabled', true);
             var post_data = {};
             $(modfline_id).val(id);
             $(modfline_name).val(name);
@@ -256,7 +271,7 @@
                 },
                 error: function (response) {
                     btnObj.removeAttr('disabled');
-                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.error);
+                    window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
                     /* 	    		location.reload(); */
                 }
             })
@@ -266,7 +281,7 @@
             var btnObj = $(obj);
             btnObj.attr('disabled', true);
             var txt = "是否确认删除？";
-            var putUrl = '/assets_config/';
+            var putUrl = '/assets_line/';
             var option = {
                 title: "id-" + id,
                 btn: parseInt("0011", 2),
@@ -278,8 +293,13 @@
                         data: {'op': 'del', 'id': id},
                         success: function (response) {
                             btnObj.removeAttr('disabled');
-                            window.wxc.xcConfirm("删除成功！", window.wxc.xcConfirm.typeEnum.success);
-                            location.reload();
+                            window.wxc.xcConfirm("删除成功！", window.wxc.xcConfirm.typeEnum.success,
+                                {
+                                    onOk: function () {
+                                        location.reload();
+                                    }
+
+                                });
                         },
                         error: function (response) {
                             btnObj.removeAttr('disabled');
@@ -294,6 +314,8 @@
             }
             window.wxc.xcConfirm(txt, "custom", option);
         }
+
+
 
     </script>
 {% endblock %}

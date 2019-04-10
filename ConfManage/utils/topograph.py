@@ -1,3 +1,4 @@
+import os
 import IPy
 import networkx
 from ConfManage.utils import usg4000ep, f1030, nsg5000, devicebase
@@ -20,9 +21,12 @@ def isnetaddr(addr):
 
 def iplocate(addr):
 	for netaddr in Topo.netaddrlist:
-		if addr in IPy.IP(netaddr.netaddr):
-			return netaddr
-	if IPy.IP(addr).iptype() == 'PUBLIC':
+		if netaddr != Topo.internet:
+			if addr in IPy.IP(netaddr.netaddr):
+				return netaddr
+	if IPy.IP("172.168.1.0/24").overlaps(addr):
+		return False
+	elif IPy.IP(addr).iptype() == 'PUBLIC':
 		return Topo.internet
 	else:
 		return False
@@ -57,7 +61,9 @@ def iszmbiepolicy(checkfirewall):
 				if i.name == srcdev:
 					srcnetlist = anychangenet(i, checkfirewall)
 		else:
-			srcnetlist.append(iplocate(checkpoliy.srcaddr))
+			srcnet = iplocate(checkpoliy.srcaddr)
+			if srcnet != False:
+				srcnetlist.append(srcnet)
 		if checkpoliy.dstaddr == '0.0.0.0/0':
 			for port in policy_zone:
 				if checkpoliy.dsteth == port.zone:
@@ -66,8 +72,10 @@ def iszmbiepolicy(checkfirewall):
 				if i.name == dstdev:
 					dstnetlist = anychangenet(i, checkfirewall)
 		else:
-			dstnetlist.append(iplocate(checkpoliy.dstaddr))
-		'''logger.info('src:' + checkpoliy.srcaddr)
+			dstnet = iplocate(checkpoliy.dstaddr)
+			if dstnet != False:
+				dstnetlist.append(dstnet)
+		logger.info('src:' + checkpoliy.srcaddr)
 		logger.info('dst:' + checkpoliy.dstaddr)
 		if len(srcnetlist) > 0:
 			for i in srcnetlist:
@@ -75,7 +83,7 @@ def iszmbiepolicy(checkfirewall):
 				logger.info('srcnet:' + i.name)
 		if len(dstnetlist) > 0:
 			for i in dstnetlist:
-				logger.info('dstnet:' + i.name)'''
+				logger.info('dstnet:' + i.name)
 		# 如果存在源节点设备和目的节点设备
 		if len(dstnetlist) > 0 and len(srcnetlist) > 0:
 			# 遍历源节点和目的节点设备
@@ -87,6 +95,7 @@ def iszmbiepolicy(checkfirewall):
 					# 遍历路径设备列表
 					for i in range(len(routelist)):
 						# 设备与策略主机一致跳过
+
 						if routelist[i] == checkfirewall:
 							continue
 						# 如设备类型为防火墙
@@ -155,25 +164,28 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 	# 解析IP地址在拓扑中对应的节点，如果节点未在拓扑中添加则退出不进行查找
 	if dstaddr == "0.0.0.0" or dstaddr == "0.0.0.0/0":
 		dstnet = Topo.internet
-	elif IPy.IP(dstaddr).iptype() == 'PUBLIC':
-		dstnet = Topo.internet
 	else:
 		for i in Topo.netaddrlist:
-			if 1 == IPy.IP(i.netaddr).overlaps(dstaddr) or 1 == IPy.IP(dstaddr).overlaps(i.netaddr):
-				dstnet = i
-				break
+			if i != Topo.internet:
+				if 1 == IPy.IP(i.netaddr).overlaps(dstaddr) or 1 == IPy.IP(dstaddr).overlaps(i.netaddr):
+					dstnet = i
+					break
+			elif IPy.IP(dstaddr).iptype() == 'PUBLIC':
+				dstnet = Topo.internet
 	if srcaddr == "0.0.0.0" or srcaddr == "0.0.0.0/0":
 		srcnet = Topo.internet
-	elif IPy.IP(srcaddr).iptype() == 'PUBLIC':
-		srcnet = Topo.internet
 	else:
 		for i in Topo.netaddrlist:
-			if 1 == IPy.IP(i.netaddr).overlaps(srcaddr) or 1 == IPy.IP(srcaddr).overlaps(i.netaddr):
-				srcnet = i
-				break
+			if i != Topo.internet:
+				if 1 == IPy.IP(i.netaddr).overlaps(srcaddr) or 1 == IPy.IP(srcaddr).overlaps(i.netaddr):
+					srcnet = i
+					break
+			elif IPy.IP(srcaddr).iptype() == 'PUBLIC':
+				srcnet = Topo.internet
+
 	# 根据策略的源区域和目的区域 确认策略路径 生成路径设备列表
 	if not srcnet or not dstnet:
-		return False
+		return False, False
 	else:
 		routelist = networkx.shortest_path(Topo.nxtopology, source=srcnet, target=dstnet)
 	# 遍历路径设备列表
@@ -206,7 +218,7 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 								# checkpoliy.printpolicymic()
 								searchpolicylist.append(j)
 		searchpolicydic.update({routelist[i].name: searchpolicylist})
-	return searchpolicydic
+	return routelist,searchpolicydic
 
 
 def regularcheck(checkfirewall):
@@ -272,10 +284,16 @@ class Topo:
 		names = locals()
 		if asset.assets_type == 'firewall':
 			if asset.model == 'USG4000EP':
-				nxtopology.add_node(usg4000ep.USG4000EP(netasset.id, netasset.hostname))
+				filename = Conffile.objects.filter(network_assets_id=netasset.id).order_by('create_date')[0].filename
+				file_cwd = os.getcwd()+"/conffile/"+filename
+				nxtopology.add_node(usg4000ep.USG4000EP(netasset.id, netasset.hostname, file_cwd))
 			elif asset.model == 'NSG5500':
+				filename = Conffile.objects.filter(network_assets_id=netasset.id).order_by('create_date')[0].filename
+				file_cwd = os.getcwd() + "/conffile/" + filename
 				nxtopology.add_node(nsg5000.NSG5000(netasset.id, netasset.hostname))
 			elif asset.model == 'F1030':
+				filename = Conffile.objects.filter(network_assets_id=netasset.id).order_by('create_date')[0].filename
+				file_cwd = os.getcwd() + "/conffile/" + filename
 				nxtopology.add_node(f1030.F1030(netasset.id, netasset.hostname))
 			else:
 				nxtopology.add_node(devicebase.EthSW(netasset.id, netasset.hostname))
@@ -297,6 +315,7 @@ class Topo:
 		netdev = devicebase.NetAddr(lineasset.id, lineasset.line_name, lineasset.line_ip)
 		if netdev.netaddr == "0.0.0.0" or netdev.netaddr == "0.0.0.0/0":
 			internet = netdev
+
 		netaddrlist.append(netdev)
 		nxtopology.add_node(netdev)
 		nodes.append({'id': lineasset.line_name, 'label': lineasset.line_name, 'type': 'line'})
