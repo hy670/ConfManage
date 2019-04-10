@@ -86,6 +86,8 @@ def policy_search(request):
 		dstaddr = request.POST.get('dstaddr')
 		protocol = request.POST.get('protocol')
 		port = request.POST.get('port')
+		nodes = []
+		edges = []
 		if not protocol:
 			protocol = '0'
 		if not port:
@@ -95,8 +97,16 @@ def policy_search(request):
 		elif int(port) not in range(0, 65535):
 			return JsonResponse({'msg': "请输入正确端口号，范围1-66535~", "code": '502'})
 		else:
+			print(srcaddr)
+			print(dstaddr)
+			print(protocol)
+			print(port)
 			policydiclist = []
-			tempdic = searchpolicy(srcaddr, dstaddr, protocol, port)
+			routelist,tempdic = searchpolicy(srcaddr, dstaddr, protocol, port)
+			for i in range(0,len(routelist)):
+				nodes.append({'id': routelist[i].name, 'label': routelist[i].name, 'type': routelist[i].type})
+				if i < len(routelist)-1:
+					edges.append({"from":routelist[i].name,"to":routelist[i+1].name})
 			if tempdic == False:
 				return JsonResponse({'msg': "输入的地址不在网络范围内", "code": '502'})
 			for key in tempdic:
@@ -111,7 +121,7 @@ def policy_search(request):
 						                 'protocol': i.service['protocol'],
 						                 'port': i.service['port']}
 						policydiclist.append(temppolicydic)
-			return JsonResponse({'policy': policydiclist, "code": '400'})
+			return JsonResponse({'policy': policydiclist,'nodes':nodes,'edges':edges, "code": '400'})
 
 
 @login_required(login_url='/login')

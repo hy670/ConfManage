@@ -36,25 +36,26 @@ def topo_edge(request):
 		lineedges = Line_Edges.objects.all()
 
 		edgesdic = []
-		for edge in edges:
-			edgeid = edge.id
-			edgetype = edge.edges_type
-			if edgetype == "net":
-				for netedge in netedges:
-					if edge.id == netedge.Edges_id:
-						srcdev = Network_Assets.objects.get(id=netedge.src_id).hostname
-						dstdev = Network_Assets.objects.get(id=netedge.dst_id).hostname
-			elif edge.edges_type == "line":
-				for lineedge in lineedges:
-					if edge.id == lineedge.Edges_id:
-						srcdev = Network_Assets.objects.get(id=lineedge.src_id).hostname
-						dstdev = Line_Assets.objects.get(id=lineedge.dst_id).line_name
-			elif edge.edges_type == "server":
-				for seredge in seredges:
-					if edge.id == seredge.Edges_id:
-						srcdev = Network_Assets.objects.get(id=seredge.src_id).hostname
-						dstdev = Server_Assets.objects.get(id=seredge.dst_id).hostname
-			edgesdic.append({'id': str(edgeid), 'type': edgetype, 'srcdev': srcdev, 'dstdev': dstdev})
+		if edges:
+			for edge in edges:
+				edgeid = edge.id
+				edgetype = edge.edges_type
+				if edgetype == "net":
+					for netedge in netedges:
+						if edge.id == netedge.Edges_id:
+							srcdev = Network_Assets.objects.get(id=netedge.src_id).hostname
+							dstdev = Network_Assets.objects.get(id=netedge.dst_id).hostname
+				elif edge.edges_type == "line":
+					for lineedge in lineedges:
+						if edge.id == lineedge.Edges_id:
+							srcdev = Network_Assets.objects.get(id=lineedge.src_id).hostname
+							dstdev = Line_Assets.objects.get(id=lineedge.dst_id).line_name
+				elif edge.edges_type == "server":
+					for seredge in seredges:
+						if edge.id == seredge.Edges_id:
+							srcdev = Network_Assets.objects.get(id=seredge.src_id).hostname
+							dstdev = Server_Assets.objects.get(id=seredge.dst_id).hostname
+				edgesdic.append({'id': str(edgeid), 'type': edgetype, 'srcdev': srcdev, 'dstdev': dstdev})
 		return render(request, 'topo/topo_edge.html', {'edges': edgesdic})
 	elif request.method == 'POST':
 		if request.POST.get('op') == 'type_select':

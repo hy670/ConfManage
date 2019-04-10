@@ -9,7 +9,6 @@
                 <div class="col-lg-12">
                     <h1 class="page-header"><i class="fa  fa-desktop"></i> 资产添加</h1>
                 </div>
-                <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
             <div class="row">
@@ -23,12 +22,13 @@
                            		<div class="col-lg-2">
                            		</div>
                                 <div class="col-lg-8">
+                                    <!-- 资产录入 -->
 									<fieldset>
 									<legend>设备资产信息录入 - 必填信息</legend> 
 										<form role="form" method="post" id="addAssets" class="main form-horizontal" >{% csrf_token %}
 										<fieldset>
 											<div class="form-group" >
-												 <label class="col-sm-2 control-label">设备类型</label>
+												 <label class="col-sm-2 control-label"><font color='red'>* </font>设备类型</label>
 												 <div class="col-sm-6">
 												   <select class="form-control" name="asset_assets_type" id='assets_type_select' onchange="javascript:oBtAssetsType();" >
 														<option value="server" name="asset_assets_type">服务器</option>
@@ -41,7 +41,7 @@
 												</div>						
 											</div>
 											<div class="form-group">
-												 <label class="col-sm-2 control-label">资产编号</label>
+												 <label class="col-sm-2 control-label"><font color='red'>* </font>资产编号</label>
 												 <div class="col-sm-6">
 												 	<input type="text" class="form-control" id="asset_name" name="asset_name" placeholder="编号" value="" class="input-xlarge"  required/>
 												 </div>
@@ -89,6 +89,7 @@
 											</div>
 
 										</fieldset>
+                                            <!-- 服务器资产录入 -->
 										<fieldset>
 											<div id="asset_server_chioce">					
 											<legend>服务器设备资产信息录入 - 可选信息</legend>
@@ -107,6 +108,7 @@
 											</div>
 											</div>
 										</fieldset>
+                                            <!-- 网络资产录入 -->
 										<fieldset>
 											<div id="asset_net_chioce" style="display:none;">					
 											<legend>网络设备资产信息录入 - 可选信息</legend>
@@ -176,6 +178,7 @@
 												 </div>
 											</div>										
 										</fieldset>
+                                            <!-- 提交栏 -->
                                         <div class="form-group">
 											<label class="col-sm-3 control-label"></label>
 											<button type="reset"  class="btn btn-default" >撤销操作</button>
@@ -201,7 +204,8 @@
 
 
 
-<script type="text/javascript"> 
+<script type="text/javascript">
+     <!-- 提示 -->
 	$(function () { $("[data-toggle='tooltip']").tooltip(); });
 
 	
@@ -271,20 +275,17 @@
 		   var value = obj.options[index].value; 
 		   if (value=="server"){
 			   document.getElementById("asset_net_chioce").style.display = "none";
-			   document.getElementById("asset_server_chioce").style.display = "";  
-			   document.getElementById("asset_vmserver_chioce").style.display = "";	
+			   document.getElementById("asset_server_chioce").style.display = "";
 			   assets = ['asset_assets_type','asset_name','asset_sn','asset_expire_date','asset_buy_time','asset_buy_user','asset_management_ip','asset_manufacturer','asset_provider','asset_model','asset_status','asset_put_zone','asset_group','asset_business','asset_project'];
 		   }
 		   else if (value=="vmser"){
 			   document.getElementById("asset_server_chioce").style.display = "";  
-			   document.getElementById("asset_net_chioce").style.display = "none";		
-			   document.getElementById("asset_vmserver_chioce").style.display = "none";	
+			   document.getElementById("asset_net_chioce").style.display = "none";
 			   assets = ['asset_assets_type','asset_name'];
 		   }		   
  		   else {
 			   document.getElementById("asset_net_chioce").style.display = "";
-			   document.getElementById("asset_server_chioce").style.display = "none";	
-			   document.getElementById("asset_vmserver_chioce").style.display = "";	
+			   document.getElementById("asset_server_chioce").style.display = "none";
 			   assets = ['asset_assets_type','asset_name','asset_sn','asset_buy_user','asset_management_ip','asset_manufacturer','asset_model'];
 		   }
 	}

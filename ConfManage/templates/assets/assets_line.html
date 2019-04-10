@@ -170,7 +170,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    <button type="button" id="modmodalclose"class="btn btn-default" data-dismiss="modal">关闭
                     </button>
                     <button type="button" class="btn btn-primary" onclick="modfAssetsData(this)">
                         修改
@@ -231,7 +231,6 @@
 
         function modfAssetspage(obj, id, name, ip, is_master) {
             var btnObj = $(obj);
-            btnObj.attr('disabled', true);
             var post_data = {};
             $(modfline_id).val(id);
             $(modfline_name).val(name);
@@ -315,6 +314,8 @@
             }
             window.wxc.xcConfirm(txt, "custom", option);
         }
+
+
 
     </script>
 {% endblock %}

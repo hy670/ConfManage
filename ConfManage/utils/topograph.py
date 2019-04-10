@@ -206,7 +206,7 @@ def searchpolicy(srcaddr, dstaddr, protocol, service):
 								# checkpoliy.printpolicymic()
 								searchpolicylist.append(j)
 		searchpolicydic.update({routelist[i].name: searchpolicylist})
-	return searchpolicydic
+	return routelist,searchpolicydic
 
 
 def regularcheck(checkfirewall):

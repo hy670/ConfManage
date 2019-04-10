@@ -14,7 +14,7 @@ try:
 
 	# 'cron'方式循环，周一到周五，每天9:30:10执行,id为工作ID作为标记
 	#@register_job(scheduler, 'cron', day_of_week='mon-fri', hour='9', minute='30', second='10', id='task_time')
-	@register_job(scheduler, "interval", seconds=60)  # 用interval方式循环，每一秒执行一次
+	#@register_job(scheduler, "interval", seconds=60)  # 用interval方式循环，每一秒执行一次
 	def test_job():
 		assets = Assets.objects.all()
 		logger.info("开始备份任务")

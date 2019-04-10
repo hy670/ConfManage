@@ -28,6 +28,7 @@ def conffile_list(request):
 		if request.POST.get('op')=='add':
 			print(os.getcwd())
 			assets_id =request.POST.get('assets_name')
+
 			file_detail = request.POST.get('conffile_detail')
 			assets = Network_Assets.objects.get(id=assets_id)
 			f = request.FILES.get('import_file')
@@ -36,6 +37,7 @@ def conffile_list(request):
 			if os.path.isdir(os.path.dirname(filepath)) is not True: os.makedirs(os.path.dirname(filepath))
 			fobj = open(filepath, 'wb')
 			for chrunk in f.chunks():
+				print(chrunk)
 				fobj.write(chrunk)
 			fobj.close()
 			Conffile.objects.create(filename=filename, file_detail=file_detail, network_assets=assets)
