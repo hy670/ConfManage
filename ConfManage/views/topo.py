@@ -17,8 +17,6 @@ from django.db import transaction
 @login_required(login_url='/login')
 def topo_graph(request):
 	if request.method == 'GET':
-		reload(ConfManage.utils.topograph)
-		from ConfManage.utils.topograph import Topo
 		nodelist = Topo.nodes
 		edgelist = Topo.edges
 		topo = {'nodes': nodelist, 'edges': edgelist}

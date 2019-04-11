@@ -97,11 +97,11 @@ class PolicyMic:
 
 
 class NSG5000:
-	def __init__(self, id="", name=""):
+	def __init__(self, id="", name="", conf_cwd="./conffile/nsg5000.zip"):
 		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
-		self.portlink = ['extranet-WANFW-USG6000EP-M', 'intranet-HXSW-01']
+		self.conf_cwd = conf_cwd
 		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
@@ -112,7 +112,7 @@ class NSG5000:
 		self.rulesergrplist = []
 		self.policylist = []
 		self.policymiclist = []
-		self.parseconffile()
+		self.parseconffile(conf_cwd)
 		self.creatpolicymic()
 
 	def locataddrbyname(self, addrname):
@@ -234,8 +234,8 @@ class NSG5000:
 						self.policymiclist.append(temppolicydetail)
 
 
-	def parseconffile(self):
-		conf_zip = zipfile.ZipFile('E:\project\ConfManage\conffile\\nsg5000.zip')
+	def parseconffile(self,conf_cwd):
+		conf_zip = zipfile.ZipFile(conf_cwd)
 		conf_obj = conf_zip.read('config_OBJ').decode('utf-8').split('\n')
 		f = open('./conffile/nsg5000/config_OBJ', 'r', encoding="UTF-8")
 		key = ''

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
-from ConfManage.views import (index, policy, users, assets, wssh, conf_file, topo, conf_bak)
+from ConfManage.views import index, policy, users, assets, wssh, conf_file, topo, conf_bak
 
 urlpatterns = [
 	url(r'^$', index.index),

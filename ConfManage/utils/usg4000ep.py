@@ -178,11 +178,12 @@ class PolicyMic:
 
 
 class USG4000EP:
-	def __init__(self, id="", name=""):
+	def __init__(self, id="", name="",conf_cwd="./conffile/usg.conf"):
 		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
 		self.portlink = ['internet-互联网电信', 'intranet-WWFW-M']
+		self.conf_cwd =conf_cwd
 		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
@@ -194,7 +195,7 @@ class USG4000EP:
 		self.policylist = []
 		self.policydetaillist = []
 		self.policymiclist = []
-		self.parseconffile()
+		self.parseconffile(self.conf_cwd)
 		self.creatpolicydetail()
 		self.creatpolicymic()
 
@@ -386,8 +387,8 @@ class USG4000EP:
 						tempmetapolicy.service = l
 						self.policymiclist.append(tempmetapolicy)
 
-	def parseconffile(self):
-		f = open('./conffile/usg.conf', 'r', encoding="UTF-8")
+	def parseconffile(self,conf_cwd):
+		f = open(conf_cwd, 'r', encoding="UTF-8")
 		linedone = 0
 		linemum = 0
 		while not linedone:

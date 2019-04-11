@@ -82,11 +82,11 @@ class PolicyMic:
 
 
 class F1030:
-	def __init__(self, id="", name=""):
+	def __init__(self, id="", name="", conf_cwd="./conffile/FW1310.conf"):
 		self.assetid = id
 		self.name = name
 		self.type = 'firewall'
-		self.portlink = ['DB-dbaddr', 'APP-appaddr', 'VPN-jtaddr', 'VPN-wzaddr', 'extranet-hxsw']
+		self.conf_cwd = conf_cwd
 		self.zone = []
 		self.addrlist = []
 		self.addrgrplist = []
@@ -97,7 +97,7 @@ class F1030:
 		self.rulesergrplist = []
 		self.policylist = []
 		self.policymiclist = []
-		self.parseconffile()
+		self.parseconffile(self.conf_cwd)
 		self.creatpolicymic()
 
 	def locataddrbyname(self, addrname):
@@ -190,10 +190,10 @@ class F1030:
 						temppolicydetail.service = l
 						self.policymiclist.append(temppolicydetail)
 
-	def parseconffile(self):
+	def parseconffile(self,conf_cwd):
 		logger.info("开始解析F1030配置文件")
 		ls = os.getcwd()
-		f = open('./conffile/FW1310.conf', 'r', encoding="GBK")
+		f = open(conf_cwd, 'r', encoding="GBK")
 		key = ''
 		for line in f:
 			if not line[0].isspace():

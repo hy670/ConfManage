@@ -12,6 +12,8 @@ class Applied_policy(models.Model):
 	protocol = models.IntegerField(blank=True, null=True, verbose_name='协议')
 	port = models.IntegerField(blank=True, null=True, verbose_name='端口')
 	proposer = models.CharField(max_length=100, null=True, verbose_name='申请人')
+	apply_time = models.DateTimeField(auto_now_add=True)
+	cut_time = models.DateTimeField(null=True)
 	create_date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:

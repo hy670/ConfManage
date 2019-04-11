@@ -7,7 +7,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from ConfManage.utils.graph import usg100, f1030, nsg5000
 from ConfManage.utils.is_ip import is_ip
 from ConfManage.utils.logger import logger
 from ConfManage.utils.topograph import Topo, searchpolicy, regularcheck,iszmbiepolicy
@@ -103,12 +102,12 @@ def policy_search(request):
 			print(port)
 			policydiclist = []
 			routelist,tempdic = searchpolicy(srcaddr, dstaddr, protocol, port)
+			if routelist == False and tempdic == False:
+				return JsonResponse({'msg': "输入的地址不在拓扑内，如存在请添加节点！！", "code": '502'})
 			for i in range(0,len(routelist)):
 				nodes.append({'id': routelist[i].name, 'label': routelist[i].name, 'type': routelist[i].type})
 				if i < len(routelist)-1:
 					edges.append({"from":routelist[i].name,"to":routelist[i+1].name})
-			if tempdic == False:
-				return JsonResponse({'msg': "输入的地址不在网络范围内", "code": '502'})
 			for key in tempdic:
 				if len(tempdic[key]) > 0:
 					for i in tempdic[key]:
