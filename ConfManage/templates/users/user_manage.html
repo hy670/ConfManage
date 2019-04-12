@@ -16,271 +16,349 @@
                         <div class="panel-body">
 
 				                            
-				           <ul class="nav nav-tabs">
-				              <li class="active"><a href="#home" data-toggle="tab"><i class="fa   fa-user"></i> 用户</a>
-				              </li>
-				              <li><a href="#profile" data-toggle="tab"><i class="fa   fa-group"></i>用户组</a>
-				              </li>
-				           </ul>
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#home" data-toggle="tab"><i class="fa   fa-user"></i> 用户</a>
+                                </li>
+                                <li><a href="#profile" data-toggle="tab"><i class="fa   fa-group"></i>用户组</a>
+                                </li>
+                                 <li><a href="#permission" data-toggle="tab"><i class="fa   fa-magnet"></i>权限管理</a>
+                                </li>
+                            </ul>
 				
 				                            
-				           <div class="tab-content">
-				              <div class="tab-pane fade in active" id="home">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-				                   			<legend><i class="fa  fa-list-alt  "></i>用户列表</legend>																					
-											<div>											
-												<table class="table table-hover">
-													<thead>
-														<tr>
-															<th class="center">用户名称</th>
-															<th class="center">邮箱地址</th>
-															<th class="hidden-xs center">超级管理员</th>
-															<th class="hidden-480 center">最后登录</th>
-															<th class="center">注册日期</th>
-															<th class="center">是否激活</th>
-															<th class="center">操作</th>
-														</tr>
-													</thead>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="home">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <br>
+                                            <legend><i class="fa  fa-list-alt  "></i>用户列表</legend>
+                                            <div>
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="center">用户名称</th>
+                                                        <th class="center">邮箱地址</th>
+                                                        <th class="hidden-xs center">超级管理员</th>
+                                                        <th class="hidden-480 center">最后登录</th>
+                                                        <th class="center">注册日期</th>
+                                                        <th class="center">是否激活</th>
+                                                        <th class="center">操作</th>
+                                                    </tr>
+                                                    </thead>
 										
-													<tbody>
-														{% for ds in userList %}
-															<tr>
-																<td>
-																	<label>
-																		<span class="lbl"></span>
-																		<a href="/user/{{ds.id}}">
-																			{{ ds.username }}
-																		</a>
-																	</label>
-																</td>		
-																<td>
-																	{{ ds.email }}
-																</td>																
-																<td class="hidden-480">	
-																	{% if ds.is_superuser %}
-																		<span class="label label-success arrowed">
-																			是
-																		</span>
-																	{% else %}
-																		<span class="label label-danger arrowed-in">
-																			否
-																		</span>												
-																	{% endif %}														
-																</td>																
-																<td>
-																	{{ ds.last_login|date:"Y/m/d H:i:s" }}
+                                                    <tbody>
+                                                    {% for ds in userList %}
+                                                        <tr>
+                                                            <td>
+                                                                <label>
+                                                                    <span class="lbl"></span>
+                                                                    <a href="/user/{{ds.id}}">
+                                                                        {{ ds.username }}
+                                                                    </a>
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                {{ ds.email }}
+                                                            </td>
+                                                            <td class="hidden-480">
+                                                                {% if ds.is_superuser %}
+                                                                    <span class="label label-success arrowed">
+                                                                        是
+                                                                    </span>
+                                                                {% else %}
+                                                                    <span class="label label-danger arrowed-in">
+                                                                        否
+                                                                    </span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {{ ds.last_login|date:"Y/m/d H:i:s" }}
 																	
-																</td>
-																<td class="hidden-480">
-																	{{ ds.date_joined|date:"Y/m/d H:i:s" }}														
+                                                            </td>
+                                                            <td class="hidden-480">
+                                                                {{ ds.date_joined|date:"Y/m/d H:i:s" }}
 																	
-																</td>
-																<td class="hidden-480">	
-																	{% if ds.is_active %}
-																		<span class="label label-success arrowed">
-																			已激活
-																		</span>
-																	{% else %}
-																		<span class="label label-danger arrowed-in">
-																			未激活
-																		</span>												
-																	{% endif %}														
-																</td>
-																<td>
-																	<div class="btn-group-vertical">
-																		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-																			<abbr title="用户控制"><i class="fa fa-edit"></i>
-																			<span class="caret"></span>
-																		</button>
-																		<ul class="dropdown-menu">
-																				<li>
-																					{% if ds.is_active %}
-																						<a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',0,'inactive')">取消激活</a>
-																					{% else %}
-																						<a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',1,'active')">激活用户</a>
-																					{% endif %}																
-																				</li>																																	
-																				<li class="divider"></li>					
-																				<li>
-																					<a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',0,'delete')">删除用户</a>
-																				</li>														
-																		</ul>
-																	</div>																	
-																</td>		
-															</tr>
-														{% endfor %}
-														</tbody>
-													</table>
-												</div>													
-													<div class="hr "></div>
+                                                            </td>
+                                                            <td class="hidden-480">
+                                                                {% if ds.is_active %}
+                                                                    <span class="label label-success arrowed">
+                                                                        已激活
+                                                                    </span>
+                                                                {% else %}
+                                                                    <span class="label label-danger arrowed-in">
+                                                                        未激活
+                                                                    </span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                <div class="btn-group-vertical">
+                                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                                        <abbr title="用户控制"><i class="fa fa-edit"></i>
+                                                                            <span class="caret"></span>
+                                                                    </button>
+                                                                    <ul class="dropdown-menu">
+                                                                        <li>
+                                                                            {% if ds.is_active %}
+                                                                                <a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',0,'inactive')">取消激活</a>
+                                                                            {% else %}
+                                                                                <a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',1,'active')">激活用户</a>
+                                                                            {% endif %}
+                                                                        </li>
+                                                                        <li class="divider"></li>
+                                                                        <li>
+                                                                            <a href="javascript:" onclick="onBtnHandleUser(this,{{ ds.id}},'{{ ds.username }}',0,'delete')">删除用户</a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="hr "></div>
 										
-													<div class="row">
-														<div class="col-sm-5 pull-right">
-															<h4 class="pull-right">
-																Total Users :
-																<span class="red"><code>{{ userList|length }}</code></span>
-															</h4>
-														</div>
-														<div class="col-sm-7 pull-left"> 
-															<button class="btn btn-sm btn-default pull-left" class="btn btn-primary" data-toggle="modal"  data-target="#myAddUserModal">
-																<i class="fa fa-plus"></i>
-																<span class="bigger-110">新增用户</span>
-															</button>
-														</div>
+                                            <div class="row">
+                                                <div class="col-sm-5 pull-right">
+                                                    <h4 class="pull-right">
+                                                        Total Users :
+                                                        <span class="red"><code>{{ userList|length }}</code></span>
+                                                    </h4>
+                                                </div>
+                                                <div class="col-sm-7 pull-left">
+                                                    <button class="btn btn-sm btn-default pull-left" class="btn btn-primary" data-toggle="modal"  data-target="#myAddUserModal">
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="bigger-110">新增用户</span>
+                                                    </button>
+                                                </div>
 															
-													</div>				                   		
-				                   		</div>
+                                            </div>
+                                        </div>
 
-				                   </div>
-				              </div>
-				              <div class="tab-pane fade" id="profile">
-				                   <div class="row">
-				                   		<div class="col-lg-12">
-				                   			<br>
-				                   			<legend><i class="fa  fa-list-alt  "></i>用户组列表</legend>																					
-											<div>											
-												<table class="table table-hover">
-													<thead>
-														<tr>
-															<th class="center">id</th>
-															<th class="center">组名</th>
-															<th class="text-center">操作</th>
-														</tr>
-													</thead>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="profile">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <br>
+                                            <legend><i class="fa  fa-list-alt  "></i>用户组列表</legend>
+                                            <div>
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="center">id</th>
+                                                        <th class="center">组名</th>
+                                                        <th class="text-center">操作</th>
+                                                    </tr>
+                                                    </thead>
 										
-													<tbody>
-														{% for ds in groupList %}
-															<tr>
-																<td>
-																	<label>
-																		<span class="lbl"></span>
-																		<a href="/group/{{ds.id}}">
-																			{{ ds.id }}
-																		</a>
-																	</label>
-																</td>		
-																<td>
-																	{{ ds.name }}
-																</td>																
-																<td class="text-center">
-																	<a href="/group/{{ds.id}}"><button  type="button" class="btn btn-default"><abbr title="编辑"><i class="glyphicon glyphicon-edit"></i></button></a>
-	                                            					<button  type="button" class="btn btn-default" onclick="delGroupData(this,'group',{{ds.id}})"><abbr title="删除"><i class="glyphicon glyphicon-trash"></i></button>																	
-																</td>		
-															</tr>
-														{% endfor %}
-														</tbody>
-													</table>
-												</div>													
-													<div class="hr "></div>
+                                                    <tbody>
+                                                    {% for ds in groupList %}
+                                                        <tr>
+                                                            <td>
+                                                                <label>
+                                                                    <span class="lbl"></span>
+                                                                    <a href="/group/{{ds.id}}">
+                                                                        {{ ds.id }}
+                                                                    </a>
+                                                                </label>
+                                                            </td>
+                                                            <td>
+                                                                {{ ds.name }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <a href="/group/{{ds.id}}"><button  type="button" class="btn btn-default"><abbr title="编辑"><i class="glyphicon glyphicon-edit"></i></button></a>
+                                                                <button  type="button" class="btn btn-default" onclick="delGroupData(this,'group',{{ds.id}})"><abbr title="删除"><i class="glyphicon glyphicon-trash"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="hr "></div>
 										
-													<div class="row">
-														<div class="col-sm-5 pull-right">
-															<h4 class="pull-right">
-																Total Groups :
-																<span class="red"><code>{{ groupList|length }}</code></span>
-															</h4>
-														</div>
-														<div class="col-sm-7 pull-left"> 
-															<button class="btn btn-sm btn-default pull-left" class="btn btn-primary" data-toggle="modal"  data-target="#myGroupModal">
-																<i class="fa fa-plus"></i>
-																<span class="bigger-110">新增用户组</span>
-															</button>
-														</div>
+                                            <div class="row">
+                                                <div class="col-sm-5 pull-right">
+                                                    <h4 class="pull-right">
+                                                        Total Groups :
+                                                        <span class="red"><code>{{ groupList|length }}</code></span>
+                                                    </h4>
+                                                </div>
+                                                <div class="col-sm-7 pull-left">
+                                                    <button class="btn btn-sm btn-default pull-left" class="btn btn-primary" data-toggle="modal"  data-target="#myGroupModal">
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="bigger-110">新增用户组</span>
+                                                    </button>
+                                                </div>
 															
-													</div>				                   		
-				                   		</div>
+                                            </div>
+                                        </div>
 
-				                   </div>
-				              </div>
-				           </div>
+                                    </div>
+                                </div>
+                                <div  class="tab-pane fade" id="permission">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <br>
+                                            <legend><i class="fa  fa-user  "></i>权限管理</legend>
+                                        </div>
+                                    </div>
+                                    <div class="form-inline">
+                                        <label class=" control-label text-center" ><strong>选择用户:</strong></label>
+                                        <select name="usernamePermission" id="usernamePermission" class="form-control" data-live-search="true">
+                                            {% for user in userList %}
+                                                <option value="{{ user.username }}">{{ user.username }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <hr style="margin-top: 5px;" />
+                                    <div class="col-lg-12" >
+                                        <h4 style="margin-top: 15px;">勾选权限</h4>
+                                        <hr style="margin-top: 5px;" />
+                                        <div class="form-inline" style="margin-bottom: 10px;">
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">资产管理</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="0" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">拓扑管理</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="1" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">防火墙策略管理</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="2" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">安全基线</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="3" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="">
+                                                <span class="input-group-addon">自动任务管理</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="4" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-inline" style="margin-bottom: 10px;">
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">配置文件管理</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="5" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">WebShh</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="6" />
+                                                </span>
+                                            </div>
+                                            <div class="input-group input-group-lg" style="float: left; margin-right: 10px;">
+                                                <span class="input-group-addon">用户中心</span>
+                                                <span class="input-group-addon">
+                                                    <input type="checkbox" name="permissionList" value="7" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="button" id="changePermissionBtn" class="btn btn-default" style="width: 100px; margin-top: 15px;" data-toggle="modal" data-target="#alertTip" data-whatever="重置权限？" onclick="changePermission()">提&nbsp;&nbsp;交</button>
+                                    </div>
+
+                                </div>
 
 
-                            <!-- /.row (nested) -->
+                                <!-- /.row (nested) -->
+                            </div>
+                            <!-- /.panel-body -->
                         </div>
-                        <!-- /.panel-body -->
+                        <!-- /.panel -->
                     </div>
-                    <!-- /.panel -->
+                    <!-- /.col-lg-12 -->
                 </div>
-                <!-- /.col-lg-12 -->
-            </div>    
-</div>
+    </div>
 
-			<div class="modal fade" id="myAddUserModal" tabindex="-1" role="dialog" aria-labelledby="myAddUserModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-								&times;
-							</button>
-							<h4 class="modal-title" id="myAddUserModalLabel">
-								新增用户
-							</h4>
-						</div>
-						<div class="modal-body">
-							<form id="register" class="main form-horizontal">
-								<fieldset>
-									<div class="form-group">
-										<label class="col-sm-2 control-label"><i class="fa fa-user"></i></label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control" placeholder="Username" name="username" required/>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label"><i class="fa fa-envelope"></i></label>
-										<div class="col-sm-6">
-											<input type="email" class="form-control" placeholder="Email" name="email" required/>
-										</div>
-									</div>									
+    <div class="modal fade" id="myAddUserModal" tabindex="-1" role="dialog" aria-labelledby="myAddUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myAddUserModalLabel">
+                        新增用户
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form id="register" class="main form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><i class="fa fa-user"></i></label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" placeholder="Username" name="username" required/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><i class="fa fa-envelope"></i></label>
+                                <div class="col-sm-6">
+                                    <input type="email" class="form-control" placeholder="Email" name="email" required/>
+                                </div>
+                            </div>
 
-									<div class="form-group">
-										<label class="col-sm-2 control-label"><i class="fa fa-lock"></i></label>
-										<div class="col-sm-6">
-											<input type="password" class="form-control" placeholder="Password" name="password" />
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label"><i class="fa fa-retweet"></i></label>
-										<div class="col-sm-6">
-											<input type="password" class="form-control" placeholder="Repeat password" name="c_password"/>
-										</div>
-									</div>									
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><i class="fa fa-lock"></i></label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control" placeholder="Password" name="password" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><i class="fa fa-retweet"></i></label>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control" placeholder="Repeat password" name="c_password"/>
+                                </div>
+                            </div>
 
 
-										<div class="space-24"></div>
+                            <div class="space-24"></div>
 										
-								</fieldset>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">关闭
-							</button>
-							<button type="button" class="btn btn-primary" onclick="userRegister(this)">
-								添加
-							</button>
-						</div>
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal -->
-			</div>	
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="userRegister(this)">
+                        添加
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 
-			<div class="modal fade" id="myGroupModal" tabindex="-1" role="dialog" aria-labelledby="myGroupModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-								&times;
-							</button>
-							<h4 class="modal-title" id="myGroupModalLabel">
-								添加用户组
-							</h4>
-						</div>
-						<div class="modal-body">
-							<form class="form-horizontal" role="form" id="group_assets">
-								<div class="form-group">
-									<label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>组名</strong></label>																												
-									<div class="col-sm-6">
-										<input class="form-control" type="text" name="name" />	
+    <div class="modal fade" id="myGroupModal" tabindex="-1" role="dialog" aria-labelledby="myGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myGroupModalLabel">
+                        添加用户组
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="group_assets">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="form-field-4"><strong>组名</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="name" />
 									</div>											
 								</div>									
 							</form>
@@ -447,10 +525,12 @@
 				}			
 			};			
 			$.ajax({
-				dataType: "JSON",
-				url:'/register/', //请求地址
+				url:'/users/manage', //请求地址
 				type:"POST",  //提交类似
-				data:server_data,  //提交参数
+				data:{
+				    op:"add_user",
+				    userinfo:JSON.stringify(server_data)
+                },  //提交参数
 				success:function(response){
 					btnObj.removeAttr('disabled');
 					if (response["code"] == 200){
@@ -517,7 +597,42 @@
 					}
 				}			
 			window.wxc.xcConfirm(txt, "custom", option);
-	}	  
+	}
+
+        function changePermission() {
+            var permissionList = $('input[name="permissionList"]:checked');
+            var permissions = '';
+            $.each(permissionList, function (index, value, array) {
+                if (index+1 == permissionList.length) {   // 最后一位，不加逗号
+                    permissions += permissionList[index].value;
+                } else {
+                    permissions += permissionList[index].value + ', ';
+                }
+            });
+            alert(permissions)
+            $.ajax({
+                url: '/users/manage',
+                type: 'POST',
+                data: {
+                    op:'change_permission',
+                    username: $('#usernamePermission').val(),
+                    permissions: permissions
+                },
+                success: function (data, textStatus) {
+                    if (data == 1) {
+                        alert('修改成功！');
+                        window.location.href = 'index';
+
+                    } else if (data == -1) {
+                        alert('未知错误！');
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            })
+        }
+
 </script>
 
 {% endblock %}

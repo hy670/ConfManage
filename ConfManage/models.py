@@ -2,17 +2,20 @@ from __future__ import unicode_literals
 
 from django.db import models
 # from OpsManage.models import Project_Config,DataBase_Server_Config
+from django.contrib.auth.models import User, Permission
+from django.contrib.auth import authenticate
+from django.db.utils import IntegrityError
+
 import sys
 
 
 class Applied_policy(models.Model):
 	name = models.CharField(max_length=100, verbose_name='策略名称', unique=True)
-	srcaddr = models.GenericIPAddressField( verbose_name='源地址', blank=True, null=True)
-	dstaddr = models.GenericIPAddressField( verbose_name='源地址', blank=True, null=True)
+	srcaddr = models.GenericIPAddressField(verbose_name='源地址', blank=True, null=True)
+	dstaddr = models.GenericIPAddressField(verbose_name='源地址', blank=True, null=True)
 	protocol = models.IntegerField(blank=True, null=True, verbose_name='协议')
 	port = models.IntegerField(blank=True, null=True, verbose_name='端口')
 	proposer = models.CharField(max_length=100, null=True, verbose_name='申请人')
-	apply_time = models.DateTimeField(auto_now_add=True)
 	cut_time = models.DateTimeField(null=True)
 	create_date = models.DateTimeField(auto_now_add=True)
 
@@ -86,7 +89,7 @@ class Server_Assets(models.Model):
 class Network_Assets(models.Model):
 	assets = models.OneToOneField('Assets', on_delete=models.CASCADE)
 	hostname = models.CharField(max_length=100, blank=True, null=True)
-	ip = models.GenericIPAddressField( blank=True, null=True, verbose_name='管理ip')
+	ip = models.GenericIPAddressField(blank=True, null=True, verbose_name='管理ip')
 	username = models.CharField(max_length=100, blank=True, null=True)
 	passwd = models.CharField(max_length=100, blank=True, null=True)
 	sudo_passwd = models.CharField(max_length=100, blank=True, null=True)
@@ -129,7 +132,7 @@ class Line_Assets(models.Model):
 
 
 class Conffile(models.Model):
-	network_assets = models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
+	network_assets = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
 	filename = models.TextField(max_length=150, blank=True, null=True, verbose_name='文件名称')
 	file_detail = models.TextField(max_length=200, blank=True, null=True, verbose_name='文件说明')
 	create_date = models.DateTimeField(auto_now_add=True)
@@ -169,8 +172,8 @@ class Edges(models.Model):
 
 class Server_Edges(models.Model):
 	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
-	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
-	dst = models.ForeignKey('Server_Assets',on_delete=models.CASCADE)
+	src = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
+	dst = models.ForeignKey('Server_Assets', on_delete=models.CASCADE)
 	create_date = models.DateTimeField(auto_now_add=True)
 	'''自定义添加只读权限-系统自带了add change delete三种权限'''
 
@@ -189,8 +192,8 @@ class Server_Edges(models.Model):
 
 class Network_Edges(models.Model):
 	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
-	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE,related_name='src')
-	dst = models.ForeignKey('Network_Assets',on_delete=models.CASCADE,related_name='dst')
+	src = models.ForeignKey('Network_Assets', on_delete=models.CASCADE, related_name='src')
+	dst = models.ForeignKey('Network_Assets', on_delete=models.CASCADE, related_name='dst')
 	create_date = models.DateTimeField(auto_now_add=True)
 	'''自定义添加只读权限-系统自带了add change delete三种权限'''
 
@@ -209,8 +212,8 @@ class Network_Edges(models.Model):
 
 class Line_Edges(models.Model):
 	Edges = models.OneToOneField('Edges', on_delete=models.CASCADE)
-	src =  models.ForeignKey('Network_Assets',on_delete=models.CASCADE)
-	dst = models.ForeignKey('Line_Assets',on_delete=models.CASCADE)
+	src = models.ForeignKey('Network_Assets', on_delete=models.CASCADE)
+	dst = models.ForeignKey('Line_Assets', on_delete=models.CASCADE)
 	create_date = models.DateTimeField(auto_now_add=True)
 	'''自定义添加只读权限-系统自带了add change delete三种权限'''
 
@@ -246,3 +249,44 @@ class Firewall_Policy_Zone(models.Model):
 		)
 		verbose_name = '防火墙安全域列表'
 		verbose_name_plural = '防火墙安全域列表'
+
+
+class view_perms(models.Model):
+	class Meta:
+		# 权限信息，这里定义的权限的名字，后面是描述信息，描述信息是在django admin中显示权限用的
+		permissions = (
+			('views_assets', '查看资产管理'),
+			('views_policy', '查看策略管理'),
+			('views_topo', '查看拓扑邮件'),
+			('views_conf_bak', '查看自动备份系统'),
+			('views_conf_file', '查看配置文件管理'),
+			('views_webssh ', '查看WebSSh'),
+			('views_Baseline', '查看安全基线管理'),
+			('views_users', '查看用户'),
+		)
+
+
+def db_change_permission(username, permissions):
+	try:
+		user = User.objects.get(username=username)
+		if permissions:
+			pers = []
+
+			c = Permission.objects.values()
+			for i in c:
+				print(i)
+			for per in permissions:
+				db_per = Permission.objects.filter(codename=per).values('id')[0]['id']
+				# 只把 id 取出来
+				pers.append(db_per)
+			user.user_permissions.set(pers)   # 这里，只能 加 id，加 codename 是不行的！！！
+		else:
+			user.user_permissions.clear()
+		User.objects.get(username=username)  # 刷新 缓存
+		# print(user.get_all_permissions())
+
+	except Exception as e:
+		print(e)
+		return -1
+	else:
+		return 1  # 修改成功
