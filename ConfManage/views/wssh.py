@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from ConfManage.utils.logger import logger
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_webssh', login_url='/noperm/')
 def wssh_list(request):
 	assetsList = Assets.objects.all().order_by("-id")
 
@@ -17,6 +18,7 @@ def wssh_list(request):
 	                                                    })
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_webssh', login_url='/noperm/')
 def wssh(request, sid):
 	try:
 		server = Network_Assets.objects.get(assets_id=sid)

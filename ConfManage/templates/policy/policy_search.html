@@ -114,7 +114,6 @@
             var edges = new vis.DataSet(respedges);
             for (var i=0,len=respnodes.length;i<len;i++)
             {
-                alert(respnodes[i].id);
                 if (respnodes[i].type == 'firewall'){
                     nodes.push({id: respnodes[i].id, label: respnodes[i].label, image: '/static/icon/h3c/h3_firewall.gif', shape: 'image',font: { color:'red' }});
                 }

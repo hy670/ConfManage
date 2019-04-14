@@ -32,6 +32,7 @@ def getBaseAssets():
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_line(request):
 	if request.method == "GET":
 		return render(request, 'assets/assets_line.html', {"user": request.user, "baseAssets": getBaseAssets()}, )
@@ -82,6 +83,7 @@ def assets_line(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_add(request, format=None):
 	if request.method == "GET":
 		userList = User.objects.all()
@@ -114,7 +116,7 @@ def assets_add(request, format=None):
 
 
 @login_required(login_url='/login')
-@permission_required('OpsManage.can_read_assets', login_url='/noperm/')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_list(request):
 	if request.method == 'GET':
 		userList = User.objects.all()
@@ -150,6 +152,7 @@ def assets_list(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_view(request, aid):
 	try:
 		assets = Assets.objects.get(id=aid)
@@ -178,6 +181,7 @@ def assets_view(request, aid):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_modf(request, aid):
 	if request.method == 'GET':
 		try:
@@ -239,7 +243,7 @@ def assets_modf(request, aid):
 
 
 @login_required(login_url='/login')
-@permission_required('OpsManage.can_change_server_assets', login_url='/noperm/')
+@permission_required('ConfManage.views_assets', login_url='/noperm/')
 def assets_facts(request, args=None):
 	if request.method == "POST" and request.user.has_perm('OpsManage.change_server_assets'):
 		server_id = request.POST.get('server_id')

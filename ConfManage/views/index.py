@@ -8,13 +8,13 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-import ConfManage.utils.topograph
+from ConfManage.utils.topograph import Topo
 from importlib import reload
 
 @login_required(login_url='/login')
 def index(request):
-    reload(ConfManage.utils.topograph)
-    from ConfManage.utils.topograph import Topo
+    #reload(ConfManage.utils.topograph)
+    #from ConfManage.utils.topograph import Topo
     nodelist = Topo.nodes
     edgelist = Topo.edges
     topo = {'nodes': nodelist, 'edges': edgelist}

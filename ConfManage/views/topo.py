@@ -15,10 +15,9 @@ from django.db import transaction
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_topo', login_url='/noperm/')
 def topo_graph(request):
 	if request.method == 'GET':
-		reload(ConfManage.utils.topograph)
-		from ConfManage.utils.topograph import Topo
 		nodelist = Topo.nodes
 		edgelist = Topo.edges
 		topo = {'nodes': nodelist, 'edges': edgelist}
@@ -28,6 +27,7 @@ def topo_graph(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_topo', login_url='/noperm/')
 def topo_edge(request):
 	if request.method == 'GET':
 		edges = Edges.objects.all()

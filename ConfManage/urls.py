@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url
-from ConfManage.views import (index, policy, users, assets, wssh, conf_file, topo, conf_bak)
+from django.conf.urls import url, include
+from ConfManage.views import index, policy, users, assets, wssh, conf_file, topo,task
 
 urlpatterns = [
 	url(r'^$', index.index),
@@ -47,14 +47,21 @@ urlpatterns = [
 	url(r'^policy_iszmbie_check/', policy.policy_iszmbie_check),
 	url(r'^policy_regular_list/', policy.policy_regular_list),
 	url(r'^policy_regular_check/', policy.policy_regular_check),
-	url(r'^user/center/$', users.user_center),
-	url(r'^user/server/(?P<uid>[0-9]+)/$', users.user_server),
+	url(r'^task_model/$', task.task_model),
+	url(r'^task_view/$', task.task_view),
+	url(r'^task_search/$', task.task_search),
 	url(r'^users/manage$', users.user_manage),
+	url(r'^user/center/$', users.user_center),
+	url(r'^users/manage$', users.user_manage),
+	url(r'^user/(?P<uid>[0-9]+)/$',users.user),
+	url(r'^group/(?P<gid>[0-9]+)/$',users.group),
+	url(r'^register/',users.register),
 	url(r'^webssh/list/$', wssh.wssh_list),
 	url(r'^webssh/(?P<sid>[0-9]+)/$', wssh.wssh),
 	url(r'^conffile/list/$', conf_file.conffile_list),
 	url(r'^conffile/diff/$', conf_file.conffile_diff),
 	url(r'^topo_graph/$', topo.topo_graph),
 	url(r'^topo_edge/$', topo.topo_edge),
+	url(r'^api/', include('api.urls')),
 
 ]

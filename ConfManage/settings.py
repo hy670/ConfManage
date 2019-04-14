@@ -11,10 +11,52 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import djcelery
+from celery import  platforms
+from kombu import Queue,Exchange
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+''' celery config '''
+djcelery.setup_loader()
+BROKER_URL = 'redis://127.0.0.1:6379/4'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database.DatabaseBackend'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER='pickle'
+CELERY_ACCEPT_CONTENT = ['pickle','json']
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24
+CELERYD_MAX_TASKS_PER_CHILD = 40
+CELERY_TRACK_STARTED = True
+CELERY_ENABLE_UTC = False
+CELERY_TIMEZONE='Asia/Shanghai'
+platforms.C_FORCE_ROOT = True
+CELERY_ENABLE_UTC = True
+
+#celery route config
+CELERY_IMPORTS = (  "ConfManage.tasks.cron","ConfManage.tasks.sched")
+CELERY_QUEUES = (
+    Queue('default',Exchange('default'),routing_key='default'),
+    Queue('ansible',Exchange('ansible'),routing_key='ansible'),
+)
+CELERY_ROUTES = {
+    'ConfManage.tasks.sql.*':{'queue':'default','routing_key':'default'},
+    'ConfManage.tasks.assets.*':{'queue':'default','routing_key':'default'},
+    'ConfManage.tasks.cron.*':{'queue':'default','routing_key':'default'},
+    'ConfManage.tasks.sched.*':{'queue':'default','routing_key':'default'},
+    'ConfManage.tasks.ansible.AnsibleScripts':{'queue':'ansible','routing_key':'ansible'},
+    'ConfManage.tasks.ansible.AnsiblePlayBook':{'queue':'ansible','routing_key':'ansible'},
+}
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
+CELERY_DEFAULT_ROUTING_KEY = 'default'
+
+
+
+REDSI_KWARGS_LPUSH = {"host":'127.0.0.1','port':6379,'db':3}
+REDSI_LPUSH_POOL = None
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -39,14 +81,16 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'ConfManage',
     'channels',
-    'django_apscheduler'
+    'djcelery',
+    'api',
 )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -57,8 +101,8 @@ ROOT_URLCONF = 'ConfManage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["E:\\project\\ConfManage\\ConfManage\\templates",
-                 "E:\\project\\ConfManage\\ConfManage\\static"],
+        'DIRS': ["./ConfManage/templates",
+                 "./ConfManage/static"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,7 +160,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -131,12 +184,15 @@ USE_L10N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    'E:\\project\\ConfManage\\ConfManage\\static',
+    '/ConfManage/static',
 )
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+

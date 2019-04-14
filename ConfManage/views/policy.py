@@ -5,9 +5,8 @@ from importlib import reload
 import json
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from ConfManage.utils.graph import usg100, f1030, nsg5000
 from ConfManage.utils.is_ip import is_ip
 from ConfManage.utils.logger import logger
 from ConfManage.utils.topograph import Topo, searchpolicy, regularcheck,iszmbiepolicy
@@ -15,6 +14,7 @@ from ConfManage.models import Applied_policy, Network_Assets, Assets, Server_Ass
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_list(request):
 	if request.method == "GET":
 		firewalllist = []
@@ -36,6 +36,7 @@ def policy_list(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_zone(request):
 	if request.method == "GET":
 		firewalllist = []
@@ -77,6 +78,7 @@ def policy_zone(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_search(request):
 	if request.method == "GET":
 		return render(request, 'policy/policy_search.html')
@@ -125,6 +127,7 @@ def policy_search(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_redundancy_check(request):
 	if request.method == "GET":
 		firewalllist = []
@@ -142,6 +145,7 @@ def policy_redundancy_check(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_iszmbie_check(request):
 	if request.method == "GET":
 		firewalllist = []
@@ -160,6 +164,7 @@ def policy_iszmbie_check(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_regular_list(request):
 	if request.method == "GET":
 		regularlist = Applied_policy.objects.all()
@@ -194,6 +199,7 @@ def policy_regular_list(request):
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_policy', login_url='/noperm/')
 def policy_regular_check(request):
 	if request.method == "GET":
 		firewalllist = []

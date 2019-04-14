@@ -15,6 +15,7 @@ from ConfManage.utils.logger import logger
 
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_conf_file', login_url='/noperm/')
 def conffile_list(request):
 	if request.method == 'GET':
 		assets = Network_Assets.objects.filter(is_master=True)
@@ -37,6 +38,7 @@ def conffile_list(request):
 			if os.path.isdir(os.path.dirname(filepath)) is not True: os.makedirs(os.path.dirname(filepath))
 			fobj = open(filepath, 'wb')
 			for chrunk in f.chunks():
+				print(chrunk)
 				fobj.write(chrunk)
 			fobj.close()
 			Conffile.objects.create(filename=filename, file_detail=file_detail, network_assets=assets)
@@ -54,6 +56,7 @@ def conffile_list(request):
 				return JsonResponse({'msg': "文件已删除~", "code": '502'})
 
 @login_required(login_url='/login')
+@permission_required('ConfManage.views_conf_file', login_url='/noperm/')
 def conffile_diff(request):
 	if request.method == 'GET':
 		assets = Network_Assets.objects.filter(is_master=True)
