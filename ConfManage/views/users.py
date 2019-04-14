@@ -73,7 +73,7 @@ def user(request, uid):
 															"errorInfo": "用户不存在，可能已经被删除."})
 		# 获取用户权限列表
 		userGroupList = []
-		permList = Permission.objects.filter(codename__startswith="can_")
+		permList = Permission.objects.filter(codename__startswith="views_")
 		userPermList = [u.get('id') for u in user.user_permissions.values()]
 		for ds in permList:
 			if ds.id in userPermList:
