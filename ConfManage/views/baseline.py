@@ -11,7 +11,7 @@ from ConfManage.utils.logger import logger
 def baseline_list(request):
     if request.method == "GET":
         pass
-        return render(request,'baseline/baseline_list.html')
+        return render(request, 'baseline/RegexGroupLis.html')
     elif request.method == "POST":
         return  JsonResponse({"code":500,"data":None,"msg":"不支持的HTTP操作"})
 
