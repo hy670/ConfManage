@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import permission_required
 from ConfManage.utils.logger import logger
 from django.http import JsonResponse
-#from djcelery.models  import CrontabSchedule,IntervalSchedule
+from djcelery.models  import CrontabSchedule,IntervalSchedule
 
 
 @api_view(['GET', 'POST' ])

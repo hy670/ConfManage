@@ -31,7 +31,6 @@ def group_list(request,format=None):
         serializer = serializers.GroupSerializer(snippets, many=True)
         return Response(serializer.data)     
     elif request.method == 'POST':
-        print(request.data)
         if not  request.user.has_perm('ConfManage.change_group'):
             return Response(status=status.HTTP_403_FORBIDDEN)         
         serializer = serializers.GroupSerializer(data=request.data)

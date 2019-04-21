@@ -1,0 +1,741 @@
+{% extends 'index.html' %}
+{% block ace-content %}
+    <script type="text/javascript" src="/static/dist/js/bootstrap-notify.js"></script>
+{% endblock %}
+{% block page-content %}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"><i class="fa   fa-dashboard"></i>增加合规策略</h1>
+            </div>
+        </div>
+        <!--    策略组 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-database"></i>基线策略组配置信息
+
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <legend>基本信息</legend>
+
+                        <form role="form" method="post" id="check_group" class="main form-horizontal">{% csrf_token %}
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><font color='red'>* </font>名称<i
+                                            class="fa fa-info-circle" data-toggle="tooltip"
+                                            title="有效长度1~32"></i></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="group_name" name="asset_name"
+                                               placeholder="名称" value="" class="input-xlarge" required/>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><font color='red'>* </font>描述<i
+                                            class="fa fa-info-circle" data-toggle="tooltip"
+                                            title="有效长度0~128"></i></label>
+                                    <div class="col-sm-6">
+                                        <textarea type="text" class="form-control" id="group_des" name="asset_mark"
+                                                  placeholder="描述" value="" class="input-xlarge"></textarea>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                            <legend>规则列表</legend>
+                            <!-- 规则列表-->
+                            <fieldset>
+
+
+                                <div class="button-group">
+                                    <div class="">
+                                        <a class="btn btnbtn-xs btn-default" data-toggle="modal"
+                                           data-target="#RegexManageAdd"><i
+                                                class="glyphicon glyphicon-plus">增加规则</i></a>
+                                        <a class="btn btnbtn-xs btn-default" data-toggle="modal"
+                                           data-target="#RegexManageImport"><i
+                                                class="glyphicon  glyphicon-import">导入规则</i></a>
+                                    </div>
+
+
+                                </div>
+                                <br>
+
+                                <table width="100%" class="table table-striped table-bordered table-hover"
+                                       id="rule_manage">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">名称</th>
+                                        <th class="text-center">描述</th>
+                                        <th class="text-center">违规级别</th>
+                                        <th class="text-center">检查类型</th>
+                                        <th class="text-center">测试</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for rule in  rulelist %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <a href="/baseline/FromGroupToRuleDetail/{{ rule.rule_id }}"
+                                                   style="text-decoration:none;">{{ rule.rule_name }}</a>
+                                            </td>
+                                            <td class="text-center">{{ rule.rule_des }}</td>
+                                            <td class="text-center">{{ rule.type }}</td>
+                                            <td class="text-center">
+                                                {% if rule.rule_severity == 0 %}
+                                                    预定义
+                                                {% elif  rule.rule_severity == 1 %}
+                                                    虚拟机
+                                                {% elif  rule.rule_severity == 2 %}
+                                                    交换机
+                                                {% elif  rule.rule_severity == 3 %}
+                                                    路由器
+                                                {% elif  rule.rule_severity == 4 %}
+                                                    防火墙
+                                                {% elif  rule.rule_severity == 5 %}
+                                                    存储设备
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="/assets_mod/{{ rule.id }}" style="text-decoration:none;">
+                                                    <button type="button" class="btn btn-default"><abbr title="修改资料"><i
+                                                            class="glyphicon glyphicon-edit"></i></abbr></button>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+
+                                </table>
+
+                            </fieldset>
+
+                            <!-- 提交栏 -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label"></label>
+                                <button type="reset" class="btn btn-default">撤销操作</button>
+                                <button type="button" class="btn btn-default" onclick="addcheckgroup(this)">确认提交
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /#wrapper -->
+    <div class="modal fade " id="RegexManageAdd" tabindex="-1" role="dialog" aria-labelledby="RegexManageAdd"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    </button>
+                    <h4 class="modal-title" id="RegexManageAdd">
+                        增加规则
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <h5>基本信息</h5>
+                    <form class="form-horizontal" role="form" id="rule">
+                        <!-- 名称 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>名称</strong></label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" id="rule_name"/>
+                            </div>
+                        </div>
+                        <!-- 违规级别 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>违规级别</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_severity">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">通知</option>
+                                    <option value="1" name="type">警告</option>
+                                    <option value="2" name="type">次要</option>
+                                    <option value="3" name="type">重要</option>
+                                    <option value="4" name="type">紧急</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <!-- 检查类型 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>检查类型</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="check_type"
+                                        onchange="javascript:checktype_select()">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">设备</option>
+                                    <option value="1" name="type">接口</option>
+                                    <option value="2" name="type">配置</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 开始标识 -->
+                        <div class="form-group" id="check_content_start_div" style="display:none;">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>开始标识</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="check_content_start" name="asset_mark"
+                                           placeholder="例如：interface" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 结束标识 -->
+                        <div class="form-group" id="check_content_end_div" style="display:none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>结束标识</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="check_content_end" name="asset_mark"
+                                           placeholder="例如：#或者!" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 检查目标 -->
+                        <div class="form-group" id="check_content_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>检查目标</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="check_content"
+                                        onchange="javascript:checkcontent_select()">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="1" name="check_content">配置文件</option>
+                                    <option value="2" name="check_content">命令执行结果</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 命令 -->
+                        <div class="form-group" id="command_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>命令</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="command" name="command"
+                                           placeholder="如 dispaly XXX" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 设备厂商 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>设备厂商</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="support_firm">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="True" name="assets_type">配置文件</option>
+                                    <option value="False" name="assets_type">命令执行结果</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 设备系列 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>设备系列</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="line_is_master">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="True" name="assets_type">SW</option>
+                                    <option value="False" name="assets_type">R</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 描述 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>描述</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="rule_des" name="rule_des"
+                                           placeholder="描述" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+
+                        <h5>匹配模式</h5>
+                        <!-- 规则类型 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则类型</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_standard"
+                                        onchange="javascript:rulestandard_select()">
+                                    <option value="0" selected="selected" id="rule_standard">简单</option>
+                                    <option value="1" id="rule_standard">高级</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 执行方法 -->
+                        <div class="form-group" id="ExecMethod_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>执行方法</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="exec_method"
+                                        onchange="javascript:execmethod_select()">
+                                    <option selected="selected" value="0">检查</option>
+                                    <option value="1">检查并提取</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal" role="form" id="rule_contentlist">
+                        <!-- 规则关系 -->
+                        <div class="form-group" id="RuleRelation_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则关系</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_relation"
+                                        onchange="javascript:type_select()">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">AND</option>
+                                    <option value="1" name="type">OR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 匹配模式 -->
+                        <div class="form-group" id="RuleCfg_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>匹配模式</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_cfg">
+
+                                    <option selected="selected" value="">请选择</option>
+
+                                    <option value="0" name="type">模糊匹配</option>
+
+                                    <option value="1" name="type">模糊不匹配</option>
+
+                                    <option value="2" name="type">精确匹配</option>
+
+                                    <option value="2" name="type">精确不匹配</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 规则内容 -->
+                        <div class="form-group " id="RuleContent_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则内容</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="rule_content"
+                                           placeholder="如 dispaly XXX" value="" class="input-xlarge"></textarea>
+                            </div>
+                            <div class="col-sm-3" id="addruleconent" style="display: none">
+                                <button type="button" class="btn btn-default" onclick="addRuleContent()">增加规则
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                    <!-- 规则列表 -->
+                    <div class="form-group" id="RuleList_div" style="display: none">
+                        <table width="100%" id="RuleList_table" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th class="text-center">规则关系</th>
+                                <th class="text-center">匹配模式</th>
+                                <th class="text-center">规则内容</th>
+                                <th class="text-center">提取值得对比方式</th>
+                                <th class="text-center">提取值得对比值</th>
+                                <th class="text-center">删除</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="addrule(this)">
+                            添加
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
+    <div class="modal fade" id="RegexManageImport" tabindex="-1" role="dialog" aria-labelledby="RegexManageImport"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Excel文件批量导入资产</h4>
+                </div>
+                <form role="form" method="post"
+                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      enctype="multipart/form-data" action='/assets_import/'
+                      class="main form-horizontal">{% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">上传文件</label>
+                            <div class="col-sm-6">
+                                <input type="file" name="import_file" placeholder="上传excel文件" required/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">导入</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!--    弹窗开始样式 -->
+    <script src="/static/dist/js/xcConfirm.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="/static/dist/css/xcConfirm.css"/>
+    <!--   csrf -->
+    <script src="/static/js/csrf.js"></script>
+
+    <script type="text/javascript">
+
+        var rulecontentlist = []
+        var rulelist = []
+
+        function checktype_select() {
+            var obj = document.getElementById("check_type");
+            var index = obj.selectedIndex;
+            var value = obj.options[index].value;
+            if (value == 1) {
+                if ($('#check_content_start_div').is(':hidden')) {
+                    $('#check_content_start_div').show();
+                }
+                if ($('#check_content_end_div').is(':hidden')) {
+                    $('#check_content_end_div').show();
+                }
+            } else if (value == 0) {
+
+                if ($('#check_content_start_div').is(':visible')) {
+                    $('#check_content_start_div').hide();
+                }
+                if ($('#check_content_end_div').is(':visible')) {
+                    $('#check_content_end_div').hide();
+                }
+            } else if (value == 2) {
+
+                if ($('#check_content_start_div').is(':hidden')) {
+                    $('#check_content_start_div').show();
+                }
+                if ($('#check_content_end_div').is(':hidden')) {
+                    $('#check_content_end_div').show();
+                }
+            }
+        }
+
+        function checkcontent_select() {
+            var obj = document.getElementById("check_content");
+            var index = obj.selectedIndex;
+            var value = obj.options[index].value;
+            if (value == 2) {
+                if ($('#command_div').is(':hidden')) {
+                    $('#command_div').show();
+                }
+            } else if (value == 1) {
+
+                if ($('#command_div').is(':visible')) {
+                    $('#command_div').hide();
+                }
+
+            }
+        }
+
+        function rulestandard_select() {
+            var obj = document.getElementById("rule_standard");
+            var index = obj.selectedIndex;
+            var value = obj.options[index].value;
+            if (value == 0) {
+                $('#rule_cfg').empty()
+                $('#rule_cfg').append(
+                    '<option selected="selected" value="">请选择</option>\n' +
+                    '<option value="0" name="type">模糊匹配</option>\n' +
+                    '<option value="1" name="type">模糊不匹配</option>\n' +
+                    '<option value="2" name="type">精确匹配</option>\n' +
+                    '<option value="2" name="type">精确不匹配</option>'
+                );
+                if ($('#RuleRelation_div').is(':visible')) {
+                    $('#RuleRelation_div').hide();
+
+                }
+                if ($('#ExecMethod_div').is(':visible')) {
+                    $('#ExecMethod_div').hide();
+                }
+                if ($('#RuleList_div').is(':visible')) {
+                    $('#RuleList_div').hide();
+                }
+                if ($('#RuleCfg_div').is(':hidden')) {
+
+                    $('#RuleCfg_div').show();
+                }
+                if ($('#addruleconent').is(':visible')) {
+                    $('#addruleconent').hide();
+                }
+                if ($('#RuleRelation_div').is(':visible')) {
+                    $('#RuleRelation_div').hide();
+                }
+
+            } else if (value == 1) {
+                $('#rule_cfg').empty()
+                $('#rule_cfg').append(
+                    '<option selected="selected" value="">请选择</option>\n' +
+                    '<option value="0" name="type">包括</option>\n' +
+                    '<option value="1" name="type">不包括</option>\n'
+                );
+
+                if ($('#ExecMethod_div').is(':hidden')) {
+                    $('#ExecMethod_div').show();
+                }
+                if ($('#RuleList_div').is(':hidden')) {
+                    $('#RuleList_div').show();
+                }
+                if ($('#RuleCfg_div').is(':hidden')) {
+
+                    $('#RuleCfg_div').show();
+
+                }
+                if ($('#addruleconent').is(':hidden')) {
+                    $('#addruleconent').show();
+                }
+                if ($('#RuleRelation_div').is(':visible')) {
+                    $('#RuleRelation_div').hide();
+                }
+            }
+        }
+
+        function execmethod_select() {
+            var obj = document.getElementById("exec_method");
+            var index = obj.selectedIndex;
+            var value = obj.options[index].value;
+            if (value == 1) {
+                if ($('#RuleCfg_div').is(':visible')) {
+                    $('#RuleCfg_div').hide();
+
+                }
+                if ($('#RuleList_div').is(':visible')) {
+                    $('#RuleList_div').hide();
+                }
+                if ($('#addruleconent').is(':visible')) {
+                    $('#addruleconent').hide();
+                }
+                if ($('#RuleRelation_div').is(':visible')) {
+                    $('#RuleRelation_div').hide();
+                }
+
+
+            } else if (value == 0) {
+
+                if ($('#ExecMethod_div').is(':hidden')) {
+                    $('#ExecMethod_div').show();
+                }
+                if ($('#RuleList_div').is(':hidden')) {
+                    $('#RuleList_div').show();
+                }
+                if ($('#RuleCfg_div').is(':hidden')) {
+                    $('#RuleCfg_div').show();
+
+                }
+                if ($('#RuleList_div').is(':hidden')) {
+                    $('#RuleList_div').show();
+                }
+                if ($('#addruleconent').is(':hidden')) {
+                    $('#addruleconent').show();
+                }
+                if ($('#RuleRelation_div').is(':visible')) {
+                    $('#RuleRelation_div').hide();
+                }
+
+            }
+        }
+
+        function addRuleContent() {
+            var form = document.getElementById('rule_contentlist');
+            var rulecontent = {}
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].id;
+                var value = form[i].value;
+                if (name != null) {
+                    rulecontent[name] = value
+
+                }
+            }
+            rulecontentnum = rulecontentlist.push(rulecontent)
+            if (rulecontentnum > 0) {
+                if ($('#RuleRelation_div').is(':hidden')) {
+                    $('#RuleRelation_div').show();
+                }
+            }
+            $('#RuleList_table').append(
+                '<tr>\n' +
+                ' <th class="text-center">' + rulecontent['rule_relation'] + '</th>\n' +
+                ' <th class="text-center">' + rulecontent['rule_cfg'] + '</th>\n' +
+                '<th class="text-center">' + rulecontent['rule_content'] + '</th>\n' +
+                '<th class="text-center"></th>\n' +
+                '<th class="text-center"></th>\n' +
+                '<th class="text-center"><button type="button" class="btn btn-xs btn-default"' +
+                'onclick = "delrule(this,' + rulecontentnum +
+                ')" > <i\n' +
+                'class="glyphicon glyphicon-trash"/></button > ' +
+                '</th>\n' +
+                '</tr>'
+            )
+
+
+        }
+
+        function delrule(obj, rulecontentnum) {
+            rulecontentlist.splice(rulecontentnum - 1, 1)
+            document.getElementById('RuleList_table').deleteRow(rulecontentnum);
+        }
+
+        function addrule() {
+            var form = document.getElementById('rule');
+            var rule = {}
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].id;
+                var value = form[i].value;
+                if (name != null) {
+                    rule[name] = value
+                }
+            }
+            if (rule['rule_standard'] == '0') {
+                var form = document.getElementById('rule_contentlist');
+                var rulecontent = {}
+                for (var i = 0; i < form.length; ++i) {
+                    var name = form[i].id;
+                    var value = form[i].value;
+                    if (name != null) {
+                        rulecontent[name] = value
+                    }
+                }
+                rulecontentlist.push(rulecontent)
+            }
+
+            rule['rule_content'] = rulecontentlist
+            rulelist.push(rule)
+            $('#rule_manage').append(
+                '<tr>\n' +
+                ' <th class="text-center">' + rule['rule_name'] + '</th>\n' +
+                ' <th class="text-center">' + rule['rule_des'] + '</th>\n' +
+                '<th class="text-center">' + rule['rule_severity'] + '</th>\n' +
+                '<th class="text-center">' + rule['check_type'] + '</th>\n' +
+                '</tr>'
+            )
+            rulecontentlist = []
+
+
+        }
+
+        function addcheckgroup() {
+            var rule_manage = {}
+            var form = document.getElementById('check_group');
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].name;
+                var value = form[i].value;
+                var assetStart = name.indexOf("asset_");
+                if (assetStart == 0 && value.length == 0 && assets.indexOf(name) >= 0) {
+                    $("[name='" + name + "']").parent().addClass("has-error");
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                    return false;
+                } else if (assetStart == 0 && value.length > 0) {
+                    $("[name='" + name + "']").parent().removeClass("has-error");
+                    $("[name='" + name + "']").parent().addClass("has-success");
+                }
+
+            };
+            for (var i = 0; i < form.length; ++i) {
+                var name = form[i].id;
+                var value = form[i].value;
+                if (name != "") {
+                    rule_manage[name] = value
+                }
+            }
+            rule_manage['rule_list'] = rulelist
+            $.ajax({
+                dataType: "JSON",
+                url: '/baseline/RegexGroupAdd/', //请求地址
+                type: "POST",  //提交类似
+                contentType: "application/json",
+                data: JSON.stringify(rule_manage),
+                success: function (response) {
+                    window.wxc.xcConfirm(response.msg, window.wxc.xcConfirm.typeEnum.success);
+
+                },
+                error: function (response) {
+                    window.wxc.xcConfirm("系统错误", window.wxc.xcConfirm.typeEnum.error);
+                }
+
+            });
+
+        }
+
+
+    </script>
+
+    <script type="text/javascript">
+
+        function format(dataList) {
+            var trHtml = '';
+            for (var i = 0; i < dataList.length; i++) {
+                trHtml += '<tr><td>' + dataList[i]["name"] + ':</td>' + '<td>' + dataList[i]["value"] + '</td></tr>'
+            }
+            ;
+            var vHtml = '<fieldset>' +
+                '<legend>硬件信息</legend>' +
+                '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                trHtml +
+                '</table>'
+            '</fieldset>';
+            return vHtml;
+        }
+
+
+        function deleteAssets(obj, id) {
+            var txt = "是否确认删除？";
+            var btnObj = $(obj);
+            btnObj.attr('disabled', true);
+            var option = {
+                title: "删除当前资产",
+                btn: parseInt("0011", 2),
+                onOk: function () {
+                    $.ajax({
+                        dataType: "JSON",
+                        type: "POST",  //提交类似
+                        url: '/assets_list/',
+                        data: {'op': 'del', 'assets_id': id},
+                        success: function (response) {
+                            btnObj.removeAttr('disabled');
+                            window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
+                            location.reload('/assets_list/');
+                        },
+                        error: function (response) {
+                            btnObj.removeAttr('disabled');
+                            window.wxc.xcConfirm("删除失败！", window.wxc.xcConfirm.typeEnum.error);
+                        }
+                    });
+                },
+                onCancel: function () {
+                },
+                onClose: function () {
+                }
+            }
+            window.wxc.xcConfirm(txt, "custom", option);
+        }
+
+
+    </script>
+
+{% endblock %}
+

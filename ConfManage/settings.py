@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'ConfManage',
     'channels',
     'djcelery',
+    'baseline',
     'api',
 )
 
