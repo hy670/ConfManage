@@ -1,3 +1,4 @@
+import re
 section_key = ""
 f = open("E:\project\ConfManage\conffile\HXSW-20190417.cfg", 'r', encoding="UTF-8")
 for i in f.readlines():
@@ -6,7 +7,14 @@ for i in f.readlines():
 			section_key = ""
 		else:
 			section_key = i.strip()
+
 	else:
-		if not section_key:
-			if "snmp" in i:
-				print(i.strip())
+
+
+
+		str = 'service-type (\w+ )'
+		ss= re.findall(str,i)
+
+		if ss:
+			for i in ss:
+				print(i)
