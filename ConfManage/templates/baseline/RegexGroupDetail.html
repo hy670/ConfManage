@@ -41,7 +41,7 @@
                             {% for rule in  rulelist %}
                                 <tr>
                                     <td class="text-center">
-                                        <a href="/baseline/FromGroupToRuleDetail/{{ rule.rule_id }}"
+                                        <a  herf="#" onclick="RegexManageDetail({{ rule.rule_id }})"
                                            style="text-decoration:none;">{{ rule.rule_name }}</a>
                                     </td>
                                     <td class="text-center">{{ rule.rule_des }}</td>
@@ -136,6 +136,243 @@
             <!-- /.modal-dialog -->
         </div>
 
+        <div class="modal fade " id="RegexManageDetail" tabindex="-1" role="dialog" aria-labelledby="RegexManageAdd"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    </button>
+                    <h4 class="modal-title" id="RegexManageAdd">
+                        规则信息
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <h5>基本信息</h5>
+                    <form class="form-horizontal" role="form" id="rule">
+                        <!-- 名称 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>名称</strong></label>
+                            <div class="col-sm-6">
+                                <label class="control-label" type="text" id="rule_name"/>
+                            </div>
+                        </div>
+                        <!-- 违规级别 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>违规级别</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_severity" disabled="disabled">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">通知</option>
+                                    <option value="1" name="type">警告</option>
+                                    <option value="2" name="type">次要</option>
+                                    <option value="3" name="type">重要</option>
+                                    <option value="4" name="type">紧急</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <!-- 检查类型 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>检查类型</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="check_type" disabled="disabled">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">设备</option>
+                                    <option value="1" name="type">接口</option>
+                                    <option value="2" name="type">配置</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 开始标识 -->
+                        <div class="form-group" id="check_content_start_div" style="display:none;">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>开始标识</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="check_content_start"
+                                           placeholder="例如：interface" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 结束标识 -->
+                        <div class="form-group" id="check_content_end_div" style="display:none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>结束标识</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="check_content_end" name="asset_mark"
+                                           placeholder="例如：#或者!" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 检查目标 -->
+                        <div class="form-group" id="check_content_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>检查目标</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="check_content" disabled="disabled">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="1" name="check_content">配置文件</option>
+                                    <option value="2" name="check_content">命令执行结果</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 命令 -->
+                        <div class="form-group" id="command_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>命令</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="command" name="command"
+                                           placeholder="如 dispaly XXX" value="" class="input-xlarge"></textarea>
+                            </div>
+                        </div>
+                        <!-- 设备厂商 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>设备厂商</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="support_firm" disabled="disabled">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="True" name="assets_type">配置文件</option>
+                                    <option value="False" name="assets_type">命令执行结果</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 描述 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>描述</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="rule_des" name="rule_des"
+                                           placeholder="描述" value="" class="input-xlarge" disabled="disabled"></textarea>
+                            </div>
+                        </div>
+
+                        <h5>匹配模式</h5>
+                        <!-- 规则类型 -->
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则类型</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_standard"
+                                        onchange="javascript:rulestandard_select()">
+                                    <option value="0" selected="selected" id="rule_standard">简单</option>
+                                    <option value="1" id="rule_standard">高级</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 执行方法 -->
+                        <div class="form-group" id="ExecMethod_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>执行方法</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="exec_method"
+                                        onchange="javascript:execmethod_select()">
+                                    <option selected="selected" value="0">检查</option>
+                                    <option value="1">检查并提取</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal" role="form" id="rule_contentlist">
+                        <!-- 规则关系 -->
+                        <div class="form-group" id="RuleRelation_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则关系</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="rule_relation"
+                                        onchange="javascript:type_select()">
+                                    <option selected="selected" value="">请选择</option>
+                                    <option value="0" name="type">AND</option>
+                                    <option value="1" name="type">OR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 匹配模式 -->
+                        <div class="form-group" id="SplRuleCfg_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>匹配模式</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="spl_rule_cfg">
+
+                                    <option selected="selected" value="">请选择</option>
+
+                                    <option value="0" name="type">模糊匹配</option>
+
+                                    <option value="1" name="type">模糊不匹配</option>
+
+                                    <option value="2" name="type">精确匹配</option>
+
+                                    <option value="2" name="type">精确不匹配</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="AdvRuleCfg_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>匹配模式</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="adv_rule_cfg">
+
+                                    <option selected="selected" value="">请选择</option>
+
+                                    <option value="0" name="type">全部包含</option>
+
+                                    <option value="1" name="type">部分包含</option>
+
+                                    <option value="2" name="type">全部不包含</option>
+
+                                    <option value="2" name="type">部分不包含</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 规则内容 -->
+                        <div class="form-group " id="RuleContent_div">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>规则内容</strong></label>
+                            <div class="col-sm-6">
+                                 <textarea type="text" class="form-control" id="rule_content"
+                                           placeholder="如 dispaly XXX" value="" class="input-xlarge"></textarea>
+                            </div>
+                            <div class="col-sm-3" id="addruleconent" style="display: none">
+                                <button type="button" class="btn btn-default" onclick="addRuleContent()">增加规则
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                    <!-- 规则列表 -->
+                    <div class="form-group" id="RuleList_div" style="display: none">
+                        <table width="100%" id="RuleList_table" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th class="text-center">规则关系</th>
+                                <th class="text-center">匹配模式</th>
+                                <th class="text-center">规则内容</th>
+                                <th class="text-center">提取值得对比方式</th>
+                                <th class="text-center">提取值得对比值</th>
+                                <th class="text-center">删除</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="addrule(this)">
+                            添加
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
+
     </div>
     <!-- /#wrapper -->
     <!--    弹窗开始样式 -->
@@ -151,9 +388,45 @@
             search_go();
         }
 
-        function show_group_detail(group_id) {
+        function RegexManageDetail(group_id) {
+            $.ajax({
+                dataType: "JSON",
+                url: '/baseline/RegexRuleDetail/', //请求地址
+                type: "POST",  //提交类似
+                data: {'rule_id':group_id},
+                success: function (response) {
+                    $('#rule_name').text(response.rule['rule_name'])
+                    $('#rule_severity').val(response.rule['rule_severity'])
+                    $('#check_type').val(response.rule['check_type'])
+                    $('#check_content').val(response.rule['check_content'])
+                    $('#rule_des').text(response.rule['rule_des'])
+                    $('#support_firm').val(response.rule['support_firm'])
+                    $('#rule_standard').val(response.rule['rule_standard'])
+                    if (response.rule['check_type'] ==1||response.rule['check_type'] ==2)
+                    {
+                        $('#check_content_start').text(response.rule['check_content_start'])
+                        $('#check_content_end').text(response.rule['check_content_end'])
+                        $('#check_content_start_div').show()
+                        $('#check_content_end_div').show()
+                    }
+                    alert(response.rule['rule_standard'])
+                    if(response.rule['rule_standard'] ==0){
+                        $.each(response.rulecontent, function (i, item) {
 
+                            $('#spl_rule_cfg').val(item['spl_rule_cfg'])
+                            $('#rule_content').text(item['rule_content'])
+                        })
+                    }
+                    $('#RegexManageDetail').modal('show')
+                },
+                error: function (response) {
+                    alert('失败')
+                    alert(response['rule'])
+                }
+            })
         }
+
+
 
         function removeself(obj) {
             $(obj).parent().remove();
