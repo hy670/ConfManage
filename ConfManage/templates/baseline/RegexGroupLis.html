@@ -39,7 +39,7 @@
                                 class="glyphicon  glyphicon-ok-sign">全部启用</i></a>
                         <a class="btn btnbtn-xs btn-default" href="/baseline/RegexGroupAdd/"><i
                                 class="glyphicon  glyphicon-remove-sign">全部停用</i></a>
-                        <a class="btn btnbtn-xs btn-default" href="/baseline/RegexGroupAdd/"><i
+                        <a class="btn btnbtn-xs btn-default" href="/baseline/RegexTaskAdd/"><i
                                 class="glyphicon glyphicon-check">启动检查</i></a>
                         <a class="btn btnbtn-xs btn-default" href="/baseline/RegexGroupAdd/"><i
                                 class="glyphicon glyphicon-refresh">刷新</i></a>
@@ -50,7 +50,7 @@
                             <tr>
 
 
-                                <th class="text-center"><input type="checkbox" onclick="checkAllBox()"/>全选</th>
+
                                 <th class="text-center">名称</th>
                                 <th class="text-center">描述</th>
                                 <th class="text-center">是否启用</th>
@@ -59,24 +59,13 @@
                                 <th class="text-center">复制</th>
                                 <th class="text-center">删除</th>
                             </tr>
-                            <tfoot>
-                            <tr>
-                                <th class="text-center">全选</th>
-                                <th class="text-center">名称</th>
-                                <th class="text-center">描述</th>
-                                <th class="text-center">是否启用</th>
-                                <th class="text-center">类型</th>
-                                <th class="text-center">修改</th>
-                                <th class="text-center">复制</th>
-                                <th class="text-center">删除</th>
-                            </tr>
-                            </tfoot>
+
                             </thead>
                             <tbody>
                             {% for group in  regexgrouplist %}
                                 <tr class="odd gradeX">
 
-                                    <td class="text-center"><input type="checkbox" value={{ a.id }} name="ckbox"/></td>
+
                                     <td class="text-center">
                                         <a href="/baseline/RegexGroupDetail/{{ group.group_id }}"
                                            style="text-decoration:none;">{{ group.group_name }}</a>
@@ -94,11 +83,7 @@
                                         {% if group.type == 0 %}
                                             预定义
                                         {% elif  group.type == 1 %}
-                                            虚拟机
-                                        {% elif  group.type == 2 %}
-                                            交换机
-                                        {% elif  group.type == 3 %}
-                                            路由器
+                                           自定义
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
@@ -257,15 +242,6 @@
 
         var selectState = false;
 
-        function checkAllBox() {
-            var qcheck = document.getElementsByName("ckbox");
-            for (var i = 0; i < qcheck.length; i++) {
-                var checkbox = qcheck[i];
-                checkbox.checked = !selectState;
-            }
-            selectState = !selectState;
-        }
-
 
         var downLoadFile = function (options) {
             var config = $.extend(true, {method: 'post'}, options);
@@ -360,139 +336,7 @@
         }
 
 
-        function format(dataList) {
-            var trHtml = '';
-            for (var i = 0; i < dataList.length; i++) {
-                trHtml += '<tr><td>' + dataList[i]["name"] + ':</td>' + '<td>' + dataList[i]["value"] + '</td></tr>'
-            }
-            ;
-            var vHtml = '<fieldset>' +
-                '<legend>硬件信息</legend>' +
-                '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
-                trHtml +
-                '</table>'
-            '</fieldset>';
-            return vHtml;
-        }
 
-        $(document).ready(function () {
-            var table = $('#assetsListTable').DataTable({
-                /* 	        "ajax": "../ajax/data/objects.txt", */
-                "columns": [
-                    {
-                        "className": 'details-control',
-                        "orderable": false,
-                        "data": null,
-                        "defaultContent": ''
-                    },
-                    {"data": "全选"},
-                    {"data": "资产ID"},
-                    {"data": "资产类型"},
-                    {"data": "管理IP"},
-                    {"data": "资产编号"},
-                    {"data": "设备型号"},
-                    {"data": "放置区域"},
-                    {"data": "产品线"},
-                    {"data": "业务类型"},
-                    {"data": "使用组"},
-                    {"data": "设备状态"},
-                    {"data": "操作"}
-                ],
-                "order": [[2, 'asc']]
-            });
-
-            // Add event listener for opening and closing details
-            $('#assetsListTable tbody').on('click', 'td.details-control', function () {
-                var dataList = [];
-                var tr = $(this).closest('tr');
-                var row = table.row(tr);
-                aId = row.data()["资产ID"];
-                $.ajax({
-                    url: "/api/assets/info/" + aId + "/",
-                    type: "post",
-                    async: false,
-                    data: {"id": aId},
-                    dataType: "json",
-                    success: function (result) {
-                        dataList = result.data;
-                    }
-                });
-                /* 	    	console.log(dataList); */
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                    tr.removeClass('shown');
-                } else {
-                    // Open this row
-                    row.child(format(dataList)).show();
-                    tr.addClass('shown');
-                }
-            });
-        });
-
-        //Flot Pie Chart
-        $(function () {
-            var data = [
-                {% for ds in assetsNumber %}
-                    {
-                        {% if ds.assets_type == "server" %}
-                            label: "服务器",
-                        {% elif ds.assets_type == "vmser" %}
-                            label: "虚拟机",
-                        {% elif ds.assets_type == "switch" %}
-                            label: "交换机",
-                        {% elif ds.assets_type == "route" %}
-                            label: "路由器",
-                        {% elif ds.assets_type == "printer" %}
-                            label: "打印机",
-                        {% elif ds.assets_type == "scanner" %}
-                            label: "扫描仪",
-                        {% elif ds.assets_type == "firewall" %}
-                            label: "防火墙",
-                        {% elif ds.assets_type == "storage" %}
-                            label: "存储设备",
-                        {% elif ds.assets_type == "wifi" %}
-                            label: "无线设备",
-                        {% endif %}
-                        data: {{ ds.dcount }}
-                    },
-                {% endfor %}
-            ];
-        });
-
-        $(function () {
-            Morris.Donut({
-                element: 'asset_number',
-                data: [
-                    {% for ds in assetsNumber %}
-                        {
-                            {% if ds.assets_type == "server" %}
-                                label: "服务器",
-                            {% elif ds.assets_type == "switch" %}
-                                label: "交换机",
-                            {% elif ds.assets_type == "vmser" %}
-                                label: "虚拟机",
-                            {% elif ds.assets_type == "route" %}
-                                label: "路由器",
-                            {% elif ds.assets_type == "printer" %}
-                                label: "打印机",
-                            {% elif ds.assets_type == "scanner" %}
-                                label: "扫描仪",
-                            {% elif ds.assets_type == "firewall" %}
-                                label: "防火墙",
-                            {% elif ds.assets_type == "storage" %}
-                                label: "存储设备",
-                            {% elif ds.assets_type == "wifi" %}
-                                label: "无线设备",
-                            {% endif %}
-                            value: {{ ds.dcount }}
-                        },
-                    {% endfor %}
-                ],
-                resize: true
-            });
-
-        });
 
         function deleteAssets(obj, id) {
             var txt = "是否确认删除？";

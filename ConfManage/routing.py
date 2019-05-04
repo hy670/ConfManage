@@ -6,7 +6,7 @@ from ConfManage.djchannels import wssh
 application = ProtocolTypeRouter({
 	"websocket": AuthMiddlewareStack(
 		URLRouter([
-			url(r'^ws/webssh/(?P<id>[0-9]+)/$$',wssh.Webterminal),
+			url(r'^ws/webssh/(?P<id>[0-9]+)/$$', wssh.Webterminal),
 
 			# path(r"stats/", StatsConsumer),
 		])

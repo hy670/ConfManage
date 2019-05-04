@@ -6,6 +6,7 @@ from ConfManage.models import *
 #from orders.models import *
 #from filemanage.models import *
 from django.contrib.auth.models import Group,User
+from baseline.models import *
 #from djcelery.models  import CrontabSchedule,IntervalSchedule
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,11 +17,12 @@ class UserSerializer(serializers.ModelSerializer):
                   'is_active','date_joined')
  
 
-
-                  
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id','name')
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ('id','name')
-          

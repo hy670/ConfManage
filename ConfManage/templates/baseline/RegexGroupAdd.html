@@ -237,18 +237,6 @@
                                 </select>
                             </div>
                         </div>
-                        <!-- 设备系列 -->
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right"
-                                   for="form-field-4"><font color='red'>* </font><strong>设备系列</strong></label>
-                            <div class="col-sm-6">
-                                <select class="form-control center" id="line_is_master">
-                                    <option selected="selected" value="">请选择</option>
-                                    <option value="True" name="assets_type">SW</option>
-                                    <option value="False" name="assets_type">R</option>
-                                </select>
-                            </div>
-                        </div>
                         <!-- 描述 -->
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right"
@@ -300,11 +288,11 @@
                             </div>
                         </div>
                         <!-- 匹配模式 -->
-                        <div class="form-group" id="RuleCfg_div">
+                        <div class="form-group" id="SplRuleCfg_div">
                             <label class="col-sm-3 control-label no-padding-right"
                                    for="form-field-4"><font color='red'>* </font><strong>匹配模式</strong></label>
                             <div class="col-sm-6">
-                                <select class="form-control center" id="rule_cfg">
+                                <select class="form-control center" id="spl_rule_cfg">
 
                                     <option selected="selected" value="">请选择</option>
 
@@ -315,6 +303,24 @@
                                     <option value="2" name="type">精确匹配</option>
 
                                     <option value="2" name="type">精确不匹配</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="AdvRuleCfg_div" style="display: none">
+                            <label class="col-sm-3 control-label no-padding-right"
+                                   for="form-field-4"><font color='red'>* </font><strong>匹配模式</strong></label>
+                            <div class="col-sm-6">
+                                <select class="form-control center" id="adv_rule_cfg">
+
+                                    <option selected="selected" value="">请选择</option>
+
+                                    <option value="0" name="type">全部包含</option>
+
+                                    <option value="1" name="type">部分包含</option>
+
+                                    <option value="2" name="type">全部不包含</option>
+
+                                    <option value="2" name="type">部分不包含</option>
                                 </select>
                             </div>
                         </div>
@@ -458,14 +464,12 @@
             var index = obj.selectedIndex;
             var value = obj.options[index].value;
             if (value == 0) {
-                $('#rule_cfg').empty()
-                $('#rule_cfg').append(
-                    '<option selected="selected" value="">请选择</option>\n' +
-                    '<option value="0" name="type">模糊匹配</option>\n' +
-                    '<option value="1" name="type">模糊不匹配</option>\n' +
-                    '<option value="2" name="type">精确匹配</option>\n' +
-                    '<option value="2" name="type">精确不匹配</option>'
-                );
+                if($('#SplRuleCfg_div').is(':hidden')){
+                     $('#SplRuleCfg_div').show();
+                }
+                if($('#AdvRuleCfg_div').is(':visible')){
+                     $('#AdvRuleCfg_div').hide();
+                }
                 if ($('#RuleRelation_div').is(':visible')) {
                     $('#RuleRelation_div').hide();
 
@@ -488,13 +492,12 @@
                 }
 
             } else if (value == 1) {
-                $('#rule_cfg').empty()
-                $('#rule_cfg').append(
-                    '<option selected="selected" value="">请选择</option>\n' +
-                    '<option value="0" name="type">包括</option>\n' +
-                    '<option value="1" name="type">不包括</option>\n'
-                );
-
+                  if($('#SplRuleCfg_div').is(':visible')){
+                     $('#SplRuleCfg_div').hide();
+                }
+                if($('#AdvRuleCfg_div').is(':hidden')){
+                     $('#AdvRuleCfg_div').show();
+                }
                 if ($('#ExecMethod_div').is(':hidden')) {
                     $('#ExecMethod_div').show();
                 }
@@ -566,7 +569,21 @@
             for (var i = 0; i < form.length; ++i) {
                 var name = form[i].id;
                 var value = form[i].value;
-                if (name != null) {
+                 if (name=='rule_cfg'){
+                        if (value == '')
+                        {
+                             window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                         return false;
+                        }
+                 }
+                 if (name=='rule_relation' && rulecontentlist.length>0 ){
+                        if (value == '')
+                        {
+                             window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                         return false;
+                        }
+                 }
+                 if (name != '' && value !='' ) {
                     rulecontent[name] = value
 
                 }
@@ -577,10 +594,11 @@
                     $('#RuleRelation_div').show();
                 }
             }
-            $('#RuleList_table').append(
+            if (rulecontentnum > 1){
+                 $('#RuleList_table').append(
                 '<tr>\n' +
                 ' <th class="text-center">' + rulecontent['rule_relation'] + '</th>\n' +
-                ' <th class="text-center">' + rulecontent['rule_cfg'] + '</th>\n' +
+                ' <th class="text-center">' + rulecontent['adv_rule_cfg'] + '</th>\n' +
                 '<th class="text-center">' + rulecontent['rule_content'] + '</th>\n' +
                 '<th class="text-center"></th>\n' +
                 '<th class="text-center"></th>\n' +
@@ -591,6 +609,26 @@
                 '</th>\n' +
                 '</tr>'
             )
+
+            }
+            else {
+                   $('#RuleList_table').append(
+                '<tr>\n' +
+                ' <th class="text-center"</th>\n' +
+                ' <th class="text-center">' + rulecontent['adv_rule_cfg'] + '</th>\n' +
+                '<th class="text-center">' + rulecontent['rule_content'] + '</th>\n' +
+                '<th class="text-center"></th>\n' +
+                '<th class="text-center"></th>\n' +
+                '<th class="text-center"><button type="button" class="btn btn-xs btn-default"' +
+                'onclick = "delrule(this,' + rulecontentnum +
+                ')" > <i\n' +
+                'class="glyphicon glyphicon-trash"/></button > ' +
+                '</th>\n' +
+                '</tr>'
+            )
+            }
+
+
 
 
         }
@@ -606,7 +644,13 @@
             for (var i = 0; i < form.length; ++i) {
                 var name = form[i].id;
                 var value = form[i].value;
-                if (name != null) {
+                if (value == '') {
+                    if(name=='rule_severity'||name=='check_type'||name=='rule_des'){
+                           window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                         return false;
+                    }
+                }
+                if (name != ''&& value!=''){
                     rule[name] = value
                 }
             }
@@ -616,12 +660,21 @@
                 for (var i = 0; i < form.length; ++i) {
                     var name = form[i].id;
                     var value = form[i].value;
-                    if (name != null) {
+                    if(value == "")
+                    {
+                        if (name=='rule_cfg'){
+                            window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                            return false;
+                        }
+                    }
+                    if (name != ''&& value!='' ) {
                         rulecontent[name] = value
                     }
                 }
                 rulecontentlist.push(rulecontent)
             }
+
+
 
             rule['rule_content'] = rulecontentlist
             rulelist.push(rule)
@@ -642,27 +695,24 @@
             var rule_manage = {}
             var form = document.getElementById('check_group');
             for (var i = 0; i < form.length; ++i) {
-                var name = form[i].name;
-                var value = form[i].value;
-                var assetStart = name.indexOf("asset_");
-                if (assetStart == 0 && value.length == 0 && assets.indexOf(name) >= 0) {
-                    $("[name='" + name + "']").parent().addClass("has-error");
-                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
-                    return false;
-                } else if (assetStart == 0 && value.length > 0) {
-                    $("[name='" + name + "']").parent().removeClass("has-error");
-                    $("[name='" + name + "']").parent().addClass("has-success");
-                }
-
-            };
-            for (var i = 0; i < form.length; ++i) {
                 var name = form[i].id;
                 var value = form[i].value;
-                if (name != "") {
+                if (name!='' &&value == ''){
+                    window.wxc.xcConfirm("请注意必填项不能为空~", window.wxc.xcConfirm.typeEnum.error);
+                            return false;
+                }
+                if (name != ''&& value!='') {
                     rule_manage[name] = value
                 }
             }
-            rule_manage['rule_list'] = rulelist
+            if (rulelist.length == 0){
+                 window.wxc.xcConfirm("请注意规则不能为空，请添加规则~", window.wxc.xcConfirm.typeEnum.error);
+                            return false;
+            }
+            else {
+                rule_manage['rule_list'] = rulelist
+            }
+
             $.ajax({
                 dataType: "JSON",
                 url: '/baseline/RegexGroupAdd/', //请求地址
