@@ -6,5 +6,6 @@ urlpatterns = [
 	url(r'^RegexRuleDetail/$', check_rule.regex_rule_detail),
 	url(r'^RegexGroupDetail/(?P<group_id>[0-9]+)$', check_rule.regex_group_detail),
 	url(r'^RegexGroupAdd/$', check_rule.regex_group_add),
+	url(r'^RegexTaskAdd/$', check_rule.regex_task_add),
 
 ]

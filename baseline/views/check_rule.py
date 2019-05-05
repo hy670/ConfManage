@@ -9,7 +9,16 @@ from django.contrib.auth.decorators import permission_required
 from django.http import JsonResponse,HttpResponse
 from ConfManage.utils.logger import logger
 import json
-from ConfManage import serializers
+from baseline import serializers as baselineserializers
+from ConfManage import serializers as confmanageserializers
+from ConfManage.models import Assets
+from celery import task
+from celery.registry import tasks as cTasks
+from celery import registry
+from celery.task.control import revoke
+from celery.five import keys, items
+from djcelery.models import PeriodicTask,CrontabSchedule,WorkerState,TaskState,IntervalSchedule
+from baseline.tasks import *
 
 def check_rule(request):
 	if request.method == "GET":
@@ -19,7 +28,6 @@ def check_rule(request):
 
 
 def regex_group_detail(request, group_id):
-	print(request.method)
 	if request.method == "GET":
 		group = check_group_mge.objects.get(group_id=group_id)
 		group_rule_detail_list = check_grp_rel.objects.filter(group=group)
@@ -31,21 +39,17 @@ def regex_group_detail(request, group_id):
 
 
 def regex_rule_detail(request):
-	print(request.method)
 	if request.method == "GET":
 		pass
 		return render(request, 'baseline/RegexGroupDetail.html')
 	elif request.method == "POST":
 		rule_id = int(request.POST.get('rule_id'))
-		print(rule_id)
 		try:
 			rulecontentlist =[]
-			rule = serializers.RuleManageSerializer(check_rule_manage.objects.get(rule_id=rule_id)).data
+			rule = baselineserializers.RuleManageSerializer(check_rule_manage.objects.get(rule_id=rule_id)).data
 			rulecontent = check_rule_content.objects.filter(rule_id=rule_id)
-			print(type(rule))
-			print(rule)
 			for i in rulecontent:
-				data = serializers.RuleContentSerializer(i)
+				data = baselineserializers.RuleContentSerializer(i)
 				rulecontentlist.append(data.data)
 			return JsonResponse({'code': 400, 'rule':  rule, 'rulecontent':  rulecontentlist})
 		except Exception as e:
@@ -59,6 +63,7 @@ def regex_rule_detail(request):
 
 def regex_group_add(request):
 	if request.method == "GET":
+
 		return render(request, 'baseline/RegexGroupAdd.html')
 	elif request.method == "POST":
 		rule_list = json.loads(request.body)['rule_list']
@@ -80,3 +85,34 @@ def regex_group_add(request):
 		except Exception as e:
 			logger.warn("新增基线策略失败，失败原因%s",e)
 			return JsonResponse({"msg":"插入失败","code":502})
+
+def regex_task_add(request):
+	if request.method == "GET":
+		regexgrouplist = check_group_mge.objects.all()
+		return render(request, 'baseline/RegexTaskAdd.html',{"regexgrouplist": regexgrouplist})
+	elif request.method == "POST":
+		op = json.loads(request.body)['op']
+		if op == 'get_dev':
+			try:
+				assets = confmanageserializers.AssetsSerializer(Assets.objects.all(),many=True).data
+			except Exception as e:
+				logger.warn(e)
+			return JsonResponse({"msg": "插入成功", "code": 400,'assets':assets})
+		elif op == 'add_task':
+			task = json.loads(request.body)['task']
+			cron.check_conf(task['rule_list'],task['dev_list'])
+			'''try:
+				PeriodicTask.objects.create(name=task['task_name'],
+				                            interval_id=request.POST.get('interval', None),
+				                            task=request.POST.get('task', None),
+				                            crontab_id=request.POST.get('crontab', None),
+				                            args=request.POST.get('args', '[]'),
+				                            kwargs=request.POST.get('kwargs', '{}'),
+				                            queue=request.POST.get('queue', None),
+				                            enabled=int(request.POST.get('enabled', 1)),
+				                            expires=request.POST.get('expires', None)
+				                            )
+				return JsonResponse({"code": 200, "data": None, "msg": "添加成功"})
+			except Exception as e:'''
+			return JsonResponse({"code": 500,  "msg": "添加失败"})
+
