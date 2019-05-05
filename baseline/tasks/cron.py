@@ -36,7 +36,9 @@ def check_conf(rules,assets):
 					print(rule_manage.rule_name)
 					rule_contents = check_rule_content.objects.filter(rule_id=rule_manage.rule_id)
 					for rule_content in rule_contents:
-						print(rule_content.content_id)
+						if rule_content.spl_rule_cfg is not None:
+							print(rule_content.content_id)
+
 				except Exception as e:
 					logger.warn(e)
 
