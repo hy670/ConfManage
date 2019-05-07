@@ -23,8 +23,28 @@ from baseline.tasks import *
 def check_rule(request):
 	if request.method == "GET":
 		regexgrouplist = check_group_mge.objects.all()
-
 		return render(request, 'baseline/RegexGroupLis.html', {"regexgrouplist": regexgrouplist})
+	elif request.method == "POST":
+		op = request.POST.get('op')
+		if op == 'del':
+			group_id = request.POST.get("check_group")
+			check_group = check_group_mge.objects.filter(group_id=group_id)
+			grp_rel_list = check_grp_rel.objects.filter(group_id=group_id)
+			try:
+				with transaction.atomic():
+					for grp_rel in grp_rel_list:
+						rule_content = check_rule_content.objects.filter(rule_id=grp_rel.rule_id)
+						rule_manage = check_rule_manage.objects.filter(rule_id=grp_rel.rule_id)
+						rule_content.delete()
+						rule_manage.delete()
+					grp_rel_list.delete()
+					check_group.delete()
+				return JsonResponse({'code': 400})
+			except Exception as e:
+				logger.warn(e)
+				return JsonResponse({'code': 500})
+
+
 
 
 def regex_group_detail(request, group_id):
@@ -100,7 +120,8 @@ def regex_task_add(request):
 			return JsonResponse({"msg": "插入成功", "code": 400,'assets':assets})
 		elif op == 'add_task':
 			task = json.loads(request.body)['task']
-			cron.check_conf(task['rule_list'],task['dev_list'])
+			check_task.objects.create(task_name=task['task_name'])
+			cron.check_conf.delay(task['rule_list'],task['dev_list'])
 			'''try:
 				PeriodicTask.objects.create(name=task['task_name'],
 				                            interval_id=request.POST.get('interval', None),

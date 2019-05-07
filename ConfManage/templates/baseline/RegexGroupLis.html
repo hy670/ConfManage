@@ -14,20 +14,6 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <div class="btn-group btn-group-xs pull-right">
-                            <button type="button" class="btn btn-default"><a href="#" data-toggle="modal"
-                                                                             data-target="#myAssetsImportModal"><i
-                                    class="fa fa-pencil fa-fw"></i>批量导入</a></button>
-                            <button type="button" class="btn btn-default" onclick="fcDumpsAssetsData(this)"><i
-                                    class="fa fa-refresh fa-fw"></i>导出资产
-                            </button>
-                            <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'update')"><i
-                                    class="fa fa-refresh fa-fw"></i>批量更新
-                            </button>
-                            <button type="button" class="btn btn-default" onclick="updateAllAssets(this,'delete')"><i
-                                    class="fa fa-trash-o fa-fw"></i>批量删除
-                            </button>
-                        </div>
                         <i class="fa fa-database"></i>策略组列表
 
                     </div>
@@ -101,7 +87,7 @@
                                     </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-default"
-                                                onclick="deleteAssets(this,{{ group.group_id }})"><i
+                                                onclick="deleteRegexGroup(this,{{ group.group_id }})"><i
                                                 class="glyphicon glyphicon-trash"></i></button>
                                     </td>
                                 </tr>
@@ -110,13 +96,7 @@
                         </table>
                         <!-- /.table-responsive -->
                         <div class="well">
-                            <h4>设备资产更新说明</h4>
-                            <ol>
-                                <li><p>点击<i class="glyphicon glyphicon-info-sign"></i>查看设备资产明细</li>
-                                <li><p>点击<i class="glyphicon glyphicon-refresh"></i>更新设备信息</p></li>
-                                <li><p>点击<i class="glyphicon glyphicon-edit"></i>编辑设备信息</p></li>
-                                <li><p>点击<i class="glyphicon glyphicon-trash"></i>删除设备信息</p></li>
-                            </ol>
+
 
 
                             <a class="btn btn-default btn-lg btn-block" target="_blank" href="/assets_add"><i
@@ -338,23 +318,23 @@
 
 
 
-        function deleteAssets(obj, id) {
+        function deleteRegexGroup(obj, id) {
             var txt = "是否确认删除？";
             var btnObj = $(obj);
             btnObj.attr('disabled', true);
             var option = {
-                title: "删除当前资产",
+                title: "删除当前规则",
                 btn: parseInt("0011", 2),
                 onOk: function () {
                     $.ajax({
                         dataType: "JSON",
                         type: "POST",  //提交类似
-                        url: '/assets_list/',
-                        data: {'op': 'del', 'assets_id': id},
+                        url: '/baseline/RegexGroupLis/',
+                        data: {'op': 'del', 'check_group': id},
                         success: function (response) {
                             btnObj.removeAttr('disabled');
                             window.wxc.xcConfirm("删除成功", window.wxc.xcConfirm.typeEnum.success);
-                            location.reload('/assets_list/');
+                            location.reload('/baseline/RegexGroupLis/');
                         },
                         error: function (response) {
                             btnObj.removeAttr('disabled');

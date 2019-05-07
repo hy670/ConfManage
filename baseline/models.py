@@ -55,7 +55,7 @@ class check_rule_manage(models.Model):
 class check_rule_content(models.Model):
 	content_id = models.AutoField(primary_key=True)
 	rule = models.ForeignKey('check_rule_manage', on_delete=models.CASCADE)
-	# 规则类型 简单匹配 高级匹配 取值(1:模糊匹配，2:模糊不匹配，3：精确匹配：4：精确不匹配）
+	# 规则类型 简单匹配 高级匹配 取值(0:匹配，1:不匹配）
 	spl_rule_cfg = models.SmallIntegerField(null=True)
 	adv_rule_cfg = models.SmallIntegerField(null=True)
 	# rule 多条 conten 之间的关系 取值（0：OR ,1:?,2:?)
@@ -112,3 +112,81 @@ class check_grp_rel(models.Model):
 		)
 		verbose_name = ''
 		verbose_name_plural = ''
+
+class check_task(models.Model):
+	check_task_id = models.AutoField(primary_key=True)
+	task_name = models.CharField(max_length=256,blank=True, null=False)
+	# 检查设备列表
+	assets_list = models.CharField(max_length=256,blank=True, null=False)
+	#  策略清单
+	check_group_list = models.CharField(max_length=256,blank=True, null=False)
+	# 描述 不成功原因 ，配置不存在或则无法登陆
+	check_task_des = models.TextField(blank=True, null=True)
+
+	class Meta:
+		db_table = 'baseline_task_assets_result'
+		permissions = (
+			("can_read_policy", "读取策略权限"),
+
+			("can_change_policy", "更改策略权限"),
+			("can_add_policy", "添加策略权限"),
+			("can_delete_policy", "删除策略权限"),
+			("can_dumps_policy", "导出策略权限"),
+		)
+		verbose_name = '已申请策略表'
+		verbose_name_plural = '已申请总策略表'
+
+class task_assets_result(models.Model):
+	result_id = models.AutoField(primary_key=True)
+	check_task_id =  models.SmallIntegerField(null=False)
+	task_id = models.CharField(max_length=256,blank=True, null=False)
+	# 检查设备ID
+	asset_id = models.SmallIntegerField(null=False)
+	# 检查是否成功，0 成功 1 不成功
+	result = models.SmallIntegerField(null=True)
+	# 描述 不成功原因 ，配置不存在或则无法登陆
+	result_des = models.TextField(blank=True, null=True)
+
+	class Meta:
+		db_table = 'baseline_task_assets_result'
+		permissions = (
+			("can_read_policy", "读取策略权限"),
+
+			("can_change_policy", "更改策略权限"),
+			("can_add_policy", "添加策略权限"),
+			("can_delete_policy", "删除策略权限"),
+			("can_dumps_policy", "导出策略权限"),
+		)
+		verbose_name = '已申请策略表'
+		verbose_name_plural = '已申请总策略表'
+
+
+class task_content_result(models.Model):
+	result_id = models.AutoField(primary_key=True)
+	content_id = models.SmallIntegerField(null=False)
+	# 规则类型 简单匹配 高级匹配 取值(0:匹配，1:不匹配）
+	spl_rule_cfg = models.SmallIntegerField(null=True)
+	adv_rule_cfg = models.SmallIntegerField(null=True)
+	# rule 多条 conten 之间的关系 取值（0：OR ,1:?,2:?)
+	rule_relation = models.SmallIntegerField(null=True)
+	# 规则内容
+	rule_content = models.TextField(blank=True, null=True)
+	# 匹配类型 取值（1：全部不包含，2：包含其中之一）
+	match_content_type = models.SmallIntegerField(blank=True, null=True)
+	# 提取值的对比方式
+	getValue_compType = models.SmallIntegerField(blank=True, null=True)
+	# 提取值的对比值
+	expression_compValue = models.CharField(max_length=256,blank=True, null=True)
+
+	class Meta:
+		db_table = 'baseline_task_content_result'
+		permissions = (
+			("can_read_policy", "读取策略权限"),
+
+			("can_change_policy", "更改策略权限"),
+			("can_add_policy", "添加策略权限"),
+			("can_delete_policy", "删除策略权限"),
+			("can_dumps_policy", "导出策略权限"),
+		)
+		verbose_name = '已申请策略表'
+		verbose_name_plural = '已申请总策略表'
